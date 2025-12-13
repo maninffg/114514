@@ -1,205 +1,325 @@
 --[[ 警告：请注意！此脚本尚未经过ScriptBlox验证。使用风险自负！ ]]
--- 忍者传奇OP GUI
--- 原作者：k00dkidd
--- 请确保阅读使用说明
+-- 忍者传奇脚本中心
+-- 汉化版
 
--- 启动时发送通知
+-- 启动通知
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "脚本中心",
-    Text = "汉化Ninja Legends OP",
-    Icon = "rbxthumb://type=Asset&id=4563944926&w=150&h=150",
-    Duration = 5
+    Title = "脚本中心";
+    Text = "忍者脚本已加载";
+    Icon = "rbxthumb://type=Asset&id=4563944926&w=150&h=150";
+    Duration = 5;
 })
 
-local gui2 = Instance.new("ScreenGui")
-gui2.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
--- 主界面框架
-local gui2Frame = Instance.new("Frame")
-gui2Frame.Size = UDim2.new(0, 180, 0, 240) -- 增加高度以容纳关闭按钮
-gui2Frame.Position = UDim2.new(0.05, 0, 0.05, 0)
-gui2Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-gui2Frame.Active = true
-gui2Frame.Draggable = true
-gui2Frame.Parent = gui2
-
--- 标题
-local gui2Title = Instance.new("TextLabel")
-gui2Title.Size = UDim2.new(1, 0, 0, 18)
-gui2Title.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-gui2Title.Text = "忍者传奇OP界面"
-gui2Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-gui2Title.TextSize = 10
-gui2Title.Parent = gui2Frame
-
--- 关闭按钮
-local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 20, 0, 20)
-closeButton.Position = UDim2.new(0.9, 0, 0, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(220, 53, 69)
-closeButton.BorderSizePixel = 0
-closeButton.Text = "X"
-closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeButton.TextSize = 12
-closeButton.Parent = gui2Frame
-
--- 切换大师元素界面按钮
-local toggleButton = Instance.new("TextButton")
-toggleButton.Size = UDim2.new(1, -10, 0, 20)
-toggleButton.Position = UDim2.new(0, 5, 0, 30)
-toggleButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-toggleButton.Text = "切换大师元素界面"
-toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleButton.TextSize = 10
-toggleButton.Parent = gui2Frame
-
--- 开始按钮
-local startButton = Instance.new("TextButton")
-startButton.Size = UDim2.new(1, -10, 0, 20)
-startButton.Position = UDim2.new(0, 5, 0, 55)
-startButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-startButton.Text = "开始"
-startButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-startButton.TextSize = 10
-startButton.Parent = gui2Frame
-
-startButton.MouseButton1Click:Connect(function()
-    local args = {
-        [1] = "convertGems",
-        [2] = -9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
-    }
-    game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer(unpack(args))
-end)
-
--- 输入框（数字输入）
-local numberEntry = Instance.new("TextBox")
-numberEntry.Size = UDim2.new(1, -20, 0, 25)
-numberEntry.Position = UDim2.new(0, 10, 0, 80)
-numberEntry.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-numberEntry.Text = "输入数字"
-numberEntry.TextColor3 = Color3.fromRGB(255, 255, 255)
-numberEntry.TextSize = 10
-numberEntry.ClearTextOnFocus = true
-numberEntry.Parent = gui2Frame
-
--- 提交按钮
-local submitButton = Instance.new("TextButton")
-submitButton.Size = UDim2.new(1, -20, 0, 25)
-submitButton.Position = UDim2.new(0, 10, 0, 110)
-submitButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-submitButton.Text = "提交"
-submitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-submitButton.TextSize = 10
-submitButton.Parent = gui2Frame
-
--- 提交功能
-submitButton.MouseButton1Click:Connect(function()
-    local num = tonumber(numberEntry.Text)
-    if num and num > 0 and num <= 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 then
-        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertGems", num)
+-- 加载WindUI
+local WindUI do
+    local ok, result = pcall(function()
+        return require("./src/Init")
+    end)
+    if ok then
+        WindUI = result
     else
-        numberEntry.Text = "数字太大！"
+        WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
     end
-end)
+end
 
--- Discord按钮
-local discordButton = Instance.new("TextButton")
-discordButton.Size = UDim2.new(1, -10, 0, 20)
-discordButton.Position = UDim2.new(0, 5, 0, 140)
-discordButton.BackgroundColor3 = Color3.fromRGB(60, 60, 200)
-discordButton.Text = "加入Discord"
-discordButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-discordButton.TextSize = 10
-discordButton.Parent = gui2Frame
+-- 创建窗口
+local Window = WindUI:CreateWindow({
+    Title = "脚本中心 | 忍者传奇",
+    Author = "by 脚本中心",
+    Folder = "ninjalegends",
+    NewElements = true,
+    HideSearchBar = false,
+    OpenButton = {
+        Title = "打开忍者脚本",
+        CornerRadius = UDim.new(1,0),
+        StrokeThickness = 3,
+        Enabled = true,
+        Draggable = true,
+        OnlyMobile = false,
+        Color = ColorSequence.new(
+            Color3.fromHex("#30FF6A"),
+            Color3.fromHex("#e7ff2f")
+        )
+    }
+})
 
-discordButton.MouseButton1Click:Connect(function()
-    setclipboard("https://discord.gg/5Wr75mQKne") -- 复制链接到剪贴板
-end)
+-- 主功能标签
+local MainTab = Window:Tab({
+    Title = "主功能",
+    Icon = "star",
+})
 
--- 大师元素界面
-local masterGui = Instance.new("ScreenGui")
-masterGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-masterGui.Enabled = false
+-- 自动刷气功能
+local AutoChiSection = MainTab:Section({
+    Title = "自动刷气",
+})
 
-local masterFrame = Instance.new("Frame")
-masterFrame.Size = UDim2.new(0, 250, 0, 400)
-masterFrame.Position = UDim2.new(0.2, 0, 0.2, 0)
-masterFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-masterFrame.BackgroundTransparency = 0.5
-masterFrame.Active = true
-masterFrame.Draggable = true
-masterFrame.Parent = masterGui
+local isAutoChi = false
+local autoChiConnection = nil
 
-local masterTitle = Instance.new("TextLabel")
-masterTitle.Size = UDim2.new(1, 0, 0, 30)
-masterTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-masterTitle.Text = "大师元素"
-masterTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
-masterTitle.TextSize = 14
-masterTitle.Parent = masterFrame
+AutoChiSection:Toggle({
+    Title = "自动刷气",
+    Desc = "该功能处于测试中，请期待正式版",
+    Default = false,
+    Callback = function(state)
+        isAutoChi = state
+        if state then
+            WindUI:Notify({
+                Title = "自动刷气",
+                Content = "已开启自动刷气",
+                Icon = "check",
+            })
+            
+            -- 开始自动刷气
+            autoChiConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                if game.Players.LocalPlayer.Character then
+                    -- 模拟按下空格键收集气
+                    game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("chiEvent"):FireServer("collectOrbs", "White")
+                end
+            end)
+        else
+            if autoChiConnection then
+                autoChiConnection:Disconnect()
+                autoChiConnection = nil
+            end
+            WindUI:Notify({
+                Title = "自动刷气",
+                Content = "已关闭自动刷气",
+                Icon = "x",
+            })
+        end
+    end
+})
 
--- 大师元素界面的关闭按钮
-local masterCloseButton = Instance.new("TextButton")
-masterCloseButton.Size = UDim2.new(0, 20, 0, 20)
-masterCloseButton.Position = UDim2.new(0.92, 0, 0, 5)
-masterCloseButton.BackgroundColor3 = Color3.fromRGB(220, 53, 69)
-masterCloseButton.BorderSizePixel = 0
-masterCloseButton.Text = "X"
-masterCloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-masterCloseButton.TextSize = 12
-masterCloseButton.Parent = masterFrame
+-- 岛屿传送功能
+local IslandSection = MainTab:Section({
+    Title = "岛屿传送",
+})
 
--- 按钮容器
-local scrollFrame = Instance.new("ScrollingFrame")
-scrollFrame.Size = UDim2.new(1, 0, 1, -30)
-scrollFrame.Position = UDim2.new(0, 0, 0, 30)
-scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 400) -- 允许滚动
-scrollFrame.ScrollBarThickness = 5
-scrollFrame.BackgroundTransparency = 1
-scrollFrame.Parent = masterFrame
+local function teleportToHighestIsland()
+    local islands = workspace:FindFirstChild("Islands")
+    if not islands then
+        WindUI:Notify({
+            Title = "错误",
+            Content = "无法传送岛屿",
+            Icon = "alert-circle",
+        })
+        return
+    end
+    
+    local highestIsland = nil
+    local highestY = -math.huge
+    
+    for _, island in pairs(islands:GetChildren()) do
+        if island:IsA("Model") and island.PrimaryPart then
+            if island.PrimaryPart.Position.Y > highestY then
+                highestY = island.PrimaryPart.Position.Y
+                highestIsland = island
+            end
+        end
+    end
+    
+    if highestIsland then
+        local humanoidRootPart = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            humanoidRootPart.CFrame = highestIsland.PrimaryPart.CFrame + Vector3.new(0, 10, 0)
+            WindUI:Notify({
+                Title = "传送成功",
+                Content = "已传送到最高岛屿",
+                Icon = "check",
+            })
+        end
+    else
+        WindUI:Notify({
+            Title = "错误",
+            Content = "未找到可传送的岛屿",
+            Icon = "alert-circle",
+        })
+    end
+end
+
+IslandSection:Button({
+    Title = "传送到最高岛屿",
+    Desc = "该功能处于测试中，请期待正式版",
+    Color = Color3.fromHex("#30a1ff"),
+    Callback = teleportToHighestIsland
+})
+
+-- 元素精通标签
+local ElementsTab = Window:Tab({
+    Title = "所有元素精通",
+    Icon = "zap",
+})
 
 -- 元素列表
 local elements = {
-    "暗影充能",
-    "雷电混沌", 
-    "烈焰实体",
-    "暗影之火",
-    "闪电",
-    "大师之怒",
-    "地狱火",
-    "永恒风暴",
-    "寒冰"
+    {Title = "暗影充能", Name = "Shadow Charge"},
+    {Title = "雷电混沌", Name = "Electral Chaos"},
+    {Title = "烈焰实体", Name = "Blazing Entity"},
+    {Title = "暗影之火", Name = "Shadowfire"},
+    {Title = "闪电", Name = "Lightning"},
+    {Title = "大师之怒", Name = "Masterful Wrath"},
+    {Title = "地狱火", Name = "Inferno"},
+    {Title = "永恒风暴", Name = "Eternity Storm"},
+    {Title = "寒冰", Name = "Frost"}
 }
 
--- 在滚动框架中创建按钮
-for i, element in ipairs(elements) do
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, -20, 0, 30)
-    button.Position = UDim2.new(0, 10, 0, (i - 1) * 35)
-    button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    button.Text = "精通 " .. element
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextSize = 10
-    button.Parent = scrollFrame
-
-    -- 元素精通事件
-    button.MouseButton1Click:Connect(function()
-        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("elementMasteryEvent"):FireServer(element)
-    end)
+-- 创建元素精通按钮
+for _, element in ipairs(elements) do
+    ElementsTab:Button({
+        Title = "精通 " .. element.Title,
+        Desc = "立即掌握" .. element.Title .. "元素",
+        Color = Color3.fromHex("#ff6b30"),
+        Callback = function()
+            -- 元素精通事件
+            game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("elementMasteryEvent"):FireServer(element.Name)
+            
+            WindUI:Notify({
+                Title = "元素精通",
+                Content = "已精通 " .. element.Title,
+                Icon = "check",
+            })
+        end
+    })
+    
+    ElementsTab:Space({Columns = 1})
 end
 
--- 大师元素界面的切换功能
-toggleButton.MouseButton1Click:Connect(function()
-    masterGui.Enabled = not masterGui.Enabled
-end)
+-- 宝石转换标签
+local GemsTab = Window:Tab({
+    Title = "金币修改",
+    Icon = "gem",
+})
 
--- 主界面关闭按钮功能
-closeButton.MouseButton1Click:Connect(function()
-    gui2:Destroy()
-    masterGui:Destroy()
-end)
+-- 快速转换
+GemsTab:Section({
+    Title = "快速获取金币",
+})
 
--- 大师元素界面关闭按钮功能
-masterCloseButton.MouseButton1Click:Connect(function()
-    masterGui.Enabled = false
-end)
+GemsTab:Button({
+    Title = "开始修改",
+    Desc = "开始修改金币",
+    Color = Color3.fromHex("#30ff6a"),
+    Callback = function()
+        local args = {
+            [1] = "convertGems",
+            [2] = -9999999999999999999999999999999999999999999999999999999999999999999
+        }
+        game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer(unpack(args))
+        
+        WindUI:Notify({
+            Title = "宝石转换",
+            Content = "已开始修改金币",
+            Icon = "check",
+        })
+    end
+})
+
+-- 自定义转换
+GemsTab:Section({
+    Title = "自定义修改",
+})
+
+local gemAmount = 1000
+local gemInput = GemsTab:Input({
+    Title = "修改数量",
+    Desc = "输入要修改的金币数量",
+    Value = "1000",
+    InputIcon = "hash",
+    Placeholder = "输入数量...",
+    Callback = function(input)
+        local num = tonumber(input)
+        if num and num > 0 then
+            gemAmount = num
+        end
+    end
+})
+
+GemsTab:Button({
+    Title = "提交修改",
+    Desc = "提交自定义数量的金币修改",
+    Color = Color3.fromHex("#306aff"),
+    Callback = function()
+        if gemAmount and gemAmount > 0 then
+            game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("zenMasterEvent"):FireServer("convertGems", gemAmount)
+            
+            WindUI:Notify({
+                Title = "金币修改",
+                Content = "已修改 " .. tostring(gemAmount) .. " 宝石",
+                Icon = "check",
+            })
+        end
+    end
+})
+
+-- 设置标签
+local SettingsTab = Window:Tab({
+    Title = "设置",
+    Icon = "settings",
+})
+
+SettingsTab:Button({
+    Title = "隐藏界面",
+    Desc = "隐藏脚本界面",
+    Color = Color3.fromHex("#ff4830"),
+    Callback = function()
+        Window:Hide()
+        WindUI:Notify({
+            Title = "界面隐藏",
+            Content = "界面已隐藏，点击屏幕右侧按钮重新打开",
+            Icon = "eye-off",
+        })
+    end
+})
+
+SettingsTab:Space({Columns = 2})
+
+SettingsTab:Button({
+    Title = "销毁界面",
+    Desc = "完全销毁脚本界面",
+    Color = Color3.fromHex("#ff3030"),
+    Callback = function()
+        Window:Destroy()
+        WindUI:Notify({
+            Title = "界面销毁",
+            Content = "脚本界面已销毁",
+            Icon = "trash-2",
+        })
+    end
+})
+
+-- 关于标签
+local AboutTab = Window:Tab({
+    Title = "关于",
+    Icon = "info",
+})
+
+AboutTab:Section({
+    Title = "脚本中心忍者脚本",
+    TextSize = 20,
+    FontWeight = Enum.FontWeight.SemiBold,
+})
+
+AboutTab:Space()
+
+AboutTab:Section({
+    Title = [[这是一个专为忍者传奇设计的脚本，提供多种功能：
+    
+• 自动刷气 - 自动收集气资源
+• 岛屿传送 - 快速传送到最高岛屿
+• 元素精通 - 一键精通所有元素
+• 金币修改 - 快速获取金币
+
+请注意：不知道。]],
+    TextSize = 14,
+    TextTransparency = .3,
+})
+
+-- 脚本加载完成通知
+wait(1)
+WindUI:Notify({
+    Title = "脚本中心",
+    Content = "忍者脚本加载完成，享受游戏吧！",
+    Icon = "check",
+    Duration = 5,
+})
