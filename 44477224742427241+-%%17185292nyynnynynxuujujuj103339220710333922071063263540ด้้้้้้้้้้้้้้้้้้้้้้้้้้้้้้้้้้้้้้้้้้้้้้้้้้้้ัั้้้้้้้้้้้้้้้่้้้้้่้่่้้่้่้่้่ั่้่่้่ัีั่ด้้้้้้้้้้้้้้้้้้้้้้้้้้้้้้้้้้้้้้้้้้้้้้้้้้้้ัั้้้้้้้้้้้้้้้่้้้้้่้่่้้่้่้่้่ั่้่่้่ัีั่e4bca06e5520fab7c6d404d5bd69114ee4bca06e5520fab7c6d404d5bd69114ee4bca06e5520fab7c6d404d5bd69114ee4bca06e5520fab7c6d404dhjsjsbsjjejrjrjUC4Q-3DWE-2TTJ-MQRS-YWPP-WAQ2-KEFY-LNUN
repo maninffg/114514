@@ -1,0 +1,2021 @@
+-- 加载UI库
+local repo = "https://raw.githubusercontent.com/ATLASTEAM01/Obsidian/main/"
+local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
+
+-- 等待游戏加载
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+-- 初始化设置
+local TranslationSettings = {
+    Enabled = false,
+    AutoTranslate = true,
+    TranslateSpeed = 0.5,
+    TargetLanguage = "英→中",
+    ShowCurrentTime = true,
+    ShowPlayerName = true,
+    ShowNewYearCountdown = true,
+    ShowExecutorInfo = true,
+    ShowServerID = true,
+    TranslationLinkCopied = false,
+    NotificationDuration = 3,
+    TranslationCount = 0
+}
+
+-- 游戏服务
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+local TextService = game:GetService("TextService")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+
+-- 全局变量
+local translationCache = {}
+local lastTranslationTime = 0
+local currentTranslations = {}
+local translationCounter = 0
+local lastFullTranslationTime = 0
+
+-- 创建通知GUI
+local NotificationGui = Instance.new("ScreenGui")
+NotificationGui.Name = "TranslationNotifications"
+NotificationGui.ResetOnSpawn = false
+NotificationGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+NotificationGui.Parent = CoreGui
+
+local function createNotification(title, message, duration)
+    duration = duration or TranslationSettings.NotificationDuration
+    
+    -- 创建通知框架
+    local notificationFrame = Instance.new("Frame")
+    notificationFrame.Name = "Notification"
+    notificationFrame.Size = UDim2.new(0, 320, 0, 80)
+    notificationFrame.Position = UDim2.new(1, -340, 0, 20)
+    notificationFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    notificationFrame.BackgroundTransparency = 0.2
+    notificationFrame.BorderSizePixel = 0
+    notificationFrame.ZIndex = 10000
+    
+    -- 圆角
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = notificationFrame
+    
+    -- 边框
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(100, 100, 200)
+    stroke.Thickness = 2
+    stroke.Parent = notificationFrame
+    
+    -- 标题
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Name = "Title"
+    titleLabel.Size = UDim2.new(1, -20, 0, 25)
+    titleLabel.Position = UDim2.new(0, 10, 0, 5)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Text = title
+    titleLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+    titleLabel.TextSize = 16
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    titleLabel.TextYAlignment = Enum.TextYAlignment.Center
+    titleLabel.ZIndex = 10001
+    titleLabel.Parent = notificationFrame
+    
+    -- 消息
+    local messageLabel = Instance.new("TextLabel")
+    messageLabel.Name = "Message"
+    messageLabel.Size = UDim2.new(1, -20, 0, 45)
+    messageLabel.Position = UDim2.new(0, 10, 0, 30)
+    messageLabel.BackgroundTransparency = 1
+    messageLabel.Text = message
+    messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    messageLabel.TextSize = 14
+    messageLabel.Font = Enum.Font.Gotham
+    messageLabel.TextXAlignment = Enum.TextXAlignment.Left
+    messageLabel.TextYAlignment = Enum.TextYAlignment.Top
+    messageLabel.TextWrapped = true
+    messageLabel.ZIndex = 10001
+    messageLabel.Parent = notificationFrame
+    
+    notificationFrame.Parent = NotificationGui
+    
+    -- 将所有现有通知上移
+    for _, child in ipairs(NotificationGui:GetChildren()) do
+        if child:IsA("Frame") and child.Name == "Notification" then
+            local currentY = child.Position.Y.Offset
+            child.Position = UDim2.new(1, -340, 0, currentY + 90)
+        end
+    end
+    
+    -- 淡入动画
+    notificationFrame.BackgroundTransparency = 1
+    titleLabel.TextTransparency = 1
+    messageLabel.TextTransparency = 1
+    
+    local fadeIn = TweenService:Create(notificationFrame, 
+        TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {BackgroundTransparency = 0.2})
+    fadeIn:Play()
+    
+    local textFadeIn = TweenService:Create(titleLabel,
+        TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {TextTransparency = 0})
+    textFadeIn:Play()
+    
+    local messageFadeIn = TweenService:Create(messageLabel,
+        TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {TextTransparency = 0})
+    messageFadeIn:Play()
+    
+    -- 延迟后淡出
+    task.delay(duration, function()
+        local fadeOut = TweenService:Create(notificationFrame,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 1, Position = UDim2.new(1, 400, notificationFrame.Position.Y.Scale, notificationFrame.Position.Y.Offset)})
+        fadeOut:Play()
+        
+        local textFadeOut = TweenService:Create(titleLabel,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {TextTransparency = 1})
+        textFadeOut:Play()
+        
+        local messageFadeOut = TweenService:Create(messageLabel,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {TextTransparency = 1})
+        messageFadeOut:Play()
+        
+        -- 动画完成后移除
+        fadeOut.Completed:Connect(function()
+            notificationFrame:Destroy()
+        end)
+    end)
+end
+
+-- 扩展翻译词典（超过1000个词汇）
+local translationDictionary = {
+    -- 基础词汇
+    ["Hello"] = "你好", ["Hi"] = "嗨", ["Welcome"] = "欢迎", ["Play"] = "游玩", ["Start"] = "开始",
+    ["Settings"] = "设置", ["Options"] = "选项", ["Exit"] = "退出", ["Yes"] = "是", ["No"] = "否",
+    ["OK"] = "确定", ["Cancel"] = "取消", ["Loading"] = "加载中", ["Error"] = "错误", ["Success"] = "成功",
+    ["Warning"] = "警告", ["Info"] = "信息", ["Back"] = "返回", ["Next"] = "下一步", ["Previous"] = "上一步",
+    ["Submit"] = "提交", ["Reset"] = "重置", ["Save"] = "保存", ["Load"] = "加载", ["Delete"] = "删除",
+    ["Create"] = "创建", ["Join"] = "加入", ["Leave"] = "离开", ["Invite"] = "邀请", ["Friends"] = "好友",
+    ["Players"] = "玩家", ["Server"] = "服务器", ["Game"] = "游戏", ["Chat"] = "聊天", ["Message"] = "消息",
+    ["Send"] = "发送", ["Receive"] = "接收", ["Score"] = "分数", ["Points"] = "点数", ["Level"] = "等级",
+    ["Experience"] = "经验", ["Health"] = "生命值", ["Mana"] = "魔法值", ["Stamina"] = "耐力", ["Attack"] = "攻击",
+    ["Defense"] = "防御", ["Speed"] = "速度", ["Jump"] = "跳跃", ["Run"] = "奔跑", ["Walk"] = "行走",
+    ["Sit"] = "坐下", ["Stand"] = "站立", ["Win"] = "胜利", ["Lose"] = "失败", ["Victory"] = "胜利",
+    ["Defeat"] = "失败", ["Rank"] = "排名", ["Leaderboard"] = "排行榜", ["Quest"] = "任务", ["Mission"] = "任务",
+    ["Objective"] = "目标", ["Reward"] = "奖励", ["Loot"] = "战利品", ["Drop"] = "掉落", ["Spawn"] = "生成",
+    ["Respawn"] = "重生", ["Kill"] = "击杀", ["Death"] = "死亡", ["Revive"] = "复活", ["Team"] = "队伍",
+    ["Enemy"] = "敌人", ["Boss"] = "首领", ["Monster"] = "怪物", ["NPC"] = "NPC", ["Button"] = "按钮",
+    ["Label"] = "标签", ["Textbox"] = "文本框", ["Frame"] = "框架", ["Panel"] = "面板", ["Window"] = "窗口",
+    ["Menu"] = "菜单", ["List"] = "列表", ["Grid"] = "网格", ["Scroll"] = "滚动", ["Tab"] = "标签页",
+    ["Icon"] = "图标", ["Image"] = "图像", ["Background"] = "背景", ["Border"] = "边框", ["Corner"] = "圆角",
+    
+    -- 颜色
+    ["Red"] = "红色", ["Blue"] = "蓝色", ["Green"] = "绿色", ["Yellow"] = "黄色", ["Black"] = "黑色",
+    ["White"] = "白色", ["Color"] = "颜色", ["Purple"] = "紫色", ["Orange"] = "橙色", ["Pink"] = "粉色",
+    ["Brown"] = "棕色", ["Gray"] = "灰色", ["Cyan"] = "青色", ["Magenta"] = "洋红色", ["Gold"] = "金色",
+    ["Silver"] = "银色", ["Bronze"] = "青铜色", ["Copper"] = "铜色", ["Rainbow"] = "彩虹", ["Transparent"] = "透明",
+    
+    -- 数字
+    ["Zero"] = "零", ["One"] = "一", ["Two"] = "二", ["Three"] = "三", ["Four"] = "四", ["Five"] = "五",
+    ["Six"] = "六", ["Seven"] = "七", ["Eight"] = "八", ["Nine"] = "九", ["Ten"] = "十", ["Hundred"] = "百",
+    ["Thousand"] = "千", ["Million"] = "百万", ["Billion"] = "十亿", ["Trillion"] = "万亿",
+    
+    -- 时间
+    ["Time"] = "时间", ["Hour"] = "小时", ["Minute"] = "分钟", ["Second"] = "秒", ["Day"] = "天",
+    ["Week"] = "周", ["Month"] = "月", ["Year"] = "年", ["Today"] = "今天", ["Tomorrow"] = "明天",
+    ["Yesterday"] = "昨天", ["Now"] = "现在", ["Later"] = "稍后", ["Soon"] = "很快", ["Early"] = "早",
+    ["Late"] = "晚", ["Morning"] = "早上", ["Afternoon"] = "下午", ["Evening"] = "晚上", ["Night"] = "夜晚",
+    ["Midnight"] = "午夜", ["Noon"] = "中午", ["Dawn"] = "黎明", ["Dusk"] = "黄昏", ["Calendar"] = "日历",
+    ["Clock"] = "时钟", ["Watch"] = "手表", ["Timer"] = "计时器", ["Stopwatch"] = "秒表", ["Schedule"] = "日程",
+    
+    -- 方向
+    ["Up"] = "上", ["Down"] = "下", ["Left"] = "左", ["Right"] = "右", ["North"] = "北",
+    ["South"] = "南", ["East"] = "东", ["West"] = "西", ["Forward"] = "前", ["Backward"] = "后",
+    ["Center"] = "中心", ["Middle"] = "中间", ["Top"] = "顶部", ["Bottom"] = "底部", ["Front"] = "前面",
+    ["Back"] = "后面", ["Side"] = "侧面", ["Corner"] = "角落", ["Edge"] = "边缘", ["Direction"] = "方向",
+    
+    -- 尺寸
+    ["Small"] = "小", ["Medium"] = "中", ["Large"] = "大", ["Tiny"] = "微小", ["Huge"] = "巨大",
+    ["Short"] = "短", ["Long"] = "长", ["Narrow"] = "窄", ["Wide"] = "宽", ["Thin"] = "薄",
+    ["Thick"] = "厚", ["Tall"] = "高", ["Low"] = "低", ["High"] = "高", ["Deep"] = "深",
+    ["Shallow"] = "浅", ["Heavy"] = "重", ["Light"] = "轻", ["Big"] = "大", ["Little"] = "小",
+    
+    -- 状态
+    ["Active"] = "活跃", ["Inactive"] = "非活跃", ["Enabled"] = "启用", ["Disabled"] = "禁用",
+    ["On"] = "开", ["Off"] = "关", ["Open"] = "打开", ["Close"] = "关闭", ["Visible"] = "可见",
+    ["Invisible"] = "不可见", ["Available"] = "可用", ["Unavailable"] = "不可用", ["Online"] = "在线",
+    ["Offline"] = "离线", ["Ready"] = "就绪", ["Busy"] = "忙碌", ["Idle"] = "空闲", ["Working"] = "工作中",
+    ["Broken"] = "损坏", ["Fixed"] = "已修复", ["Complete"] = "完成", ["Incomplete"] = "未完成",
+    ["Finished"] = "已完成", ["Started"] = "已开始", ["Stopped"] = "已停止", ["Paused"] = "已暂停",
+    
+    -- 物品
+    ["Item"] = "物品", ["Weapon"] = "武器", ["Armor"] = "护甲", ["Potion"] = "药水", ["Food"] = "食物",
+    ["Gold"] = "金币", ["Coin"] = "硬币", ["Money"] = "金钱", ["Tool"] = "工具", ["Equipment"] = "装备",
+    ["Resource"] = "资源", ["Material"] = "材料", ["Inventory"] = "背包", ["Storage"] = "存储",
+    ["Bag"] = "袋子", ["Chest"] = "箱子", ["Box"] = "盒子", ["Container"] = "容器", ["Package"] = "包裹",
+    ["Gift"] = "礼物", ["Treasure"] = "宝藏", ["Key"] = "钥匙", ["Lock"] = "锁", ["Door"] = "门",
+    ["Window"] = "窗户", ["Wall"] = "墙", ["Floor"] = "地板", ["Ceiling"] = "天花板", ["Roof"] = "屋顶",
+    
+    -- 交易
+    ["Buy"] = "购买", ["Sell"] = "出售", ["Trade"] = "交易", ["Use"] = "使用", ["Equip"] = "装备",
+    ["Unequip"] = "卸下", ["Craft"] = "制作", ["Build"] = "建造", ["Destroy"] = "摧毁", ["Collect"] = "收集",
+    ["Gather"] = "采集", ["Mine"] = "挖掘", ["Chop"] = "砍", ["Fish"] = "钓鱼", ["Hunt"] = "狩猎",
+    ["Farm"] = "农场", ["Plant"] = "种植", ["Water"] = "浇水", ["Harvest"] = "收获", ["Cook"] = "烹饪",
+    ["Eat"] = "吃", ["Drink"] = "喝", ["Sleep"] = "睡觉", ["Rest"] = "休息", ["Heal"] = "治疗",
+    
+    -- 动作
+    ["Move"] = "移动", ["Stop"] = "停止", ["Wait"] = "等待", ["Look"] = "看", ["Watch"] = "观看",
+    ["See"] = "看见", ["Hear"] = "听", ["Listen"] = "聆听", ["Speak"] = "说话", ["Talk"] = "交谈",
+    ["Say"] = "说", ["Tell"] = "告诉", ["Ask"] = "问", ["Answer"] = "回答", ["Reply"] = "回复",
+    ["Shout"] = "喊叫", ["Whisper"] = "耳语", ["Sing"] = "唱歌", ["Dance"] = "跳舞", ["Jump"] = "跳跃",
+    ["Run"] = "奔跑", ["Walk"] = "行走", ["Crawl"] = "爬行", ["Swim"] = "游泳", ["Fly"] = "飞行",
+    ["Drive"] = "驾驶", ["Ride"] = "骑", ["Carry"] = "携带", ["Hold"] = "握住", ["Throw"] = "投掷",
+    ["Catch"] = "抓住", ["Push"] = "推", ["Pull"] = "拉", ["Lift"] = "举起", ["Drop"] = "掉落",
+    
+    -- 社交
+    ["Friend"] = "朋友", ["Enemy"] = "敌人", ["Guild"] = "公会", ["Clan"] = "部落", ["Party"] = "队伍",
+    ["Group"] = "组", ["Community"] = "社区", ["Family"] = "家庭", ["Parent"] = "父母", ["Child"] = "孩子",
+    ["Brother"] = "兄弟", ["Sister"] = "姐妹", ["Son"] = "儿子", ["Daughter"] = "女儿", ["Man"] = "男人",
+    ["Woman"] = "女人", ["Boy"] = "男孩", ["Girl"] = "女孩", ["Baby"] = "婴儿", ["Kid"] = "小孩",
+    ["Adult"] = "成人", ["Elder"] = "长者", ["King"] = "国王", ["Queen"] = "女王", ["Prince"] = "王子",
+    ["Princess"] = "公主", ["Knight"] = "骑士", ["Soldier"] = "士兵", ["Warrior"] = "战士", ["Hero"] = "英雄",
+    ["Villain"] = "反派", ["Villager"] = "村民", ["Citizen"] = "公民", ["Stranger"] = "陌生人",
+    
+    -- 帮助
+    ["Help"] = "帮助", ["Support"] = "支持", ["Report"] = "举报", ["Block"] = "屏蔽", ["Mute"] = "静音",
+    ["Unmute"] = "取消静音", ["Kick"] = "踢出", ["Ban"] = "封禁", ["Warn"] = "警告", ["Forgive"] = "原谅",
+    ["Apologize"] = "道歉", ["Thank"] = "感谢", ["Welcome"] = "欢迎", ["Please"] = "请", ["Sorry"] = "对不起",
+    
+    -- 属性
+    ["Strength"] = "力量", ["Agility"] = "敏捷", ["Intelligence"] = "智力", ["Wisdom"] = "智慧",
+    ["Charisma"] = "魅力", ["Luck"] = "幸运", ["Power"] = "力量", ["Energy"] = "能量", ["Force"] = "力",
+    ["Damage"] = "伤害", ["Protection"] = "保护", ["Resistance"] = "抗性", ["Defense"] = "防御",
+    ["Attack"] = "攻击", ["Health"] = "生命值", ["Mana"] = "魔法值", ["Stamina"] = "耐力",
+    ["Speed"] = "速度", ["Accuracy"] = "准确度", ["Critical"] = "暴击", ["Evasion"] = "闪避",
+    ["Dodge"] = "躲避", ["Parry"] = "格挡", ["Block"] = "格挡", ["Reflect"] = "反射",
+    
+    -- 世界
+    ["Universe"] = "宇宙", ["World"] = "世界", ["Earth"] = "地球", ["Sun"] = "太阳", ["Moon"] = "月亮",
+    ["Star"] = "星星", ["Planet"] = "行星", ["Galaxy"] = "银河", ["Space"] = "太空", ["Sky"] = "天空",
+    ["Cloud"] = "云", ["Rain"] = "雨", ["Snow"] = "雪", ["Wind"] = "风", ["Storm"] = "风暴",
+    ["Lightning"] = "闪电", ["Thunder"] = "雷声", ["Rainbow"] = "彩虹", ["Weather"] = "天气",
+    ["Temperature"] = "温度", ["Hot"] = "热", ["Cold"] = "冷", ["Warm"] = "温暖", ["Cool"] = "凉爽",
+    ["Water"] = "水", ["Fire"] = "火", ["Air"] = "空气", ["Earth"] = "土", ["Light"] = "光",
+    ["Dark"] = "暗", ["Shadow"] = "影子", ["Nature"] = "自然", ["Forest"] = "森林", ["Mountain"] = "山",
+    ["River"] = "河流", ["Ocean"] = "海洋", ["Sea"] = "海", ["Lake"] = "湖", ["Island"] = "岛",
+    ["Desert"] = "沙漠", ["Jungle"] = "丛林", ["Cave"] = "洞穴", ["Valley"] = "山谷", ["Hill"] = "山丘",
+    
+    -- 生物
+    ["Animal"] = "动物", ["Plant"] = "植物", ["Human"] = "人类", ["Machine"] = "机器", ["Robot"] = "机器人",
+    ["Dragon"] = "龙", ["Bird"] = "鸟", ["Fish"] = "鱼", ["Cat"] = "猫", ["Dog"] = "狗",
+    ["Horse"] = "马", ["Cow"] = "牛", ["Pig"] = "猪", ["Sheep"] = "羊", ["Chicken"] = "鸡",
+    ["Wolf"] = "狼", ["Bear"] = "熊", ["Lion"] = "狮子", ["Tiger"] = "老虎", ["Elephant"] = "大象",
+    ["Monkey"] = "猴子", ["Snake"] = "蛇", ["Spider"] = "蜘蛛", ["Insect"] = "昆虫", ["Bug"] = "虫子",
+    ["Tree"] = "树", ["Flower"] = "花", ["Grass"] = "草", ["Bush"] = "灌木", ["Leaf"] = "叶子",
+    
+    -- 建筑
+    ["Castle"] = "城堡", ["City"] = "城市", ["Village"] = "村庄", ["Town"] = "城镇", ["House"] = "房子",
+    ["Home"] = "家", ["Room"] = "房间", ["Building"] = "建筑", ["Tower"] = "塔", ["Bridge"] = "桥",
+    ["Road"] = "道路", ["Path"] = "小路", ["Street"] = "街道", ["Alley"] = "小巷", ["Park"] = "公园",
+    ["Garden"] = "花园", ["Farm"] = "农场", ["Factory"] = "工厂", ["Shop"] = "商店", ["Market"] = "市场",
+    ["School"] = "学校", ["Hospital"] = "医院", ["Bank"] = "银行", ["Hotel"] = "酒店", ["Restaurant"] = "餐厅",
+    
+    -- 交通工具
+    ["Car"] = "汽车", ["Boat"] = "船", ["Plane"] = "飞机", ["Train"] = "火车", ["Bus"] = "公交车",
+    ["Bike"] = "自行车", ["Motorcycle"] = "摩托车", ["Ship"] = "船", ["Submarine"] = "潜艇", ["Rocket"] = "火箭",
+    ["Spaceship"] = "宇宙飞船", ["Helicopter"] = "直升机", ["Truck"] = "卡车", ["Van"] = "货车", ["Taxi"] = "出租车",
+    
+    -- 科技
+    ["Technology"] = "科技", ["Science"] = "科学", ["Computer"] = "电脑", ["Phone"] = "手机",
+    ["Tablet"] = "平板", ["TV"] = "电视", ["Radio"] = "收音机", ["Camera"] = "相机", ["Internet"] = "互联网",
+    ["Network"] = "网络", ["Connection"] = "连接", ["Website"] = "网站", ["App"] = "应用", ["Software"] = "软件",
+    ["Hardware"] = "硬件", ["Code"] = "代码", ["Program"] = "程序", ["System"] = "系统", ["Data"] = "数据",
+    ["Information"] = "信息", ["Knowledge"] = "知识", ["Research"] = "研究", ["Experiment"] = "实验",
+    ["Discover"] = "发现", ["Invent"] = "发明", ["Create"] = "创造", ["Develop"] = "开发",
+    
+    -- 艺术
+    ["Art"] = "艺术", ["Music"] = "音乐", ["Sound"] = "声音", ["Song"] = "歌曲", ["Instrument"] = "乐器",
+    ["Dance"] = "舞蹈", ["Painting"] = "绘画", ["Drawing"] = "素描", ["Sculpture"] = "雕塑", ["Photo"] = "照片",
+    ["Movie"] = "电影", ["Film"] = "电影", ["Video"] = "视频", ["Animation"] = "动画", ["Game"] = "游戏",
+    ["Story"] = "故事", ["Book"] = "书", ["Novel"] = "小说", ["Poem"] = "诗歌", ["Theater"] = "剧院",
+    ["Performance"] = "表演", ["Show"] = "表演", ["Concert"] = "音乐会", ["Festival"] = "节日",
+    
+    -- 教育
+    ["School"] = "学校", ["University"] = "大学", ["College"] = "学院", ["Teacher"] = "老师", ["Student"] = "学生",
+    ["Class"] = "班级", ["Lesson"] = "课程", ["Study"] = "学习", ["Learn"] = "学习", ["Teach"] = "教学",
+    ["Education"] = "教育", ["Knowledge"] = "知识", ["Skill"] = "技能", ["Talent"] = "天赋", ["Ability"] = "能力",
+    ["Test"] = "测试", ["Exam"] = "考试", ["Grade"] = "成绩", ["Score"] = "分数", ["Pass"] = "通过",
+    ["Fail"] = "失败", ["Graduate"] = "毕业", ["Diploma"] = "文凭", ["Degree"] = "学位", ["Certificate"] = "证书",
+    
+    -- 工作
+    ["Work"] = "工作", ["Job"] = "工作", ["Business"] = "商业", ["Company"] = "公司", ["Office"] = "办公室",
+    ["Boss"] = "老板", ["Employee"] = "员工", ["Worker"] = "工人", ["Manager"] = "经理", ["Director"] = "总监",
+    ["CEO"] = "首席执行官", ["President"] = "总裁", ["Leader"] = "领导者", ["Team"] = "团队", ["Project"] = "项目",
+    ["Task"] = "任务", ["Meeting"] = "会议", ["Conference"] = "会议", ["Presentation"] = "演示", ["Report"] = "报告",
+    ["Deadline"] = "截止日期", ["Schedule"] = "日程", ["Plan"] = "计划", ["Goal"] = "目标", ["Achievement"] = "成就",
+    
+    -- 金钱
+    ["Money"] = "金钱", ["Cash"] = "现金", ["Coin"] = "硬币", ["Dollar"] = "美元", ["Euro"] = "欧元",
+    ["Pound"] = "英镑", ["Yen"] = "日元", ["Yuan"] = "元", ["Currency"] = "货币", ["Price"] = "价格",
+    ["Cost"] = "成本", ["Value"] = "价值", ["Worth"] = "价值", ["Rich"] = "富有", ["Poor"] = "贫穷",
+    ["Wealth"] = "财富", ["Fortune"] = "财富", ["Treasure"] = "宝藏", ["Gold"] = "黄金", ["Silver"] = "白银",
+    ["Diamond"] = "钻石", ["Jewel"] = "珠宝", ["Gem"] = "宝石", ["Crystal"] = "水晶", ["Ring"] = "戒指",
+    
+    -- 健康
+    ["Health"] = "健康", ["Sick"] = "生病", ["Ill"] = "生病", ["Injury"] = "受伤", ["Pain"] = "疼痛",
+    ["Medicine"] = "药物", ["Drug"] = "药物", ["Pill"] = "药丸", ["Tablet"] = "药片", ["Vaccine"] = "疫苗",
+    ["Doctor"] = "医生", ["Nurse"] = "护士", ["Hospital"] = "医院", ["Clinic"] = "诊所", ["Surgery"] = "手术",
+    ["Treatment"] = "治疗", ["Recover"] = "恢复", ["Heal"] = "治愈", ["Cure"] = "治愈", ["Prevent"] = "预防",
+    ["Exercise"] = "锻炼", ["Fitness"] = "健身", ["Sport"] = "运动", ["Yoga"] = "瑜伽", ["Meditation"] = "冥想",
+    
+    -- 情感
+    ["Love"] = "爱", ["Hate"] = "恨", ["Fear"] = "恐惧", ["Joy"] = "快乐", ["Sadness"] = "悲伤",
+    ["Anger"] = "愤怒", ["Peace"] = "和平", ["War"] = "战争", ["Battle"] = "战斗", ["Fight"] = "战斗",
+    ["Conflict"] = "冲突", ["Peace"] = "和平", ["Harmony"] = "和谐", ["Balance"] = "平衡", ["Chaos"] = "混乱",
+    ["Order"] = "秩序", ["Freedom"] = "自由", ["Justice"] = "正义", ["Right"] = "正确", ["Wrong"] = "错误",
+    ["Good"] = "好", ["Evil"] = "邪恶", ["Kind"] = "善良", ["Cruel"] = "残忍", ["Brave"] = "勇敢",
+    ["Coward"] = "懦夫", ["Honest"] = "诚实", ["Liar"] = "骗子", ["Smart"] = "聪明", ["Stupid"] = "愚蠢",
+    ["Beautiful"] = "美丽", ["Ugly"] = "丑陋", ["Strong"] = "强壮", ["Weak"] = "虚弱", ["Happy"] = "快乐",
+    ["Sad"] = "悲伤", ["Excited"] = "兴奋", ["Bored"] = "无聊", ["Tired"] = "疲劳", ["Sleepy"] = "困倦",
+    
+    -- 超自然
+    ["Magic"] = "魔法", ["Spell"] = "法术", ["Wizard"] = "巫师", ["Witch"] = "女巫", ["Sorcerer"] = "术士",
+    ["Mage"] = "法师", ["Magician"] = "魔术师", ["Fairy"] = "仙女", ["Elf"] = "精灵", ["Dwarf"] = "矮人",
+    ["Goblin"] = "哥布林", ["Orc"] = "兽人", ["Troll"] = "巨魔", ["Giant"] = "巨人", ["Demon"] = "恶魔",
+    ["Devil"] = "魔鬼", ["Angel"] = "天使", ["God"] = "神", ["Goddess"] = "女神", ["Spirit"] = "灵魂",
+    ["Ghost"] = "鬼魂", ["Zombie"] = "僵尸", ["Vampire"] = "吸血鬼", ["Werewolf"] = "狼人", ["Monster"] = "怪物",
+    ["Creature"] = "生物", ["Alien"] = "外星人", ["UFO"] = "不明飞行物", ["Mystery"] = "神秘", ["Secret"] = "秘密",
+    
+    -- 语言
+    ["Language"] = "语言", ["Translate"] = "翻译", ["Text"] = "文本", ["Word"] = "单词", ["Sentence"] = "句子",
+    ["Paragraph"] = "段落", ["Document"] = "文档", ["File"] = "文件", ["Folder"] = "文件夹", ["Page"] = "页面",
+    ["Chapter"] = "章节", ["Book"] = "书", ["Dictionary"] = "词典", ["Grammar"] = "语法", ["Vocabulary"] = "词汇",
+    ["Alphabet"] = "字母表", ["Letter"] = "字母", ["Number"] = "数字", ["Symbol"] = "符号", ["Sign"] = "标志",
+    
+    -- 计算机
+    ["Screen"] = "屏幕", ["Display"] = "显示器", ["Monitor"] = "显示器", ["Keyboard"] = "键盘", ["Mouse"] = "鼠标",
+    ["Click"] = "点击", ["Press"] = "按下", ["Type"] = "输入", ["Enter"] = "进入", ["Search"] = "搜索",
+    ["Find"] = "查找", ["Result"] = "结果", ["Download"] = "下载", ["Upload"] = "上传", ["Install"] = "安装",
+    ["Uninstall"] = "卸载", ["Update"] = "更新", ["Upgrade"] = "升级", ["Downgrade"] = "降级", ["Version"] = "版本",
+    ["Release"] = "发布", ["Beta"] = "测试版", ["Alpha"] = "内测版", ["Demo"] = "演示", ["Trial"] = "试用",
+    ["Free"] = "免费", ["Paid"] = "付费", ["Premium"] = "高级", ["Basic"] = "基础", ["Advanced"] = "高级",
+    ["Professional"] = "专业", ["Enterprise"] = "企业", ["Custom"] = "自定义", ["Default"] = "默认",
+    
+    -- 质量
+    ["Normal"] = "正常", ["Special"] = "特殊", ["Unique"] = "独特", ["Rare"] = "稀有", ["Common"] = "常见",
+    ["Simple"] = "简单", ["Complex"] = "复杂", ["Easy"] = "容易", ["Hard"] = "困难", ["Difficult"] = "困难",
+    ["Challenge"] = "挑战", ["Puzzle"] = "谜题", ["Secret"] = "秘密", ["Hidden"] = "隐藏", ["Visible"] = "可见",
+    ["Transparent"] = "透明", ["Opaque"] = "不透明", ["Solid"] = "固体", ["Liquid"] = "液体", ["Gas"] = "气体",
+    ["Hot"] = "热", ["Cold"] = "冷", ["Warm"] = "温暖", ["Cool"] = "凉爽", ["Temperature"] = "温度",
+    
+    -- 天气
+    ["Weather"] = "天气", ["Sunny"] = "晴朗", ["Rainy"] = "下雨", ["Cloudy"] = "多云", ["Snowy"] = "下雪",
+    ["Windy"] = "有风", ["Stormy"] = "暴风雨", ["Foggy"] = "有雾", ["Misty"] = "薄雾", ["Clear"] = "晴朗",
+    ["Overcast"] = "阴天", ["Humid"] = "潮湿", ["Dry"] = "干燥", ["Wet"] = "湿润", ["Flood"] = "洪水",
+    ["Drought"] = "干旱", ["Earthquake"] = "地震", ["Tsunami"] = "海啸", ["Tornado"] = "龙卷风", ["Hurricane"] = "飓风",
+    ["Typhoon"] = "台风", ["Blizzard"] = "暴风雪", ["Avalanche"] = "雪崩", ["Volcano"] = "火山", ["Eruption"] = "喷发" , ["Emergency"] = "紧急", ["Priority"] = "优先", ["Important"] = "重要", ["Urgent"] = "紧急", ["Casual"] = "休闲",
+["Formal"] = "正式", ["Official"] = "官方", ["Private"] = "私人", ["Public"] = "公共", ["Secret"] = "秘密",
+["Confidential"] = "机密", ["Secure"] = "安全", ["Danger"] = "危险", ["Safe"] = "安全", ["Risk"] = "风险",
+["Chance"] = "机会", ["Opportunity"] = "机遇", ["Moment"] = "时刻", ["Instant"] = "瞬间", ["Period"] = "时期",
+["Era"] = "时代", ["Age"] = "年龄", ["Century"] = "世纪", ["Decade"] = "十年", ["Millennium"] = "千年",
+["Season"] = "季节", ["Spring"] = "春天", ["Summer"] = "夏天", ["Autumn"] = "秋天", ["Winter"] = "冬天",
+
+-- 颜色补充
+["Lavender"] = "薰衣草色", ["Turquoise"] = "绿松石色", ["Teal"] = "蓝绿色", ["Indigo"] = "靛蓝色", ["Violet"] = "紫罗兰色",
+["Maroon"] = "栗色", ["Beige"] = "米色", ["Ivory"] = "象牙色", ["Khaki"] = "卡其色", ["Coral"] = "珊瑚色",
+["Salmon"] = "鲑鱼色", ["Peach"] = "桃色", ["Lime"] = "酸橙色", ["Olive"] = "橄榄色", ["Navy"] = "海军蓝",
+["SkyBlue"] = "天蓝色", ["LightBlue"] = "浅蓝色", ["DarkBlue"] = "深蓝色", ["LightGreen"] = "浅绿色", ["DarkGreen"] = "深绿色",
+["LightRed"] = "浅红色", ["DarkRed"] = "深红色", ["LightYellow"] = "浅黄色", ["DarkYellow"] = "深黄色", ["LightPink"] = "浅粉色",
+
+-- 数字补充
+["Eleven"] = "十一", ["Twelve"] = "十二", ["Thirteen"] = "十三", ["Fourteen"] = "十四", ["Fifteen"] = "十五",
+["Sixteen"] = "十六", ["Seventeen"] = "十七", ["Eighteen"] = "十八", ["Nineteen"] = "十九", ["Twenty"] = "二十",
+["Thirty"] = "三十", ["Forty"] = "四十", ["Fifty"] = "五十", ["Sixty"] = "六十", ["Seventy"] = "七十",
+["Eighty"] = "八十", ["Ninety"] = "九十", ["First"] = "第一", ["Second"] = "第二", ["Third"] = "第三",
+["Fourth"] = "第四", ["Fifth"] = "第五", ["Sixth"] = "第六", ["Seventh"] = "第七", ["Eighth"] = "第八",
+
+-- 时间补充
+["Anniversary"] = "周年纪念", ["Birthday"] = "生日", ["Holiday"] = "假日", ["Vacation"] = "假期", ["Weekend"] = "周末",
+["Weekday"] = "工作日", ["Monday"] = "星期一", ["Tuesday"] = "星期二", ["Wednesday"] = "星期三", ["Thursday"] = "星期四",
+["Friday"] = "星期五", ["Saturday"] = "星期六", ["Sunday"] = "星期日", ["January"] = "一月", ["February"] = "二月",
+["March"] = "三月", ["April"] = "四月", ["May"] = "五月", ["June"] = "六月", ["July"] = "七月",
+["August"] = "八月", ["September"] = "九月", ["October"] = "十月", ["November"] = "十一月", ["December"] = "十二月",
+
+-- 方向补充
+["Diagonal"] = "对角线", ["Horizontal"] = "水平", ["Vertical"] = "垂直", ["Parallel"] = "平行", ["Perpendicular"] = "垂直",
+["Adjacent"] = "相邻", ["Opposite"] = "相反", ["Around"] = "周围", ["Through"] = "穿过", ["Across"] = "横跨",
+["Along"] = "沿着", ["Beside"] = "旁边", ["Between"] = "之间", ["Among"] = "之中", ["Inside"] = "内部",
+["Outside"] = "外部", ["Upper"] = "上部", ["Lower"] = "下部", ["Inner"] = "内部", ["Outer"] = "外部",
+
+-- 尺寸补充
+["Gigantic"] = "巨大", ["Colossal"] = "巨大", ["Enormous"] = "庞大", ["Massive"] = "巨大", ["Immense"] = "巨大",
+["Microscopic"] = "微观", ["Minute"] = "微小", ["Petite"] = "娇小", ["Compact"] = "紧凑", ["Spacious"] = "宽敞",
+["Cramped"] = "狭窄", ["Tight"] = "紧", ["Loose"] = "松", ["Empty"] = "空", ["Full"] = "满",
+["Partial"] = "部分", ["Complete"] = "完整", ["Whole"] = "全部", ["Half"] = "一半", ["Quarter"] = "四分之一",
+
+-- 状态补充
+["Stable"] = "稳定", ["Unstable"] = "不稳定", ["Secure"] = "安全", ["Insecure"] = "不安全", ["Reliable"] = "可靠",
+["Unreliable"] = "不可靠", ["Accurate"] = "准确", ["Inaccurate"] = "不准确", ["Precise"] = "精确", ["Vague"] = "模糊",
+["Clear"] = "清晰", ["Confused"] = "混乱", ["Organized"] = "有序", ["Disorganized"] = "无序", ["Systematic"] = "系统",
+["Random"] = "随机", ["Predictable"] = "可预测", ["Unpredictable"] = "不可预测", ["Consistent"] = "一致", ["Inconsistent"] = "不一致",
+
+-- 物品补充
+["Furniture"] = "家具", ["Chair"] = "椅子", ["Table"] = "桌子", ["Bed"] = "床", ["Sofa"] = "沙发",
+["Desk"] = "书桌", ["Shelf"] = "架子", ["Cabinet"] = "柜子", ["Drawer"] = "抽屉", ["Mirror"] = "镜子",
+["Lamp"] = "灯", ["Clock"] = "时钟", ["Calendar"] = "日历", ["Pen"] = "笔", ["Pencil"] = "铅笔",
+["Paper"] = "纸", ["Book"] = "书", ["Notebook"] = "笔记本", ["Magazine"] = "杂志", ["Newspaper"] = "报纸",
+
+-- 交易补充
+["Purchase"] = "购买", ["Sale"] = "销售", ["Discount"] = "折扣", ["Price"] = "价格", ["Cost"] = "成本",
+["Value"] = "价值", ["Bargain"] = "讨价还价", ["Deal"] = "交易", ["Contract"] = "合同", ["Agreement"] = "协议",
+["Negotiate"] = "谈判", ["Bid"] = "出价", ["Offer"] = "报价", ["Demand"] = "需求", ["Supply"] = "供应",
+["Stock"] = "库存", ["Inventory"] = "存货", ["Merchandise"] = "商品", ["Product"] = "产品", ["Service"] = "服务",
+
+-- 动作补充
+["Climb"] = "爬", ["Slide"] = "滑", ["Roll"] = "滚", ["Spin"] = "旋转", ["Turn"] = "转",
+["Bend"] = "弯曲", ["Stretch"] = "伸展", ["Reach"] = "伸手", ["Grab"] = "抓住", ["Release"] = "释放",
+["Tie"] = "绑", ["Untie"] = "解开", ["Wrap"] = "包裹", ["Unwrap"] = "打开", ["Fold"] = "折叠",
+["Unfold"] = "展开", ["Cut"] = "切", ["Slice"] = "切片", ["Chop"] = "砍", ["Peel"] = "剥皮",
+
+-- 社交补充
+["Acquaintance"] = "熟人", ["Colleague"] = "同事", ["Partner"] = "伙伴", ["Companion"] = "同伴", ["Mate"] = "同伴",
+["Buddy"] = "朋友", ["Pal"] = "朋友", ["Ally"] = "盟友", ["Rival"] = "对手", ["Competitor"] = "竞争者",
+["Opponent"] = "对手", ["Adversary"] = "对手", ["Foe"] = "敌人", ["Stranger"] = "陌生人", ["Guest"] = "客人",
+["Host"] = "主人", ["Visitor"] = "访客", ["Tourist"] = "游客", ["Immigrant"] = "移民", ["Refugee"] = "难民",
+
+-- 帮助补充
+["Assist"] = "协助", ["Aid"] = "援助", ["Rescue"] = "救援", ["Save"] = "拯救", ["Protect"] = "保护",
+["Guard"] = "守卫", ["Defend"] = "防御", ["Shelter"] = "庇护", ["Comfort"] = "安慰", ["Console"] = "安慰",
+["Encourage"] = "鼓励", ["Motivate"] = "激励", ["Inspire"] = "鼓舞", ["Advise"] = "建议", ["Counsel"] = "咨询",
+["Guide"] = "指导", ["Instruct"] = "指导", ["Teach"] = "教导", ["Train"] = "训练", ["Coach"] = "教练",
+
+-- 属性补充
+["Durability"] = "耐久度", ["Flexibility"] = "灵活性", ["Rigidity"] = "刚性", ["Elasticity"] = "弹性", ["Plasticity"] = "可塑性",
+["Hardness"] = "硬度", ["Softness"] = "柔软度", ["Smoothness"] = "光滑度", ["Roughness"] = "粗糙度", ["Sharpness"] = "锐利度",
+["Bluntness"] = "钝度", ["Brightness"] = "亮度", ["Darkness"] = "暗度", ["Loudness"] = "响度", ["Quietness"] = "安静",
+["Sweetness"] = "甜度", ["Sourness"] = "酸度", ["Bitterness"] = "苦度", ["Saltiness"] = "咸度", ["Spiciness"] = "辣度",
+
+-- 世界补充
+["Continent"] = "大陆", ["Country"] = "国家", ["Nation"] = "民族", ["State"] = "州", ["Province"] = "省",
+["City"] = "城市", ["Capital"] = "首都", ["Metropolis"] = "大都市", ["Megacity"] = "特大城市", ["Countryside"] = "乡村",
+["Suburb"] = "郊区", ["District"] = "区", ["Region"] = "地区", ["Territory"] = "领土", ["Border"] = "边界",
+["Coast"] = "海岸", ["Beach"] = "海滩", ["Shore"] = "岸边", ["Cliff"] = "悬崖", ["Plateau"] = "高原",
+
+-- 生物补充
+["Mammal"] = "哺乳动物", ["Reptile"] = "爬行动物", ["Amphibian"] = "两栖动物", ["Bird"] = "鸟类", ["Fish"] = "鱼类",
+["Insect"] = "昆虫", ["Arachnid"] = "蛛形纲", ["Crustacean"] = "甲壳类", ["Mollusk"] = "软体动物", ["Microorganism"] = "微生物",
+["Bacteria"] = "细菌", ["Virus"] = "病毒", ["Fungus"] = "真菌", ["Plant"] = "植物", ["Tree"] = "树",
+["Flower"] = "花", ["Herb"] = "草药", ["Shrub"] = "灌木", ["Bush"] = "灌木丛", ["Grass"] = "草",
+
+-- 建筑补充
+["Skyscraper"] = "摩天大楼", ["Apartment"] = "公寓", ["Condominium"] = "共管公寓", ["Mansion"] = "豪宅", ["Cottage"] = "小屋",
+["Cabin"] = "小木屋", ["Tent"] = "帐篷", ["Garage"] = "车库", ["Barn"] = "谷仓", ["Shed"] = "棚屋",
+["Warehouse"] = "仓库", ["Factory"] = "工厂", ["Mill"] = "磨坊", ["Plant"] = "工厂", ["Station"] = "车站",
+["Terminal"] = "终点站", ["Port"] = "港口", ["Harbor"] = "海港", ["Airport"] = "机场", ["Bus station"] = "公交车站",
+
+-- 交通工具补充
+["Bicycle"] = "自行车", ["Scooter"] = "滑板车", ["Skateboard"] = "滑板", ["Rollerblades"] = "轮滑鞋", ["Segway"] = "赛格威",
+["Electric car"] = "电动汽车", ["Hybrid car"] = "混合动力汽车", ["SUV"] = "运动型多用途车", ["Van"] = "货车", ["Minivan"] = "小型货车",
+["Pickup truck"] = "皮卡车", ["Tractor"] = "拖拉机", ["Ambulance"] = "救护车", ["Fire truck"] = "消防车", ["Police car"] = "警车",
+["Taxi"] = "出租车", ["Limousine"] = "豪华轿车", ["Convertible"] = "敞篷车", ["Coupe"] = "双门轿车", ["Sedan"] = "轿车",
+
+-- 科技补充
+["Artificial intelligence"] = "人工智能", ["Machine learning"] = "机器学习", ["Deep learning"] = "深度学习", ["Neural network"] = "神经网络", ["Algorithm"] = "算法",
+["Blockchain"] = "区块链", ["Cryptocurrency"] = "加密货币", ["Bitcoin"] = "比特币", ["Ethereum"] = "以太坊", ["NFT"] = "非同质化代币",
+["Virtual reality"] = "虚拟现实", ["Augmented reality"] = "增强现实", ["Mixed reality"] = "混合现实", ["Metaverse"] = "元宇宙", ["Cybersecurity"] = "网络安全",
+["Cloud computing"] = "云计算", ["Edge computing"] = "边缘计算", ["Quantum computing"] = "量子计算", ["Big data"] = "大数据", ["Internet of Things"] = "物联网",
+
+-- 艺术补充
+["Theater"] = "剧院", ["Cinema"] = "电影院", ["Gallery"] = "画廊", ["Museum"] = "博物馆", ["Exhibition"] = "展览",
+["Concert"] = "音乐会", ["Opera"] = "歌剧", ["Ballet"] = "芭蕾舞", ["Symphony"] = "交响乐", ["Orchestra"] = "管弦乐队",
+["Band"] = "乐队", ["Choir"] = "合唱团", ["Solo"] = "独奏", ["Duet"] = "二重奏", ["Trio"] = "三重奏",
+["Quartet"] = "四重奏", ["Quintet"] = "五重奏", ["Sextet"] = "六重奏", ["Septet"] = "七重奏", ["Octet"] = "八重奏",
+
+-- 教育补充
+["Kindergarten"] = "幼儿园", ["Elementary school"] = "小学", ["Middle school"] = "中学", ["High school"] = "高中", ["College"] = "大学",
+["University"] = "大学", ["Academy"] = "学院", ["Institute"] = "研究所", ["Laboratory"] = "实验室", ["Library"] = "图书馆",
+["Curriculum"] = "课程", ["Syllabus"] = "教学大纲", ["Textbook"] = "教科书", ["Homework"] = "家庭作业", ["Assignment"] = "作业",
+["Project"] = "项目", ["Thesis"] = "论文", ["Dissertation"] = "学位论文", ["Research"] = "研究", ["Experiment"] = "实验",
+
+-- 工作补充
+["Career"] = "职业", ["Profession"] = "专业", ["Occupation"] = "职业", ["Vocation"] = "职业", ["Employment"] = "就业",
+["Unemployment"] = "失业", ["Retirement"] = "退休", ["Promotion"] = "晋升", ["Demotion"] = "降职", ["Transfer"] = "调动",
+["Resignation"] = "辞职", ["Dismissal"] = "解雇", ["Layoff"] = "裁员", ["Strike"] = "罢工", ["Union"] = "工会",
+["Salary"] = "工资", ["Wage"] = "工资", ["Income"] = "收入", ["Earnings"] = "收入", ["Bonus"] = "奖金",
+
+-- 金钱补充
+["Bank"] = "银行", ["ATM"] = "自动取款机", ["Account"] = "账户", ["Savings"] = "储蓄", ["Checking"] = "支票",
+["Credit"] = "信用", ["Debit"] = "借记", ["Loan"] = "贷款", ["Mortgage"] = "抵押贷款", ["Interest"] = "利息",
+["Investment"] = "投资", ["Stock"] = "股票", ["Bond"] = "债券", ["Fund"] = "基金", ["Dividend"] = "股息",
+["Profit"] = "利润", ["Loss"] = "损失", ["Revenue"] = "收入", ["Expense"] = "费用", ["Budget"] = "预算",
+
+-- 健康补充
+["Nutrition"] = "营养", ["Diet"] = "饮食", ["Exercise"] = "锻炼", ["Fitness"] = "健身", ["Wellness"] = "健康",
+["Illness"] = "疾病", ["Disease"] = "疾病", ["Infection"] = "感染", ["Allergy"] = "过敏", ["Fever"] = "发烧",
+["Cough"] = "咳嗽", ["Cold"] = "感冒", ["Flu"] = "流感", ["Headache"] = "头痛", ["Pain"] = "疼痛",
+["Injury"] = "受伤", ["Wound"] = "伤口", ["Bruise"] = "淤伤", ["Fracture"] = "骨折", ["Surgery"] = "手术",
+
+-- 情感补充
+["Happiness"] = "幸福", ["Sadness"] = "悲伤", ["Anger"] = "愤怒", ["Fear"] = "恐惧", ["Surprise"] = "惊讶",
+["Disgust"] = "厌恶", ["Trust"] = "信任", ["Anticipation"] = "期待", ["Joy"] = "喜悦", ["Sorrow"] = "悲哀",
+["Grief"] = "悲痛", ["Regret"] = "后悔", ["Remorse"] = "悔恨", ["Guilt"] = "内疚", ["Shame"] = "羞耻",
+["Pride"] = "骄傲", ["Humility"] = "谦逊", ["Confidence"] = "自信", ["Insecurity"] = "不安全感", ["Anxiety"] = "焦虑",
+
+-- 超自然补充
+["Supernatural"] = "超自然", ["Paranormal"] = "超常", ["Ghost"] = "鬼魂", ["Spirit"] = "灵魂", ["Apparition"] = "幽灵",
+["Poltergeist"] = "吵闹鬼", ["Haunting"] = "闹鬼", ["Possession"] = "附身", ["Exorcism"] = "驱魔", ["Witchcraft"] = "巫术",
+["Sorcery"] = "巫术", ["Necromancy"] = "死灵术", ["Alchemy"] = "炼金术", ["Divination"] = "占卜", ["Prophecy"] = "预言",
+["Omen"] = "预兆", ["Curse"] = "诅咒", ["Blessing"] = "祝福", ["Miracle"] = "奇迹", ["Superstition"] = "迷信",
+
+-- 语言补充
+["Grammar"] = "语法", ["Syntax"] = "句法", ["Semantics"] = "语义学", ["Pragmatics"] = "语用学", ["Phonetics"] = "语音学",
+["Phonology"] = "音韵学", ["Morphology"] = "形态学", ["Lexicon"] = "词汇", ["Dialect"] = "方言", ["Accent"] = "口音",
+["Slang"] = "俚语", ["Jargon"] = "行话", ["Terminology"] = "术语", ["Vocabulary"] = "词汇", ["Idiom"] = "习语",
+["Proverb"] = "谚语", ["Saying"] = "俗语", ["Expression"] = "表达", ["Phrase"] = "短语", ["Clause"] = "从句",
+
+-- 计算机补充
+["Computer"] = "电脑", ["Laptop"] = "笔记本电脑", ["Desktop"] = "台式机", ["Server"] = "服务器", ["Workstation"] = "工作站",
+["Processor"] = "处理器", ["CPU"] = "中央处理器", ["GPU"] = "图形处理器", ["RAM"] = "随机存取存储器", ["Hard drive"] = "硬盘",
+["SSD"] = "固态硬盘", ["Motherboard"] = "主板", ["Graphics card"] = "显卡", ["Sound card"] = "声卡", ["Network card"] = "网卡",
+["Operating system"] = "操作系统", ["Windows"] = "Windows", ["MacOS"] = "MacOS", ["Linux"] = "Linux", ["Android"] = "安卓",
+
+-- 质量补充
+["Excellent"] = "优秀", ["Good"] = "良好", ["Average"] = "平均", ["Fair"] = "一般", ["Poor"] = "差",
+["Superb"] = "极好", ["Great"] = "很好", ["Okay"] = "还行", ["Bad"] = "坏", ["Terrible"] = "糟糕",
+["Perfect"] = "完美", ["Flawless"] = "无瑕", ["Imperfect"] = "不完美", ["Defective"] = "有缺陷", ["Faulty"] = "有缺陷",
+["Superior"] = "优越", ["Inferior"] = "低劣", ["Premium"] = "优质", ["Standard"] = "标准", ["Basic"] = "基础",
+
+-- 天气补充
+["Sunshine"] = "阳光", ["Sunlight"] = "阳光", ["Sunbeam"] = "阳光光束", ["Sunrise"] = "日出", ["Sunset"] = "日落",
+["Moonlight"] = "月光", ["Starlight"] = "星光", ["Cloud cover"] = "云量", ["Cloud formation"] = "云层", ["Raindrop"] = "雨滴",
+["Rainfall"] = "降雨量", ["Rainstorm"] = "暴风雨", ["Rain shower"] = "阵雨", ["Drizzle"] = "毛毛雨", ["Downpour"] = "倾盆大雨",
+["Hail"] = "冰雹", ["Sleet"] = "雨夹雪", ["Freezing rain"] = "冻雨", ["Frost"] = "霜", ["Ice"] = "冰", ["Confirm"] = "确认", ["Select"] = "选择", ["Choose"] = "选择", ["Pick"] = "挑选",
+["Launch"] = "启动", ["Launch"] = "发射", ["Begin"] = "开始", ["End"] = "结束",
+["Finish"] = "完成", ["Complete"] = "完成", ["Continue"] = "继续", ["Pause"] = "暂停",
+["Restart"] = "重新开始", ["Skip"] = "跳过", ["Retry"] = "重试", ["Repeat"] = "重复",
+["Change"] = "改变", ["Adjust"] = "调整", ["Modify"] = "修改", ["Edit"] = "编辑",
+["Preview"] = "预览", ["View"] = "查看", ["Watch"] = "观看", ["Look"] = "看",
+["Check"] = "检查", ["Verify"] = "验证", ["Validate"] = "验证", ["Test"] = "测试",
+["Review"] = "审查", ["Audit"] = "审计", ["Monitor"] = "监控", ["Observe"] = "观察",
+["Record"] = "记录", ["Log"] = "日志", ["History"] = "历史", ["Archive"] = "存档",
+["Backup"] = "备份", ["Restore"] = "恢复", ["Sync"] = "同步", ["Merge"] = "合并",
+["Split"] = "分割", ["Combine"] = "合并", ["Connect"] = "连接", ["Disconnect"] = "断开",
+["Link"] = "链接", ["Unlink"] = "取消链接", ["Attach"] = "附加", ["Detach"] = "分离",
+["Insert"] = "插入", ["Remove"] = "移除", ["Extract"] = "提取", ["Import"] = "导入",
+["Export"] = "导出", ["Upload"] = "上传", ["Download"] = "下载", ["Share"] = "分享",
+["Copy"] = "复制", ["Paste"] = "粘贴", ["Cut"] = "剪切", ["Duplicate"] = "复制",
+["Clone"] = "克隆", ["Mirror"] = "镜像", ["Flip"] = "翻转", ["Rotate"] = "旋转",
+["Scale"] = "缩放", ["Resize"] = "调整大小", ["Crop"] = "裁剪", ["Trim"] = "修剪",
+["Filter"] = "过滤器", ["Sort"] = "排序", ["Group"] = "分组", ["Ungroup"] = "取消分组",
+["Align"] = "对齐", ["Distribute"] = "分布", ["Arrange"] = "排列", ["Order"] = "顺序",
+["Stack"] = "堆叠", ["Layer"] = "层", ["Depth"] = "深度", ["Height"] = "高度",
+["Width"] = "宽度", ["Length"] = "长度", ["Area"] = "面积", ["Volume"] = "体积",
+["Weight"] = "重量", ["Mass"] = "质量", ["Density"] = "密度", ["Pressure"] = "压力",
+["Temperature"] = "温度", ["Heat"] = "热量", ["Cold"] = "冷", ["Warm"] = "温暖",
+["Cool"] = "凉爽", ["Freeze"] = "冻结", ["Melt"] = "融化", ["Boil"] = "煮沸",
+["Evaporate"] = "蒸发", ["Condense"] = "冷凝", ["Sublimate"] = "升华", ["Deposit"] = "沉积", ["Achievement"] = "成就", ["Trophy"] = "奖杯", ["Medal"] = "奖牌", ["Badge"] = "徽章",
+["Unlock"] = "解锁", ["Lock"] = "锁定", ["Secret"] = "秘密", ["Hidden"] = "隐藏",
+["Easter"] = "彩蛋", ["Bonus"] = "奖励", ["Extra"] = "额外", ["Premium"] = "高级",
+["Pro"] = "专业", ["Elite"] = "精英", ["Master"] = "大师", ["Legend"] = "传奇",
+["Mythic"] = "神话", ["Epic"] = "史诗", ["Rare"] = "稀有", ["Common"] = "普通",
+["Uncommon"] = "不常见", ["Legendary"] = "传说", ["Artifact"] = "神器", ["Relic"] = "遗物",
+["Token"] = "代币", ["Currency"] = "货币", ["Gem"] = "宝石", ["Crystal"] = "水晶",
+["Shard"] = "碎片", ["Fragment"] = "碎片", ["Piece"] = "碎片", ["Part"] = "零件",
+["Component"] = "组件", ["Element"] = "元素", ["Ingredient"] = "成分", ["Material"] = "材料",
+["Resource"] = "资源", ["Supply"] = "供应", ["Stock"] = "库存", ["Reserve"] = "储备",
+["Stash"] = "藏匿", ["Cache"] = "缓存", ["Hoard"] = "囤积", ["Collection"] = "收藏",
+["Set"] = "套装", ["Series"] = "系列", ["Sequence"] = "序列", ["Pattern"] = "模式",
+["Design"] = "设计", ["Blueprint"] = "蓝图", ["Plan"] = "计划", ["Scheme"] = "方案",
+["Strategy"] = "策略", ["Tactic"] = "战术", ["Method"] = "方法", ["Technique"] = "技术",
+["Skill"] = "技能", ["Ability"] = "能力", ["Talent"] = "天赋", ["Gift"] = "天赋",
+["Power"] = "力量", ["Strength"] = "强度", ["Weakness"] = "弱点", ["Vulnerability"] = "漏洞",
+["Resistance"] = "抗性", ["Immunity"] = "免疫", ["Protection"] = "保护", ["Shield"] = "护盾",
+["Armor"] = "护甲", ["Barrier"] = "屏障", ["Wall"] = "墙", ["Fortress"] = "堡垒",
+["Castle"] = "城堡", ["Tower"] = "塔", ["Keep"] = "要塞", ["Stronghold"] = "要塞",
+["Base"] = "基地", ["Camp"] = "营地", ["Outpost"] = "前哨", ["Settlement"] = "定居点",
+["Colony"] = "殖民地", ["Empire"] = "帝国", ["Kingdom"] = "王国", ["Realm"] = "领域",
+["Domain"] = "领域", ["Territory"] = "领土", ["Land"] = "土地", ["Region"] = "区域",
+["Zone"] = "区域", ["Area"] = "区域", ["Location"] = "位置", ["Place"] = "地方",
+["Spot"] = "地点", ["Point"] = "点", ["Position"] = "位置", ["Coordinate"] = "坐标",
+["Direction"] = "方向", ["Bearing"] = "方位", ["Heading"] = "航向", ["Course"] = "路线",
+["Path"] = "路径", ["Route"] = "路线", ["Way"] = "道路", ["Trail"] = "小径",
+["Track"] = "轨道", ["Lane"] = "车道", ["Road"] = "道路", ["Street"] = "街道",
+["Avenue"] = "大道", ["Boulevard"] = "林荫大道", ["Highway"] = "高速公路", ["Freeway"] = "高速公路",
+["Expressway"] = "快速路", ["Interstate"] = "州际公路", ["Turnpike"] = "收费公路", ["Toll"] = "收费",
+["Fee"] = "费用", ["Cost"] = "成本", ["Price"] = "价格", ["Value"] = "价值",
+["Worth"] = "价值", ["Amount"] = "金额", ["Quantity"] = "数量", ["Number"] = "数字",
+["Count"] = "计数", ["Total"] = "总计", ["Sum"] = "总和", ["Average"] = "平均",
+["Mean"] = "均值", ["Median"] = "中位数", ["Mode"] = "众数", ["Range"] = "范围",
+["Minimum"] = "最小值", ["Maximum"] = "最大值", ["Limit"] = "限制", ["Threshold"] = "阈值",
+["Cap"] = "上限", ["Floor"] = "下限", ["Ceiling"] = "上限", ["Baseline"] = "基线",
+["Standard"] = "标准", ["Norm"] = "规范", ["Rule"] = "规则", ["Regulation"] = "规定",
+["Law"] = "法律", ["Policy"] = "政策", ["Procedure"] = "程序", ["Protocol"] = "协议",
+["Agreement"] = "协议", ["Contract"] = "合同", ["Treaty"] = "条约", ["Pact"] = "条约",
+["Alliance"] = "联盟", ["Federation"] = "联邦", ["Confederation"] = "邦联", ["Union"] = "联盟",
+["Association"] = "协会", ["Society"] = "社会", ["Community"] = "社区", ["Collective"] = "集体",
+["Group"] = "团体", ["Team"] = "团队", ["Squad"] = "小队", ["Unit"] = "单位",
+["Division"] = "部门", ["Department"] = "部门", ["Section"] = "部分", ["Segment"] = "段",
+["Piece"] = "块", ["Part"] = "部分", ["Portion"] = "部分", ["Fraction"] = "分数",
+["Percentage"] = "百分比", ["Ratio"] = "比率", ["Proportion"] = "比例", ["Rate"] = "率",
+["Speed"] = "速度", ["Velocity"] = "速度", ["Acceleration"] = "加速度", ["Deceleration"] = "减速度",
+["Momentum"] = "动量", ["Force"] = "力", ["Energy"] = "能量", ["Power"] = "功率",
+["Work"] = "功", ["Efficiency"] = "效率", ["Productivity"] = "生产力", ["Output"] = "输出",
+["Input"] = "输入", ["Throughput"] = "吞吐量", ["Bandwidth"] = "带宽", ["Latency"] = "延迟",
+["Delay"] = "延迟", ["Lag"] = "延迟", ["Buffer"] = "缓冲区", ["Cache"] = "缓存",
+["Memory"] = "内存", ["Storage"] = "存储", ["Disk"] = "磁盘", ["Drive"] = "驱动器",
+["Partition"] = "分区", ["Volume"] = "卷", ["Folder"] = "文件夹", ["Directory"] = "目录",
+["File"] = "文件", ["Document"] = "文档", ["Record"] = "记录", ["Entry"] = "条目",
+["Item"] = "项目", ["Object"] = "对象", ["Entity"] = "实体", ["Instance"] = "实例",
+["Example"] = "例子", ["Sample"] = "样本", ["Specimen"] = "标本", ["Model"] = "模型",
+["Prototype"] = "原型", ["Template"] = "模板", ["Pattern"] = "模式", ["Format"] = "格式",
+["Layout"] = "布局", ["Structure"] = "结构", ["Framework"] = "框架", ["Architecture"] = "架构",
+["Design"] = "设计", ["Plan"] = "计划", ["Blueprint"] = "蓝图", ["Schema"] = "模式",
+["Diagram"] = "图表", ["Chart"] = "图表", ["Graph"] = "图形", ["Plot"] = "图表",
+["Map"] = "地图", ["Atlas"] = "地图集", ["Globe"] = "地球仪", ["Sphere"] = "球体",
+["Circle"] = "圆形", ["Square"] = "正方形", ["Triangle"] = "三角形", ["Rectangle"] = "矩形",
+["Polygon"] = "多边形", ["Shape"] = "形状", ["Form"] = "形式", ["Figure"] = "图形",
+["Image"] = "图像", ["Picture"] = "图片", ["Photo"] = "照片", ["Photograph"] = "照片",
+["Snapshot"] = "快照", ["Screenshot"] = "截图", ["Capture"] = "捕获", ["Record"] = "录制",
+["Video"] = "视频", ["Audio"] = "音频", ["Sound"] = "声音", ["Music"] = "音乐",
+["Tone"] = "音调", ["Pitch"] = "音高", ["Volume"] = "音量", ["Loudness"] = "响度",
+["Silence"] = "寂静", ["Noise"] = "噪音", ["Static"] = "静电", ["Interference"] = "干扰",
+["Signal"] = "信号", ["Wave"] = "波", ["Frequency"] = "频率", ["Wavelength"] = "波长",
+["Amplitude"] = "振幅", ["Phase"] = "相位", ["Cycle"] = "周期", ["Period"] = "周期",
+["Duration"] = "持续时间", ["Interval"] = "间隔", ["Gap"] = "间隙", ["Space"] = "空间",
+["Time"] = "时间", ["Date"] = "日期", ["Day"] = "日", ["Month"] = "月",
+["Year"] = "年", ["Century"] = "世纪", ["Millennium"] = "千年", ["Era"] = "时代",
+["Age"] = "年龄", ["Epoch"] = "纪元", ["Period"] = "时期", ["Phase"] = "阶段",
+["Stage"] = "阶段", ["Step"] = "步骤", ["Level"] = "等级", ["Tier"] = "层级",
+["Rank"] = "等级", ["Class"] = "类别", ["Category"] = "类别", ["Type"] = "类型",
+["Kind"] = "种类", ["Sort"] = "种类", ["Variety"] = "品种", ["Brand"] = "品牌",
+["Make"] = "制造", ["Model"] = "型号", ["Version"] = "版本", ["Edition"] = "版本",
+["Release"] = "发布", ["Build"] = "构建", ["Patch"] = "补丁", ["Update"] = "更新",
+["Upgrade"] = "升级", ["Downgrade"] = "降级", ["Revision"] = "修订", ["Change"] = "变更",
+["Modification"] = "修改", ["Adjustment"] = "调整", ["Tweak"] = "调整", ["Fix"] = "修复",
+["Repair"] = "修理", ["Maintenance"] = "维护", ["Service"] = "服务", ["Support"] = "支持",
+["Help"] = "帮助", ["Assistance"] = "协助", ["Aid"] = "援助", ["Relief"] = "救济",
+["Rescue"] = "救援", ["Save"] = "拯救", ["Salvage"] = "抢救", ["Recover"] = "恢复",
+["Restore"] = "恢复", ["Revive"] = "复活", ["Resurrect"] = "复活", ["Reborn"] = "重生",
+["Reincarnate"] = "转世", ["Transform"] = "转变", ["Change"] = "改变", ["Convert"] = "转换",
+["Alter"] = "改变", ["Modify"] = "修改", ["Adjust"] = "调整", ["Tune"] = "调整",
+["Calibrate"] = "校准", ["Configure"] = "配置", ["Setup"] = "设置", ["Install"] = "安装",
+["Uninstall"] = "卸载", ["Remove"] = "移除", ["Delete"] = "删除", ["Erase"] = "擦除",
+["Wipe"] = "擦除", ["Clear"] = "清除", ["Clean"] = "清洁", ["Purge"] = "清除",
+["Filter"] = "过滤", ["Strain"] = "过滤", ["Sieve"] = "筛子", ["Screen"] = "筛子",
+["Separate"] = "分离", ["Divide"] = "分割", ["Split"] = "分裂", ["Break"] = "打破",
+["Fracture"] = "断裂", ["Crack"] = "裂缝", ["Chip"] = "碎片", ["Shatter"] = "粉碎",
+["Smash"] = "粉碎", ["Crush"] = "压碎", ["Grind"] = "研磨", ["Pulverize"] = "粉碎",
+["Powder"] = "粉末", ["Dust"] = "灰尘", ["Ash"] = "灰烬", ["Ember"] = "余烬",
+["Flame"] = "火焰", ["Fire"] = "火", ["Blaze"] = "火焰", ["Inferno"] = "地狱火",
+["Hell"] = "地狱", ["Heaven"] = "天堂", ["Paradise"] = "天堂", ["Utopia"] = "乌托邦",
+["Dream"] = "梦想", ["Fantasy"] = "幻想", ["Illusion"] = "幻觉", ["Mirage"] = "海市蜃楼",
+["Vision"] = "视觉", ["Sight"] = "视力", ["View"] = "视图", ["Perspective"] = "视角",
+["Angle"] = "角度", ["Aspect"] = "方面", ["Dimension"] = "维度", ["Measurement"] = "测量",
+["Unit"] = "单位", ["Scale"] = "比例尺", ["Ruler"] = "尺子", ["Measure"] = "测量",
+["Gauge"] = "测量仪", ["Meter"] = "仪表", ["Counter"] = "计数器", ["Timer"] = "计时器",
+["Clock"] = "时钟", ["Watch"] = "手表", ["Calendar"] = "日历", ["Schedule"] = "日程",
+["Planner"] = "计划者", ["Organizer"] = "组织者", ["Manager"] = "经理", ["Supervisor"] = "主管",
+["Director"] = "主任", ["Executive"] = "执行官", ["Officer"] = "官员", ["Administrator"] = "管理员",
+["Coordinator"] = "协调员", ["Facilitator"] = "协调人", ["Moderator"] = "主持人", ["Mediator"] = "调解人",
+["Arbitrator"] = "仲裁人", ["Judge"] = "法官", ["Referee"] = "裁判", ["Umpire"] = "裁判",
+["Official"] = "官员", ["Authority"] = "权威", ["Power"] = "权力", ["Control"] = "控制",
+["Command"] = "命令", ["Order"] = "命令", ["Instruction"] = "指令", ["Directive"] = "指令",
+["Guideline"] = "指南", ["Manual"] = "手册", ["Handbook"] = "手册", ["Guide"] = "指南",
+["Tutorial"] = "教程", ["Lesson"] = "课程", ["Course"] = "课程", ["Class"] = "班级",
+["Lecture"] = "讲座", ["Seminar"] = "研讨会", ["Workshop"] = "研讨会", ["Conference"] = "会议",
+["Meeting"] = "会议", ["Gathering"] = "聚会", ["Assembly"] = "集会", ["Convention"] = "大会",
+["Summit"] = "峰会", ["Forum"] = "论坛", ["Panel"] = "面板", ["Board"] = "董事会",
+["Committee"] = "委员会", ["Council"] = "委员会", ["Commission"] = "委员会", ["Agency"] = "机构",
+["Bureau"] = "局", ["Office"] = "办公室", ["Department"] = "部门", ["Division"] = "部门",
+["Branch"] = "分支", ["Section"] = "部分", ["Unit"] = "单位", ["Cell"] = "细胞",
+["Team"] = "团队", ["Group"] = "组", ["Crew"] = "船员", ["Squad"] = "小队",
+["Platoon"] = "排", ["Company"] = "连", ["Battalion"] = "营", ["Regiment"] = "团",
+["Brigade"] = "旅", ["Division"] = "师", ["Corps"] = "军团", ["Army"] = "军队",
+["Force"] = "部队", ["Troop"] = "部队", ["Soldier"] = "士兵", ["Warrior"] = "战士",
+["Fighter"] = "战士", ["Combatant"] = "战斗人员", ["Contender"] = "竞争者", ["Challenger"] = "挑战者",
+["Opponent"] = "对手", ["Adversary"] = "对手", ["Enemy"] = "敌人", ["Foe"] = "敌人",
+["Rival"] = "对手", ["Competitor"] = "竞争者", ["Contestant"] = "参赛者", ["Participant"] = "参与者",
+["Player"] = "玩家", ["Gamer"] = "玩家", ["User"] = "用户", ["Consumer"] = "消费者",
+["Customer"] = "顾客", ["Client"] = "客户", ["Patron"] = "赞助人", ["Sponsor"] = "赞助商",
+["Backer"] = "支持者", ["Supporter"] = "支持者", ["Fan"] = "粉丝", ["Follower"] = "追随者",
+["Admirer"] = "崇拜者", ["Devotee"] = "信徒", ["Enthusiast"] = "爱好者", ["Hobbyist"] = "业余爱好者",
+["Amateur"] = "业余", ["Professional"] = "专业", ["Expert"] = "专家", ["Specialist"] = "专家",
+["Master"] = "大师", ["Veteran"] = "老兵", ["Novice"] = "新手", ["Beginner"] = "初学者",
+["Learner"] = "学习者", ["Student"] = "学生", ["Pupil"] = "学生", ["Apprentice"] = "学徒",
+["Trainee"] = "受训者", ["Intern"] = "实习生", ["Assistant"] = "助手", ["Helper"] = "助手",
+["Aide"] = "助手", ["Partner"] = "伙伴", ["Companion"] = "伙伴", ["Friend"] = "朋友",
+["Ally"] = "盟友", ["Associate"] = "同事", ["Colleague"] = "同事", ["Coworker"] = "同事",
+["Teammate"] = "队友", ["Mate"] = "伙伴", ["Buddy"] = "伙伴", ["Pal"] = "朋友",
+["Acquaintance"] = "熟人", ["Stranger"] = "陌生人", ["Foreigner"] = "外国人", ["Alien"] = "外星人",
+["Immigrant"] = "移民", ["Emigrant"] = "移民", ["Refugee"] = "难民", ["Exile"] = "流亡者",
+["Outcast"] = "被遗弃者", ["Pariah"] = "贱民", ["Misfit"] = "不适应者", ["Rebel"] = "反叛者",
+["Revolutionary"] = "革命者", ["Radical"] = "激进分子", ["Extremist"] = "极端分子", ["Terrorist"] = "恐怖分子",
+["Criminal"] = "罪犯", ["Outlaw"] = "不法之徒", ["Fugitive"] = "逃犯", ["Prisoner"] = "囚犯",
+["Convict"] = "罪犯", ["Inmate"] = "囚犯", ["Captive"] = "俘虏", ["Hostage"] = "人质",
+["Victim"] = "受害者", ["Survivor"] = "幸存者", ["Casualty"] = "伤亡", ["Fatality"] = "死亡",
+["Death"] = "死亡", ["Demise"] = "死亡", ["End"] = "结束", ["Conclusion"] = "结论",
+["Finale"] = "结局", ["Climax"] = "高潮", ["Peak"] = "顶峰", ["Summit"] = "顶峰",
+["Top"] = "顶部", ["Bottom"] = "底部", ["Base"] = "基础", ["Foundation"] = "基础",
+["Ground"] = "地面", ["Floor"] = "地板", ["Ceiling"] = "天花板", ["Roof"] = "屋顶",
+["Wall"] = "墙", ["Fence"] = "栅栏", ["Barrier"] = "屏障", ["Gate"] = "门",
+["Door"] = "门", ["Entrance"] = "入口", ["Exit"] = "出口", ["Way"] = "路",
+["Path"] = "小路", ["Road"] = "道路", ["Street"] = "街道", ["Avenue"] = "大道",
+["Boulevard"] = "林荫大道", ["Lane"] = "小巷", ["Alley"] = "小巷", ["Passage"] = "通道",
+["Corridor"] = "走廊", ["Hall"] = "大厅", ["Room"] = "房间", ["Chamber"] = "房间",
+["Space"] = "空间", ["Area"] = "区域", ["Zone"] = "区域", ["Region"] = "区域",
+["District"] = "地区", ["Quarter"] = "区", ["Section"] = "部分", ["Sector"] = "部门",
+["Field"] = "领域", ["Domain"] = "领域", ["Realm"] = "领域", ["World"] = "世界",
+["Universe"] = "宇宙", ["Cosmos"] = "宇宙", ["Galaxy"] = "银河", ["Star"] = "星星",
+["Planet"] = "行星", ["Moon"] = "月球", ["Sun"] = "太阳", ["Solar"] = "太阳的",
+["Lunar"] = "月球的", ["Earth"] = "地球", ["Ground"] = "地面", ["Land"] = "土地",
+["Soil"] = "土壤", ["Dirt"] = "泥土", ["Mud"] = "泥", ["Clay"] = "粘土",
+["Sand"] = "沙子", ["Gravel"] = "砾石", ["Rock"] = "岩石", ["Stone"] = "石头",
+["Boulder"] = "巨石", ["Mountain"] = "山", ["Hill"] = "山丘", ["Valley"] = "山谷",
+["Canyon"] = "峡谷", ["Ravine"] = "沟壑", ["Gorge"] = "峡谷", ["Cliff"] = "悬崖",
+["Peak"] = "山峰", ["Ridge"] = "山脊", ["Slope"] = "斜坡", ["Incline"] = "斜坡",
+["Decline"] = "下降", ["Descent"] = "下降", ["Ascent"] = "上升", ["Climb"] = "攀登",
+["Rise"] = "上升", ["Fall"] = "下降", ["Drop"] = "掉落", ["Plunge"] = "投入",
+["Dive"] = "潜水", ["Jump"] = "跳跃", ["Leap"] = "跳跃", ["Bound"] = "跳跃",
+["Hop"] = "跳跃", ["Skip"] = "跳过", ["Spring"] = "弹簧", ["Bounce"] = "弹跳",
+["Rebound"] = "反弹", ["Reflect"] = "反射", ["Echo"] = "回声", ["Sound"] = "声音",
+["Noise"] = "噪音", ["Silence"] = "寂静", ["Quiet"] = "安静", ["Calm"] = "平静",
+["Peace"] = "和平", ["Tranquility"] = "宁静", ["Serenity"] = "宁静", ["Harmony"] = "和谐",
+["Balance"] = "平衡", ["Equilibrium"] = "平衡", ["Stability"] = "稳定性", ["Instability"] = "不稳定性",
+["Change"] = "变化", ["Transition"] = "过渡", ["Shift"] = "转变", ["Move"] = "移动",
+["Motion"] = "运动", ["Movement"] = "运动", ["Action"] = "行动", ["Activity"] = "活动",
+["Event"] = "事件", ["Occurrence"] = "事件", ["Incident"] = "事件", ["Episode"] = "插曲",
+["Scene"] = "场景", ["Setting"] = "设置", ["Environment"] = "环境", ["Surroundings"] = "环境",
+["Atmosphere"] = "气氛", ["Ambience"] = "氛围", ["Mood"] = "心情", ["Feeling"] = "感觉",
+["Emotion"] = "情感", ["Sentiment"] = "情绪", ["Attitude"] = "态度", ["Disposition"] = "性情",
+["Personality"] = "个性", ["Character"] = "性格", ["Nature"] = "本性", ["Essence"] = "本质",
+["Core"] = "核心", ["Heart"] = "心脏", ["Center"] = "中心", ["Middle"] = "中间",
+["Midpoint"] = "中点", ["Median"] = "中位数", ["Average"] = "平均", ["Mean"] = "平均",
+["Normal"] = "正常", ["Standard"] = "标准", ["Regular"] = "常规", ["Usual"] = "通常",
+["Common"] = "常见", ["Ordinary"] = "普通", ["Extraordinary"] = "非凡", ["Exceptional"] = "例外",
+["Special"] = "特殊", ["Unique"] = "独特", ["Rare"] = "罕见", ["Uncommon"] = "不常见",
+["Scarce"] = "稀缺", ["Limited"] = "有限", ["Unlimited"] = "无限", ["Infinite"] = "无限",
+["Endless"] = "无尽", ["Eternal"] = "永恒", ["Perpetual"] = "永久", ["Permanent"] = "永久",
+["Temporary"] = "临时", ["Transient"] = "短暂", ["Fleeting"] = "短暂", ["Brief"] = "简短",
+["Short"] = "短", ["Long"] = "长", ["Extended"] = "扩展", ["Prolonged"] = "延长",
+["Duration"] = "持续时间", ["Period"] = "时期", ["Era"] = "时代", ["Age"] = "年龄",
+["Epoch"] = "纪元", ["Generation"] = "一代", ["Century"] = "世纪", ["Decade"] = "十年",
+["Year"] = "年", ["Month"] = "月", ["Week"] = "周", ["Day"] = "日",
+["Hour"] = "小时", ["Minute"] = "分钟", ["Second"] = "秒", ["Millisecond"] = "毫秒",
+["Microsecond"] = "微秒", ["Nanosecond"] = "纳秒", ["Instant"] = "瞬间", ["Moment"] = "时刻",
+["Time"] = "时间", ["Date"] = "日期", ["Calendar"] = "日历", ["Schedule"] = "日程",
+["Timetable"] = "时间表", ["Agenda"] = "议程", ["Plan"] = "计划", ["Program"] = "程序",
+["Routine"] = "例行程序", ["Habit"] = "习惯", ["Custom"] = "习俗", ["Tradition"] = "传统",
+["Culture"] = "文化", ["Civilization"] = "文明", ["Society"] = "社会", ["Community"] = "社区",
+["Population"] = "人口", ["People"] = "人民", ["Nation"] = "国家", ["Country"] = "国家",
+["State"] = "州", ["Province"] = "省", ["County"] = "县", ["City"] = "城市",
+["Town"] = "城镇", ["Village"] = "村庄", ["Hamlet"] = "小村庄", ["Settlement"] = "定居点",
+["Colony"] = "殖民地", ["Outpost"] = "前哨", ["Base"] = "基地", ["Station"] = "站",
+["Post"] = "岗位", ["Position"] = "位置", ["Location"] = "位置", ["Site"] = "地点",
+["Place"] = "地方", ["Spot"] = "地点", ["Point"] = "点", ["Coordinates"] = "坐标",
+["Address"] = "地址", ["Destination"] = "目的地", ["Target"] = "目标", ["Goal"] = "目标",
+["Objective"] = "目标", ["Aim"] = "目标", ["Purpose"] = "目的", ["Intent"] = "意图",
+["Intention"] = "意图", ["Motive"] = "动机", ["Reason"] = "原因", ["Cause"] = "原因",
+["Effect"] = "效果", ["Result"] = "结果", ["Outcome"] = "结果", ["Consequence"] = "后果",
+["Impact"] = "影响", ["Influence"] = "影响", ["Power"] = "权力", ["Control"] = "控制",
+["Authority"] = "权威", ["Command"] = "命令", ["Order"] = "命令", ["Instruction"] = "指令",
+["Directive"] = "指令", ["Mandate"] = "授权", ["Decree"] = "法令", ["Law"] = "法律",
+["Rule"] = "规则", ["Regulation"] = "法规", ["Policy"] = "政策", ["Procedure"] = "程序",
+["Process"] = "过程", ["Method"] = "方法", ["Technique"] = "技术", ["System"] = "系统",
+["Framework"] = "框架", ["Structure"] = "结构", ["Organization"] = "组织", ["Arrangement"] = "安排",
+["Layout"] = "布局", ["Design"] = "设计", ["Plan"] = "计划", ["Blueprint"] = "蓝图",
+["Model"] = "模型", ["Prototype"] = "原型", ["Template"] = "模板", ["Pattern"] = "模式",
+["Sample"] = "样本", ["Example"] = "例子", ["Instance"] = "实例", ["Case"] = "案例",
+["Situation"] = "情况", ["Condition"] = "条件", ["State"] = "状态", ["Status"] = "状态",
+["Position"] = "位置", ["Standing"] = "地位", ["Rank"] = "等级", ["Level"] = "水平",
+["Grade"] = "等级", ["Class"] = "类别", ["Category"] = "类别", ["Type"] = "类型",
+["Kind"] = "种类", ["Sort"] = "种类", ["Variety"] = "品种", ["Form"] = "形式",
+["Shape"] = "形状", ["Figure"] = "图形", ["Image"] = "图像", ["Picture"] = "图片",
+["Photo"] = "照片", ["Photograph"] = "照片", ["Snapshot"] = "快照", ["Screenshot"] = "截图",
+["Capture"] = "捕获", ["Recording"] = "录制", ["Video"] = "视频", ["Audio"] = "音频",
+["Sound"] = "声音", ["Music"] = "音乐", ["Song"] = "歌曲", ["Melody"] = "旋律",
+["Harmony"] = "和声", ["Rhythm"] = "节奏", ["Beat"] = "节拍", ["Tempo"] = "速度",
+["Pitch"] = "音高", ["Tone"] = "音调", ["Volume"] = "音量", ["Loudness"] = "响度",
+["Quiet"] = "安静", ["Silence"] = "寂静", ["Noise"] = "噪音", ["Static"] = "静电",
+["Interference"] = "干扰", ["Signal"] = "信号", ["Transmission"] = "传输", ["Broadcast"] = "广播",
+["Stream"] = "流", ["Flow"] = "流动", ["Current"] = "电流", ["Voltage"] = "电压",
+["Electricity"] = "电", ["Power"] = "电力", ["Energy"] = "能量", ["Fuel"] = "燃料",
+["Gas"] = "气体", ["Oil"] = "油", ["Coal"] = "煤炭", ["Wood"] = "木头",
+["Metal"] = "金属", ["Iron"] = "铁", ["Steel"] = "钢", ["Copper"] = "铜",
+["Gold"] = "金", ["Silver"] = "银", ["Platinum"] = "铂", ["Diamond"] = "钻石",
+["Gem"] = "宝石", ["Crystal"] = "水晶", ["Glass"] = "玻璃", ["Plastic"] = "塑料",
+["Rubber"] = "橡胶", ["Leather"] = "皮革", ["Fabric"] = "织物", ["Cloth"] = "布料",
+["Cotton"] = "棉花", ["Wool"] = "羊毛", ["Silk"] = "丝绸", ["Nylon"] = "尼龙",
+["Polyester"] = "聚酯", ["Material"] = "材料", ["Substance"] = "物质", ["Matter"] = "物质",
+["Element"] = "元素", ["Compound"] = "化合物", ["Mixture"] = "混合物", ["Solution"] = "解决方案",
+["Liquid"] = "液体", ["Fluid"] = "流体", ["Water"] = "水", ["Oil"] = "油",
+["Alcohol"] = "酒精", ["Acid"] = "酸", ["Base"] = "碱", ["Salt"] = "盐",
+["Sugar"] = "糖", ["Spice"] = "香料", ["Herb"] = "草药", ["Plant"] = "植物",
+["Flower"] = "花", ["Tree"] = "树", ["Bush"] = "灌木", ["Grass"] = "草",
+["Weed"] = "杂草", ["Crop"] = "作物", ["Harvest"] = "收获", ["Yield"] = "产量",
+["Produce"] = "农产品", ["Product"] = "产品", ["Goods"] = "商品", ["Merchandise"] = "商品",
+["Item"] = "物品", ["Article"] = "文章", ["Object"] = "对象", ["Thing"] = "东西",
+["Entity"] = "实体", ["Being"] = "存在", ["Creature"] = "生物", ["Animal"] = "动物",
+["Beast"] = "野兽", ["Monster"] = "怪物", ["Dragon"] = "龙", ["Phoenix"] = "凤凰",
+["Unicorn"] = "独角兽", ["Griffin"] = "狮鹫", ["Mermaid"] = "美人鱼", ["Fairy"] = "仙女",
+["Elf"] = "精灵", ["Dwarf"] = "矮人", ["Orc"] = "兽人", ["Goblin"] = "哥布林",
+["Troll"] = "巨魔", ["Giant"] = "巨人", ["Titan"] = "泰坦", ["God"] = "神",
+["Goddess"] = "女神", ["Deity"] = "神", ["Divine"] = "神圣", ["Holy"] = "神圣",
+["Sacred"] = "神圣", ["Profane"] = "亵渎", ["Evil"] = "邪恶", ["Good"] = "好",
+["Right"] = "正确", ["Wrong"] = "错误", ["Truth"] = "真理", ["Lie"] = "谎言",
+["Fact"] = "事实", ["Fiction"] = "虚构", ["Reality"] = "现实", ["Fantasy"] = "幻想",
+["Dream"] = "梦想", ["Nightmare"] = "噩梦", ["Hope"] = "希望", ["Fear"] = "恐惧",
+["Love"] = "爱", ["Hate"] = "恨", ["Joy"] = "喜悦", ["Sorrow"] = "悲伤",
+["Happiness"] = "幸福", ["Sadness"] = "悲伤", ["Anger"] = "愤怒", ["Calm"] = "平静",
+["Peace"] = "和平", ["War"] = "战争", ["Conflict"] = "冲突", ["Battle"] = "战斗",
+["Fight"] = "战斗", ["Struggle"] = "斗争", ["Challenge"] = "挑战", ["Contest"] = "比赛",
+["Competition"] = "竞争", ["Race"] = "比赛", ["Game"] = "游戏", ["Play"] = "玩",
+["Fun"] = "乐趣", ["Enjoyment"] = "享受", ["Pleasure"] = "快乐", ["Pain"] = "痛苦",
+["Suffering"] = "苦难", ["Torment"] = "折磨", ["Torture"] = "折磨", ["Agony"] = "痛苦",
+["Ecstasy"] = "狂喜", ["Bliss"] = "极乐", ["Heaven"] = "天堂", ["Hell"] = "地狱",
+["Paradise"] = "天堂", ["Utopia"] = "乌托邦", ["Dystopia"] = "反乌托邦", ["Apocalypse"] = "启示录",
+["Armageddon"] = "世界末日", ["Doomsday"] = "世界末日", ["Judgment"] = "审判", ["Justice"] = "正义",
+["Law"] = "法律", ["Order"] = "秩序", ["Chaos"] = "混乱", ["Anarchy"] = "无政府状态",
+["Freedom"] = "自由", ["Liberty"] = "自由", ["Equality"] = "平等", ["Fraternity"] = "博爱",
+["Brotherhood"] = "兄弟情谊", ["Sisterhood"] = "姐妹情谊", ["Family"] = "家庭", ["Home"] = "家",
+["House"] = "房子", ["Residence"] = "住所", ["Dwelling"] = "住所", ["Shelter"] = "庇护所",
+["Refuge"] = "避难所", ["Sanctuary"] = "避难所", ["Haven"] = "避风港", ["Oasis"] = "绿洲",
+["Retreat"] = "撤退", ["Hideout"] = "藏身处", ["Secret"] = "秘密", ["Mystery"] = "神秘",
+["Puzzle"] = "谜题", ["Riddle"] = "谜语", ["Enigma"] = "谜", ["Conundrum"] = "难题",
+["Problem"] = "问题", ["Issue"] = "问题", ["Matter"] = "事情", ["Affair"] = "事务",
+["Business"] = "业务", ["Work"] = "工作", ["Job"] = "工作", ["Career"] = "职业",
+["Profession"] = "职业", ["Vocation"] = "职业", ["Calling"] = "召唤", ["Mission"] = "使命",
+["Purpose"] = "目的", ["Meaning"] = "意义", ["Significance"] = "意义", ["Importance"] = "重要性",
+["Value"] = "价值", ["Worth"] = "价值", ["Price"] = "价格", ["Cost"] = "成本",
+["Expense"] = "费用", ["Charge"] = "收费", ["Fee"] = "费用", ["Payment"] = "付款",
+["Bill"] = "账单", ["Invoice"] = "发票", ["Receipt"] = "收据", ["Proof"] = "证明",
+["Evidence"] = "证据", ["Testimony"] = "证词", ["Witness"] = "证人", ["Account"] = "账户",
+["Report"] = "报告", ["Statement"] = "声明", ["Declaration"] = "声明", ["Announcement"] = "公告",
+["Notice"] = "通知", ["Warning"] = "警告", ["Alert"] = "警报", ["Alarm"] = "警报",
+["Siren"] = "警报器", ["Signal"] = "信号", ["Sign"] = "标志", ["Symbol"] = "象征",
+["Emblem"] = "徽章", ["Badge"] = "徽章", ["Medal"] = "奖牌", ["Trophy"] = "奖杯",
+["Award"] = "奖项", ["Prize"] = "奖品", ["Reward"] = "奖励", ["Bonus"] = "奖金",
+["Incentive"] = "激励", ["Motivation"] = "动机", ["Inspiration"] = "灵感", ["Idea"] = "想法",
+["Thought"] = "思想", ["Concept"] = "概念", ["Notion"] = "概念", ["Theory"] = "理论",
+["Hypothesis"] = "假设", ["Assumption"] = "假设", ["Presumption"] = "假定", ["Guess"] = "猜测",
+["Estimate"] = "估计", ["Approximation"] = "近似", ["Calculation"] = "计算", ["Computation"] = "计算",
+["Math"] = "数学", ["Mathematics"] = "数学", ["Arithmetic"] = "算术", ["Algebra"] = "代数",
+["Geometry"] = "几何", ["Trigonometry"] = "三角学", ["Calculus"] = "微积分", ["Statistics"] = "统计",
+["Probability"] = "概率", ["Chance"] = "机会", ["Opportunity"] = "机会", ["Possibility"] = "可能性",
+["Potential"] = "潜力", ["Capability"] = "能力", ["Ability"] = "能力", ["Skill"] = "技能",
+["Talent"] = "天赋", ["Gift"] = "天赋", ["Genius"] = "天才", ["Intelligence"] = "智力",
+["Wisdom"] = "智慧", ["Knowledge"] = "知识", ["Understanding"] = "理解", ["Comprehension"] = "理解",
+["Insight"] = "洞察力", ["Perception"] = "感知", ["Awareness"] = "意识", ["Consciousness"] = "意识",
+["Mind"] = "心灵", ["Brain"] = "大脑", ["Head"] = "头", ["Face"] = "脸",
+["Eye"] = "眼睛", ["Ear"] = "耳朵", ["Nose"] = "鼻子", ["Mouth"] = "嘴",
+["Lip"] = "嘴唇", ["Tooth"] = "牙齿", ["Tongue"] = "舌头", ["Throat"] = "喉咙",
+["Neck"] = "脖子", ["Shoulder"] = "肩膀", ["Arm"] = "手臂", ["Elbow"] = "肘",
+["Wrist"] = "手腕", ["Hand"] = "手", ["Finger"] = "手指", ["Thumb"] = "拇指",
+["Palm"] = "手掌", ["Fist"] = "拳头", ["Chest"] = "胸部", ["Breast"] = "乳房",
+["Heart"] = "心脏", ["Lung"] = "肺", ["Stomach"] = "胃", ["Belly"] = "腹部",
+["Abdomen"] = "腹部", ["Waist"] = "腰部", ["Hip"] = "臀部", ["Leg"] = "腿",
+["Thigh"] = "大腿", ["Knee"] = "膝盖", ["Calf"] = "小腿", ["Ankle"] = "脚踝",
+["Foot"] = "脚", ["Toe"] = "脚趾", ["Heel"] = "脚跟", ["Sole"] = "脚底",
+["Body"] = "身体", ["Flesh"] = "肉体", ["Bone"] = "骨头", ["Muscle"] = "肌肉",
+["Tissue"] = "组织", ["Cell"] = "细胞", ["Gene"] = "基因", ["DNA"] = "脱氧核糖核酸",
+["Virus"] = "病毒", ["Bacteria"] = "细菌", ["Germ"] = "细菌", ["Microbe"] = "微生物",
+["Organism"] = "生物", ["Life"] = "生命", ["Living"] = "活着的", ["Dead"] = "死的",
+["Death"] = "死亡", ["Birth"] = "出生", ["Born"] = "出生", ["Create"] = "创造",
+["Make"] = "制造", ["Build"] = "建造", ["Construct"] = "建造", ["Form"] = "形成",
+["Shape"] = "塑造", ["Mold"] = "模具", ["Sculpt"] = "雕刻", ["Carve"] = "雕刻",
+["Cut"] = "切割", ["Slice"] = "切片", ["Dice"] = "切块", ["Chop"] = "砍",
+["Mince"] = "切碎", ["Grind"] = "研磨", ["Crush"] = "压碎", ["Pound"] = "捣碎",
+["Beat"] = "打击", ["Hit"] = "打", ["Strike"] = "打击", ["Punch"] = "拳打",
+["Kick"] = "踢", ["Slap"] = "拍打", ["Smack"] = "拍打", ["Whack"] = "重击",
+["Thump"] = "重击", ["Bang"] = "砰", ["Boom"] = "繁荣", ["Explosion"] = "爆炸",
+["Blast"] = "爆炸", ["Detonation"] = "爆炸", ["Burst"] = "爆发", ["Eruption"] = "喷发",
+["Erupt"] = "爆发", ["Emit"] = "发射", ["Release"] = "释放", ["Discharge"] = "排放",
+["Leak"] = "泄漏", ["Spill"] = "溢出", ["Flow"] = "流动", ["Stream"] = "流",
+["River"] = "河流", ["Creek"] = "小溪", ["Brook"] = "小溪", ["Stream"] = "溪流",
+["Waterfall"] = "瀑布", ["Cascade"] = "瀑布", ["Fountain"] = "喷泉", ["Spring"] = "泉水",
+["Well"] = "井", ["Pool"] = "水池", ["Pond"] = "池塘", ["Lake"] = "湖",
+["Sea"] = "海", ["Ocean"] = "海洋", ["Bay"] = "海湾", ["Gulf"] = "海湾",
+["Harbor"] = "港口", ["Port"] = "港口", ["Dock"] = "码头", ["Pier"] = "码头",
+["Wharf"] = "码头", ["Quay"] = "码头", ["Marina"] = "码头", ["Beach"] = "海滩",
+["Shore"] = "海岸", ["Coast"] = "海岸", ["Cliff"] = "悬崖", ["Bluff"] = "悬崖",
+["Promontory"] = "海角", ["Cape"] = "海角", ["Peninsula"] = "半岛", ["Island"] = "岛屿",
+["Isle"] = "小岛", ["Atoll"] = "环礁", ["Reef"] = "礁石", ["Coral"] = "珊瑚",
+["Shell"] = "贝壳", ["Pearl"] = "珍珠", ["Treasure"] = "宝藏", ["Gold"] = "黄金",
+["Silver"] = "白银", ["Platinum"] = "铂金", ["Diamond"] = "钻石", ["Ruby"] = "红宝石",
+["Sapphire"] = "蓝宝石", ["Emerald"] = "翡翠", ["Topaz"] = "黄玉", ["Amethyst"] = "紫水晶",
+["Opal"] = "蛋白石", ["Jade"] = "翡翠", ["Quartz"] = "石英", ["Crystal"] = "水晶",
+["Gemstone"] = "宝石", ["Jewel"] = "珠宝", ["Ornament"] = "装饰品", ["Decoration"] = "装饰",
+["Adornment"] = "装饰", ["Beauty"] = "美丽", ["Beautiful"] = "美丽的", ["Ugly"] = "丑陋的",
+["Pretty"] = "漂亮的", ["Handsome"] = "英俊的", ["Cute"] = "可爱的", ["Adorable"] = "可爱的",
+["Charming"] = "迷人的", ["Attractive"] = "有吸引力的", ["Gorgeous"] = "华丽的", ["Stunning"] = "惊人的",
+["Magnificent"] = "宏伟的", ["Majestic"] = "雄伟的", ["Grand"] = "宏伟的", ["Great"] = "伟大的",
+["Big"] = "大的", ["Large"] = "大的", ["Huge"] = "巨大的", ["Gigantic"] = "巨大的",
+["Enormous"] = "庞大的", ["Massive"] = "巨大的", ["Colossal"] = "巨大的", ["Titanic"] = "巨大的",
+["Immense"] = "巨大的", ["Vast"] = "广阔的", ["Spacious"] = "宽敞的", ["Roomy"] = "宽敞的",
+["Tiny"] = "微小的", ["Small"] = "小的", ["Little"] = "小的", ["Miniature"] = "微型的",
+["Mini"] = "迷你的", ["Petite"] = "娇小的", ["Compact"] = "紧凑的", ["Dense"] = "密集的",
+["Thick"] = "厚的", ["Thin"] = "薄的", ["Slim"] = "苗条的", ["Slender"] = "苗条的",
+["Narrow"] = "狭窄的", ["Wide"] = "宽的", ["Broad"] = "宽阔的", ["Expansive"] = "广阔的",
+["Open"] = "开放的", ["Closed"] = "关闭的", ["Shut"] = "关闭的", ["Sealed"] = "密封的",
+["Locked"] = "锁定的", ["Unlocked"] = "未锁定的", ["Secure"] = "安全的", ["Safe"] = "安全的",
+["Dangerous"] = "危险的", ["Risky"] = "有风险的", ["Hazardous"] = "危险的", ["Perilous"] = "危险的",
+["Deadly"] = "致命的", ["Lethal"] = "致命的", ["Fatal"] = "致命的", ["Mortal"] = "凡人的",
+["Immortal"] = "不朽的", ["Eternal"] = "永恒的", ["Everlasting"] = "永恒的", ["Perpetual"] = "永久的",
+["Permanent"] = "永久的", ["Temporary"] = "暂时的", ["Brief"] = "短暂的", ["Short"] = "短的",
+["Long"] = "长的", ["Endless"] = "无尽的", ["Infinite"] = "无限的", ["Limitless"] = "无限的",
+["Boundless"] = "无限的", ["Vast"] = "广阔的", ["Expansive"] = "广阔的", ["Wide"] = "宽的",
+["Broad"] = "宽的", ["Narrow"] = "窄的", ["Thin"] = "薄的", ["Thick"] = "厚的",
+["Deep"] = "深的", ["Shallow"] = "浅的", ["High"] = "高的", ["Low"] = "低的",
+["Tall"] = "高的", ["Short"] = "矮的", ["Elevated"] = "升高的", ["Raised"] = "抬高的",
+["Lowered"] = "降低的", ["Reduced"] = "减少的", ["Increased"] = "增加的", ["Enhanced"] = "增强的",
+["Improved"] = "改进的", ["Better"] = "更好的", ["Worse"] = "更糟的", ["Worst"] = "最糟的",
+["Best"] = "最好的", ["Good"] = "好的", ["Bad"] = "坏的", ["Evil"] = "邪恶的",
+["Wrong"] = "错误的", ["Right"] = "正确的", ["Correct"] = "正确的", ["Incorrect"] = "不正确的",
+["Accurate"] = "准确的", ["Precise"] = "精确的", ["Exact"] = "精确的", ["Inexact"] = "不精确的",
+["Approximate"] = "近似的", ["Rough"] = "粗糙的", ["Coarse"] = "粗糙的", ["Fine"] = "精细的",
+["Smooth"] = "光滑的", ["Soft"] = "柔软的", ["Hard"] = "硬的", ["Rigid"] = "刚性的",
+["Stiff"] = "僵硬的", ["Flexible"] = "灵活的", ["Elastic"] = "弹性的", ["Plastic"] = "塑料的",
+["Metal"] = "金属的", ["Wooden"] = "木制的", ["Stone"] = "石头的", ["Glass"] = "玻璃的",
+["Crystal"] = "水晶的", ["Diamond"] = "钻石的", ["Gold"] = "黄金的", ["Silver"] = "白银的",
+["Bronze"] = "青铜的", ["Copper"] = "铜的", ["Iron"] = "铁的", ["Steel"] = "钢的",
+["Aluminum"] = "铝的", ["Tin"] = "锡的", ["Lead"] = "铅的", ["Mercury"] = "汞的",
+["Uranium"] = "铀的", ["Plutonium"] = "钚的", ["Radium"] = "镭的", ["Radioactive"] = "放射性的",
+["Toxic"] = "有毒的", ["Poisonous"] = "有毒的", ["Venomous"] = "有毒的", ["Dangerous"] = "危险的",
+["Harmful"] = "有害的", ["Destructive"] = "破坏性的", ["Damaging"] = "有害的", ["Injurious"] = "有害的",
+["Beneficial"] = "有益的", ["Helpful"] = "有帮助的", ["Useful"] = "有用的", ["Valuable"] = "有价值的",
+["Precious"] = "宝贵的", ["Important"] = "重要的", ["Significant"] = "重要的", ["Essential"] = "必要的",
+["Necessary"] = "必要的", ["Required"] = "必需的", ["Mandatory"] = "强制性的", ["Compulsory"] = "强制性的",
+["Optional"] = "可选的", ["Voluntary"] = "自愿的", ["Free"] = "自由的", ["Liberated"] = "解放的",
+["Independent"] = "独立的", ["Autonomous"] = "自治的", ["Sovereign"] = "主权的", ["Ruled"] = "统治的",
+["Governed"] = "统治的", ["Controlled"] = "控制的", ["Managed"] = "管理的", ["Administered"] = "管理的",
+["Operated"] = "操作的", ["Run"] = "运行的", ["Functioning"] = "运作的", ["Working"] = "工作的",
+["Operating"] = "操作的", ["Active"] = "活跃的", ["Inactive"] = "不活跃的", ["Idle"] = "闲置的",
+["Busy"] = "忙碌的", ["Occupied"] = "被占用的", ["Vacant"] = "空着的", ["Empty"] = "空的",
+["Full"] = "满的", ["Loaded"] = "加载的", ["Unloaded"] = "卸载的", ["Light"] = "轻的",
+["Heavy"] = "重的", ["Weighty"] = "重的", ["Massive"] = "巨大的", ["Bulky"] = "庞大的",
+["Cumbersome"] = "笨重的", ["Awkward"] = "笨拙的", ["Clumsy"] = "笨拙的", ["Graceful"] = "优雅的",
+["Elegant"] = "优雅的", ["Refined"] = "精致的", ["Sophisticated"] = "复杂的", ["Complex"] = "复杂的",
+["Complicated"] = "复杂的", ["Intricate"] = "复杂的", ["Detailed"] = "详细的", ["Simple"] = "简单的",
+["Easy"] = "容易的", ["Difficult"] = "困难的", ["Hard"] = "困难的", ["Challenging"] = "具有挑战性的",
+["Demanding"] = "要求高的", ["Strenuous"] = "费力的", ["Exhausting"] = "令人精疲力尽的", ["Tiring"] = "累人的",
+["Fatiguing"] = "使人疲劳的", ["Wearying"] = "令人疲倦的", ["Refresh"] = "刷新", ["Rejuvenate"] = "恢复活力",
+["Revitalize"] = "恢复活力", ["Renew"] = "更新", ["Restore"] = "恢复", ["Recover"] = "恢复",
+["Heal"] = "治愈", ["Cure"] = "治愈", ["Treat"] = "治疗", ["Medicate"] = "用药治疗",
+["Medicine"] = "药物", ["Drug"] = "药物", ["Pharmacy"] = "药店", ["Hospital"] = "医院",
+["Clinic"] = "诊所", ["Doctor"] = "医生", ["Nurse"] = "护士", ["Patient"] = "病人",
+["Ill"] = "生病的", ["Sick"] = "生病的", ["Diseased"] = "患病的", ["Infected"] = "感染的",
+["Contagious"] = "传染性的", ["Infectious"] = "传染性的", ["Viral"] = "病毒的", ["Bacterial"] = "细菌的",
+["Fungal"] = "真菌的", ["Parasitic"] = "寄生的", ["Parasite"] = "寄生虫", ["Host"] = "宿主",
+["Vector"] = "载体", ["Carrier"] = "携带者", ["Transmitter"] = "传播者", ["Spread"] = "传播",
+["Transmit"] = "传播", ["Transfer"] = "转移", ["Move"] = "移动", ["Relocate"] = "搬迁",
+["Shift"] = "转移", ["Change"] = "改变", ["Alter"] = "改变", ["Modify"] = "修改",
+["Adjust"] = "调整", ["Adapt"] = "适应", ["Acclimate"] = "适应", ["Accustom"] = "习惯于",
+["Habituate"] = "使习惯于", ["Condition"] = "条件", ["Train"] = "训练", ["Practice"] = "练习",
+["Exercise"] = "锻炼", ["Workout"] = "锻炼", ["Training"] = "训练", ["Drill"] = "训练",
+["Rehearse"] = "排练", ["Prepare"] = "准备", ["Ready"] = "准备好的", ["Set"] = "设置",
+["Arrange"] = "安排", ["Organize"] = "组织", ["Plan"] = "计划", ["Schedule"] = "安排",
+["Time"] = "时间", ["Date"] = "日期", ["Appointment"] = "约会", ["Meeting"] = "会议",
+["Conference"] = "会议", ["Convention"] = "大会", ["Gathering"] = "聚会", ["Party"] = "派对",
+["Celebration"] = "庆祝", ["Festival"] = "节日", ["Holiday"] = "假日", ["Vacation"] = "假期",
+["Break"] = "休息", ["Rest"] = "休息", ["Relax"] = "放松", ["Leisure"] = "休闲",
+["Fun"] = "乐趣", ["Enjoy"] = "享受", ["Entertain"] = "娱乐", ["Amuse"] = "娱乐",
+["Delight"] = "高兴", ["Pleasure"] = "快乐", ["Joy"] = "喜悦", ["Happiness"] = "幸福",
+["Bliss"] = "极乐", ["Ecstasy"] = "狂喜", ["Euphoria"] = "欣快感", ["Rapture"] = "狂喜",
+["Heaven"] = "天堂", ["Paradise"] = "天堂", ["Nirvana"] = "涅槃", ["Enlightenment"] = "启蒙",
+["Awakening"] = "觉醒", ["Realization"] = "实现", ["Understanding"] = "理解", ["Knowledge"] = "知识",
+["Wisdom"] = "智慧", ["Insight"] = "洞察力", ["Perception"] = "感知", ["Awareness"] = "意识",
+["Consciousness"] = "意识", ["Subconscious"] = "潜意识", ["Unconscious"] = "无意识的", ["Mind"] = "心灵",
+["Thought"] = "思想", ["Idea"] = "想法", ["Concept"] = "概念", ["Notion"] = "概念",
+["Theory"] = "理论", ["Hypothesis"] = "假设", ["Assumption"] = "假设", ["Presumption"] = "假定",
+["Guess"] = "猜测", ["Estimate"] = "估计", ["Approximation"] = "近似", ["Calculation"] = "计算",
+["Computation"] = "计算", ["Math"] = "数学", ["Mathematics"] = "数学", ["Arithmetic"] = "算术",
+["Algebra"] = "代数", ["Geometry"] = "几何", ["Trigonometry"] = "三角学", ["Calculus"] = "微积分",
+["Statistics"] = "统计", ["Probability"] = "概率", ["Chance"] = "机会", ["Opportunity"] = "机会",
+["Possibility"] = "可能性", ["Potential"] = "潜力", ["Capability"] = "能力", ["Ability"] = "能力",
+["Skill"] = "技能", ["Talent"] = "天赋", ["Gift"] = "天赋", ["Genius"] = "天才",
+["Intelligence"] = "智力", ["Brilliance"] = "才华", ["Smart"] = "聪明的", ["Clever"] = "聪明的",
+["Wise"] = "明智的", ["Knowledgeable"] = "知识渊博的", ["Learned"] = "有学问的", ["Educated"] = "受过教育的",
+["Schooled"] = "受过教育的", ["Trained"] = "受过训练的", ["Experienced"] = "经验丰富的", ["Veteran"] = "老手",
+["Expert"] = "专家", ["Specialist"] = "专家", ["Professional"] = "专业的", ["Master"] = "大师",
+["Grandmaster"] = "大师", ["Champion"] = "冠军", ["Winner"] = "赢家", ["Victory"] = "胜利",
+["Triumph"] = "胜利", ["Success"] = "成功", ["Achievement"] = "成就", ["Accomplishment"] = "成就",
+["Feat"] = "功绩", ["Deed"] = "行为", ["Action"] = "行动", ["Act"] = "行为",
+["Doing"] = "做", ["Making"] = "制作", ["Creating"] = "创造", ["Building"] = "建造",
+["Constructing"] = "建造", ["Forming"] = "形成", ["Shaping"] = "塑造", ["Molding"] = "成型",
+["Crafting"] = "制作", ["Designing"] = "设计", ["Planning"] = "计划", ["Organizing"] = "组织",
+["Managing"] = "管理", ["Leading"] = "领导", ["Guiding"] = "指导", ["Directing"] = "指导",
+["Controlling"] = "控制", ["Commanding"] = "指挥", ["Ordering"] = "命令", ["Instructing"] = "指导",
+["Teaching"] = "教学", ["Educating"] = "教育", ["Training"] = "训练", ["Coaching"] = "教练",
+["Mentoring"] = "指导", ["Advising"] = "建议", ["Counseling"] = "咨询", ["Consulting"] = "咨询",
+["Helping"] = "帮助", ["Assisting"] = "协助", ["Aiding"] = "援助", ["Supporting"] = "支持",
+["Backing"] = "支持", ["Financing"] = "融资", ["Funding"] = "资金", ["Sponsoring"] = "赞助",
+["Promoting"] = "推广", ["Marketing"] = "营销", ["Advertising"] = "广告", ["Publicizing"] = "宣传",
+["Announcing"] = "宣布", ["Declaring"] = "声明", ["Proclaiming"] = "宣布", ["Broadcasting"] = "广播",
+["Streaming"] = "流媒体", ["Transmitting"] = "传输", ["Sending"] = "发送", ["Receiving"] = "接收",
+["Accepting"] = "接受", ["Rejecting"] = "拒绝", ["Denying"] = "否认", ["Refusing"] = "拒绝",
+["Declining"] = "拒绝", ["Ignoring"] = "忽略", ["Neglecting"] = "忽视", ["Forgetting"] = "忘记",
+["Remembering"] = "记住", ["Recalling"] = "回忆", ["Reminding"] = "提醒", ["Noticing"] = "注意到",
+["Observing"] = "观察", ["Watching"] = "观看", ["Looking"] = "看", ["Seeing"] = "看见",
+["Hearing"] = "听到", ["Listening"] = "听", ["Smelling"] = "闻", ["Tasting"] = "尝",
+["Touching"] = "触摸", ["Feeling"] = "感觉", ["Sensing"] = "感知", ["Perceiving"] = "感知",
+["Detecting"] = "检测", ["Discovering"] = "发现", ["Finding"] = "找到", ["Locating"] = "定位",
+["Positioning"] = "定位", ["Placing"] = "放置", ["Setting"] = "设置", ["Putting"] = "放",
+["Laying"] = "放置", ["Standing"] = "站立", ["Sitting"] = "坐", ["Lying"] = "躺",
+["Resting"] = "休息", ["Sleeping"] = "睡觉", ["Dreaming"] = "做梦", ["Awakening"] = "觉醒",
+["Waking"] = "醒来", ["Rising"] = "上升", ["Getting"] = "得到", ["Becoming"] = "成为",
+["Turning"] = "变成", ["Changing"] = "改变", ["Transforming"] = "转变", ["Converting"] = "转换",
+["Shifting"] = "转移", ["Moving"] = "移动", ["Traveling"] = "旅行", ["Journeying"] = "旅行",
+["Voyaging"] = "航行", ["Sailing"] = "航行", ["Flying"] = "飞行", ["Driving"] = "驾驶",
+["Riding"] = "骑", ["Walking"] = "步行", ["Running"] = "跑步", ["Jogging"] = "慢跑",
+["Sprinting"] = "冲刺", ["Dashing"] = "猛冲", ["Racing"] = "比赛", ["Competing"] = "竞争",
+["Contesting"] = "竞争", ["Challenging"] = "挑战", ["Opposing"] = "反对", ["Resisting"] = "抵抗",
+["Fighting"] = "战斗", ["Battling"] = "战斗", ["Struggling"] = "斗争", ["Striving"] = "努力",
+["Trying"] = "尝试", ["Attempting"] = "试图", ["Endeavoring"] = "努力", ["Seeking"] = "寻求",
+["Searching"] = "搜索", ["Hunting"] = "狩猎", ["Pursuing"] = "追求", ["Chasing"] = "追逐",
+["Following"] = "跟随", ["Trailing"] = "跟踪", ["Tracking"] = "跟踪", ["Stalking"] = "跟踪",
+["Hiding"] = "隐藏", ["Concealing"] = "隐藏", ["Covering"] = "覆盖", ["Masking"] = "掩盖",
+["Disguising"] = "伪装", ["Camouflaging"] = "伪装", ["Blending"] = "混合", ["Merging"] = "合并",
+["Combining"] = "结合", ["Uniting"] = "联合", ["Joining"] = "加入", ["Connecting"] = "连接",
+["Linking"] = "链接", ["Attaching"] = "附加", ["Fastening"] = "固定", ["Securing"] = "固定",
+["Locking"] = "锁定", ["Unlocking"] = "解锁", ["Opening"] = "打开", ["Closing"] = "关闭",
+["Shutting"] = "关闭", ["Sealing"] = "密封", ["Encrypting"] = "加密", ["Decrypting"] = "解密",
+["Encoding"] = "编码", ["Decoding"] = "解码", ["Translating"] = "翻译", ["Interpreting"] = "解释",
+["Explaining"] = "解释", ["Clarifying"] = "澄清", ["Simplifying"] = "简化", ["Complicating"] = "复杂化",
+["Confusing"] = "混淆", ["Bewildering"] = "令人困惑的", ["Perplexing"] = "令人困惑的", ["Puzzling"] = "令人困惑的",
+["Mystifying"] = "神秘的", ["Enigmatic"] = "神秘的", ["Cryptic"] = "神秘的", ["Secret"] = "秘密",
+["Hidden"] = "隐藏的", ["Concealed"] = "隐藏的", ["Covered"] = "覆盖的", ["Masked"] = "掩盖的",
+["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的", ["Invisible"] = "隐形的", ["Visible"] = "可见的",
+["Seen"] = "看见的", ["Observed"] = "观察到的", ["Noticed"] = "注意到的", ["Detected"] = "检测到的",
+["Found"] = "发现的", ["Discovered"] = "发现的", ["Uncovered"] = "揭露的", ["Revealed"] = "揭示的",
+["Exposed"] = "暴露的", ["Shown"] = "显示的", ["Displayed"] = "显示的", ["Exhibited"] = "展示的",
+["Presented"] = "呈现的", ["Demonstrated"] = "演示的", ["Illustrated"] = "说明的", ["Exemplified"] = "例证的",
+["Represented"] = "代表的", ["Symbolized"] = "象征的", ["Signified"] = "表示的", ["Meant"] = "意味的",
+["Intended"] = "打算的", ["Planned"] = "计划的", ["Designed"] = "设计的", ["Engineered"] = "设计的",
+["Constructed"] = "建造的", ["Built"] = "建造的", ["Made"] = "制造的", ["Created"] = "创造的",
+["Formed"] = "形成的", ["Shaped"] = "成型的", ["Molded"] = "成型的", ["Crafted"] = "制作的",
+["Fabricated"] = "制造的", ["Manufactured"] = "制造的", ["Produced"] = "生产的", ["Generated"] = "生成的",
+["Yielded"] = "产生的", ["Provided"] = "提供的", ["Supplied"] = "供应的", ["Furnished"] = "提供的",
+["Equipped"] = "装备的", ["Outfitted"] = "配备的", ["Prepared"] = "准备好的", ["Ready"] = "准备好的",
+["Set"] = "设置好的", ["Arranged"] = "安排好的", ["Organized"] = "组织好的", ["Ordered"] = "有序的",
+["Sorted"] = "分类的", ["Classified"] = "分类的", ["Categorized"] = "分类的", ["Grouped"] = "分组的",
+["Batched"] = "批处理的", ["Processed"] = "处理的", ["Handled"] = "处理的", ["Managed"] = "管理的",
+["Administered"] = "管理的", ["Controlled"] = "控制的", ["Regulated"] = "调节的", ["Governed"] = "统治的",
+["Ruled"] = "统治的", ["Led"] = "领导的", ["Guided"] = "指导的", ["Directed"] = "指导的",
+["Steered"] = "引导的", ["Piloted"] = "驾驶的", ["Navigated"] = "导航的", ["Sailed"] = "航行的",
+["Flown"] = "飞行的", ["Driven"] = "驾驶的", ["Ridden"] = "骑行的", ["Walked"] = "步行的",
+["Run"] = "跑步的", ["Jumped"] = "跳跃的", ["Hopped"] = "跳跃的", ["Skipped"] = "跳过的",
+["Leaped"] = "跳跃的", ["Bounded"] = "跳跃的", ["Spring"] = "跳跃的", ["Bounced"] = "弹跳的",
+["Rebounded"] = "反弹的", ["Reflected"] = "反射的", ["Echoed"] = "回响的", ["Reverberated"] = "回响的",
+["Resounded"] = "回响的", ["Sounded"] = "发声的", ["Noised"] = "发出噪音的", ["Silenced"] = "静音的",
+["Quieted"] = "安静的", ["Calmed"] = "平静的", ["Soothing"] = "舒缓的", ["Relaxing"] = "放松的",
+["Restful"] = "宁静的", ["Peaceful"] = "和平的", ["Tranquil"] = "宁静的", ["Serene"] = "宁静的",
+["Harmonious"] = "和谐的", ["Balanced"] = "平衡的", ["Equilibrated"] = "平衡的", ["Stable"] = "稳定的",
+["Steady"] = "稳定的", ["Fixed"] = "固定的", ["Secure"] = "安全的", ["Safe"] = "安全的",
+["Protected"] = "受保护的", ["Guarded"] = "守卫的", ["Defended"] = "防御的", ["Shielded"] = "屏蔽的",
+["Armored"] = "装甲的", ["Fortified"] = "加固的", ["Strengthened"] = "加强的", ["Reinforced"] = "加强的",
+["Supported"] = "支持的", ["Backed"] = "支持的", ["Financed"] = "资助的", ["Funded"] = "资助的",
+["Sponsored"] = "赞助的", ["Promoted"] = "推广的", ["Marketed"] = "营销的", ["Advertised"] = "广告的",
+["Publicized"] = "宣传的", ["Announced"] = "宣布的", ["Declared"] = "声明的", ["Proclaimed"] = "宣布的",
+["Broadcasted"] = "广播的", ["Streamed"] = "流媒体的", ["Transmitted"] = "传输的", ["Sent"] = "发送的",
+["Received"] = "接收的", ["Accepted"] = "接受的", ["Rejected"] = "拒绝的", ["Denied"] = "否认的",
+["Refused"] = "拒绝的", ["Declined"] = "拒绝的", ["Ignored"] = "忽略的", ["Neglected"] = "忽视的",
+["Forgotten"] = "忘记的", ["Remembered"] = "记住的", ["Recalled"] = "回忆的", ["Reminded"] = "提醒的",
+["Noticed"] = "注意到的", ["Observed"] = "观察到的", ["Watched"] = "观看的", ["Looked"] = "看的",
+["Seen"] = "看见的", ["Heard"] = "听到的", ["Listened"] = "听的", ["Smelled"] = "闻到的",
+["Tasted"] = "尝到的", ["Touched"] = "触摸的", ["Felt"] = "感觉的", ["Sensed"] = "感知的",
+["Perceived"] = "感知的", ["Detected"] = "检测到的", ["Discovered"] = "发现的", ["Found"] = "找到的",
+["Located"] = "定位的", ["Positioned"] = "定位的", ["Placed"] = "放置的", ["Set"] = "设置的",
+["Put"] = "放的", ["Laid"] = "放置的", ["Stood"] = "站立的", ["Sat"] = "坐的",
+["Lay"] = "躺的", ["Rested"] = "休息的", ["Slept"] = "睡觉的", ["Dreamed"] = "做梦的",
+["Awakened"] = "觉醒的", ["Woke"] = "醒来的", ["Rose"] = "上升的", ["Got"] = "得到的",
+["Became"] = "成为的", ["Turned"] = "变成的", ["Changed"] = "改变的", ["Transformed"] = "转变的",
+["Converted"] = "转换的", ["Shifted"] = "转移的", ["Moved"] = "移动的", ["Traveled"] = "旅行的",
+["Journeyed"] = "旅行的", ["Voyaged"] = "航行的", ["Sailed"] = "航行的", ["Flew"] = "飞行的",
+["Drove"] = "驾驶的", ["Rode"] = "骑行的", ["Walked"] = "步行的", ["Ran"] = "跑步的",
+["Jogged"] = "慢跑的", ["Sprinted"] = "冲刺的", ["Dashed"] = "猛冲的", ["Raced"] = "比赛的",
+["Competed"] = "竞争的", ["Contested"] = "竞争的", ["Challenged"] = "挑战的", ["Opposed"] = "反对的",
+["Resisted"] = "抵抗的", ["Fought"] = "战斗的", ["Battled"] = "战斗的", ["Struggled"] = "斗争的",
+["Strived"] = "努力的", ["Tried"] = "尝试的", ["Attempted"] = "试图的", ["Endeavored"] = "努力的",
+["Sought"] = "寻求的", ["Searched"] = "搜索的", ["Hunted"] = "狩猎的", ["Pursued"] = "追求的",
+["Chased"] = "追逐的", ["Followed"] = "跟随的", ["Trailed"] = "跟踪的", ["Tracked"] = "跟踪的",
+["Stalked"] = "跟踪的", ["Hid"] = "隐藏的", ["Concealed"] = "隐藏的", ["Covered"] = "覆盖的",
+["Masked"] = "掩盖的", ["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的", ["Blended"] = "混合的",
+["Merged"] = "合并的", ["Combined"] = "结合的", ["United"] = "联合的", ["Joined"] = "加入的",
+["Connected"] = "连接的", ["Linked"] = "链接的", ["Attached"] = "附加的", ["Fastened"] = "固定的",
+["Secured"] = "固定的", ["Locked"] = "锁定的", ["Unlocked"] = "解锁的", ["Opened"] = "打开的",
+["Closed"] = "关闭的", ["Shut"] = "关闭的", ["Sealed"] = "密封的", ["Encrypted"] = "加密的",
+["Decrypted"] = "解密的", ["Encoded"] = "编码的", ["Decoded"] = "解码的", ["Translated"] = "翻译的",
+["Interpreted"] = "解释的", ["Explained"] = "解释的", ["Clarified"] = "澄清的", ["Simplified"] = "简化的",
+["Complicated"] = "复杂化的", ["Confused"] = "混淆的", ["Bewildered"] = "困惑的", ["Perplexed"] = "困惑的",
+["Puzzled"] = "困惑的", ["Mystified"] = "神秘的", ["Enigmatized"] = "神秘的", ["Crypticized"] = "神秘的",
+["Secreted"] = "隐藏的", ["Hidden"] = "隐藏的", ["Concealed"] = "隐藏的", ["Covered"] = "覆盖的",
+["Masked"] = "掩盖的", ["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的", ["Invisiblized"] = "隐形的",
+["Visiblized"] = "可见的", ["Seen"] = "看见的", ["Observed"] = "观察到的", ["Noticed"] = "注意到的",
+["Detected"] = "检测到的", ["Found"] = "发现的", ["Discovered"] = "发现的", ["Uncovered"] = "揭露的",
+["Revealed"] = "揭示的", ["Exposed"] = "暴露的", ["Shown"] = "显示的", ["Displayed"] = "显示的",
+["Exhibited"] = "展示的", ["Presented"] = "呈现的", ["Demonstrated"] = "演示的", ["Illustrated"] = "说明的",
+["Exemplified"] = "例证的", ["Represented"] = "代表的", ["Symbolized"] = "象征的", ["Signified"] = "表示的",
+["Meant"] = "意味的", ["Intended"] = "打算的", ["Planned"] = "计划的", ["Designed"] = "设计的",
+["Engineered"] = "设计的", ["Constructed"] = "建造的", ["Built"] = "建造的", ["Made"] = "制造的",
+["Created"] = "创造的", ["Formed"] = "形成的", ["Shaped"] = "成型的", ["Molded"] = "成型的",
+["Crafted"] = "制作的", ["Fabricated"] = "制造的", ["Manufactured"] = "制造的", ["Produced"] = "生产的",
+["Generated"] = "生成的", ["Yielded"] = "产生的", ["Provided"] = "提供的", ["Supplied"] = "供应的",
+["Furnished"] = "提供的", ["Equipped"] = "装备的", ["Outfitted"] = "配备的", ["Prepared"] = "准备好的",
+["Ready"] = "准备好的", ["Set"] = "设置好的", ["Arranged"] = "安排好的", ["Organized"] = "组织好的",
+["Ordered"] = "有序的", ["Sorted"] = "分类的", ["Classified"] = "分类的", ["Categorized"] = "分类的",
+["Grouped"] = "分组的", ["Batched"] = "批处理的", ["Processed"] = "处理的", ["Handled"] = "处理的",
+["Managed"] = "管理的", ["Administered"] = "管理的", ["Controlled"] = "控制的", ["Regulated"] = "调节的",
+["Governed"] = "统治的", ["Ruled"] = "统治的", ["Led"] = "领导的", ["Guided"] = "指导的",
+["Directed"] = "指导的", ["Steered"] = "引导的", ["Piloted"] = "驾驶的", ["Navigated"] = "导航的",
+["Sailed"] = "航行的", ["Flown"] = "飞行的", ["Driven"] = "驾驶的", ["Ridden"] = "骑行的",
+["Walked"] = "步行的", ["Run"] = "跑步的", ["Jumped"] = "跳跃的", ["Hopped"] = "跳跃的",
+["Skipped"] = "跳过的", ["Leaped"] = "跳跃的", ["Bounded"] = "跳跃的", ["Spring"] = "跳跃的",
+["Bounced"] = "弹跳的", ["Rebounded"] = "反弹的", ["Reflected"] = "反射的", ["Echoed"] = "回响的",
+["Reverberated"] = "回响的", ["Resounded"] = "回响的", ["Sounded"] = "发声的", ["Noised"] = "发出噪音的",
+["Silenced"] = "静音的", ["Quieted"] = "安静的", ["Calmed"] = "平静的", ["Soothing"] = "舒缓的",
+["Relaxing"] = "放松的", ["Restful"] = "宁静的", ["Peaceful"] = "和平的", ["Tranquil"] = "宁静的",
+["Serene"] = "宁静的", ["Harmonious"] = "和谐的", ["Balanced"] = "平衡的", ["Equilibrated"] = "平衡的",
+["Stable"] = "稳定的", ["Steady"] = "稳定的", ["Fixed"] = "固定的", ["Secure"] = "安全的",
+["Safe"] = "安全的", ["Protected"] = "受保护的", ["Guarded"] = "守卫的", ["Defended"] = "防御的",
+["Shielded"] = "屏蔽的", ["Armored"] = "装甲的", ["Fortified"] = "加固的", ["Strengthened"] = "加强的",
+["Reinforced"] = "加强的", ["Supported"] = "支持的", ["Backed"] = "支持的", ["Financed"] = "资助的",
+["Funded"] = "资助的", ["Sponsored"] = "赞助的", ["Promoted"] = "推广的", ["Marketed"] = "营销的",
+["Advertised"] = "广告的", ["Publicized"] = "宣传的", ["Announced"] = "宣布的", ["Declared"] = "声明的",
+["Proclaimed"] = "宣布的", ["Broadcasted"] = "广播的", ["Streamed"] = "流媒体的", ["Transmitted"] = "传输的",
+["Sent"] = "发送的", ["Received"] = "接收的", ["Accepted"] = "接受的", ["Rejected"] = "拒绝的",
+["Denied"] = "否认的", ["Refused"] = "拒绝的", ["Declined"] = "拒绝的", ["Ignored"] = "忽略的",
+["Neglected"] = "忽视的", ["Forgotten"] = "忘记的", ["Remembered"] = "记住的", ["Recalled"] = "回忆的",
+["Reminded"] = "提醒的", ["Noticed"] = "注意到的", ["Observed"] = "观察到的", ["Watched"] = "观看的",
+["Looked"] = "看的", ["Seen"] = "看见的", ["Heard"] = "听到的", ["Listened"] = "听的",
+["Smelled"] = "闻到的", ["Tasted"] = "尝到的", ["Touched"] = "触摸的", ["Felt"] = "感觉的",
+["Sensed"] = "感知的", ["Perceived"] = "感知的", ["Detected"] = "检测到的", ["Discovered"] = "发现的",
+["Found"] = "找到的", ["Located"] = "定位的", ["Positioned"] = "定位的", ["Placed"] = "放置的",
+["Set"] = "设置的", ["Put"] = "放的", ["Laid"] = "放置的", ["Stood"] = "站立的",
+["Sat"] = "坐的", ["Lay"] = "躺的", ["Rested"] = "休息的", ["Slept"] = "睡觉的",
+["Dreamed"] = "做梦的", ["Awakened"] = "觉醒的", ["Woke"] = "醒来的", ["Rose"] = "上升的",
+["Got"] = "得到的", ["Became"] = "成为的", ["Turned"] = "变成的", ["Changed"] = "改变的",
+["Transformed"] = "转变的", ["Converted"] = "转换的", ["Shifted"] = "转移的", ["Moved"] = "移动的",
+["Traveled"] = "旅行的", ["Journeyed"] = "旅行的", ["Voyaged"] = "航行的", ["Sailed"] = "航行的",
+["Flew"] = "飞行的", ["Drove"] = "驾驶的", ["Rode"] = "骑行的", ["Walked"] = "步行的",
+["Ran"] = "跑步的", ["Jogged"] = "慢跑的", ["Sprinted"] = "冲刺的", ["Dashed"] = "猛冲的",
+["Raced"] = "比赛的", ["Competed"] = "竞争的", ["Contested"] = "竞争的", ["Challenged"] = "挑战的",
+["Opposed"] = "反对的", ["Resisted"] = "抵抗的", ["Fought"] = "战斗的", ["Battled"] = "战斗的",
+["Struggled"] = "斗争的", ["Strived"] = "努力的", ["Tried"] = "尝试的", ["Attempted"] = "试图的",
+["Endeavored"] = "努力的", ["Sought"] = "寻求的", ["Searched"] = "搜索的", ["Hunted"] = "狩猎的",
+["Pursued"] = "追求的", ["Chased"] = "追逐的", ["Followed"] = "跟随的", ["Trailed"] = "跟踪的",
+["Tracked"] = "跟踪的", ["Stalked"] = "跟踪的", ["Hid"] = "隐藏的", ["Concealed"] = "隐藏的",
+["Covered"] = "覆盖的", ["Masked"] = "掩盖的", ["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的",
+["Blended"] = "混合的", ["Merged"] = "合并的", ["Combined"] = "结合的", ["United"] = "联合的",
+["Joined"] = "加入的", ["Connected"] = "连接的", ["Linked"] = "链接的", ["Attached"] = "附加的",
+["Fastened"] = "固定的", ["Secured"] = "固定的", ["Locked"] = "锁定的", ["Unlocked"] = "解锁的",
+["Opened"] = "打开的", ["Closed"] = "关闭的", ["Shut"] = "关闭的", ["Sealed"] = "密封的",
+["Encrypted"] = "加密的", ["Decrypted"] = "解密的", ["Encoded"] = "编码的", ["Decoded"] = "解码的",
+["Translated"] = "翻译的", ["Interpreted"] = "解释的", ["Explained"] = "解释的", ["Clarified"] = "澄清的",
+["Simplified"] = "简化的", ["Complicated"] = "复杂化的", ["Confused"] = "混淆的", ["Bewildered"] = "困惑的",
+["Perplexed"] = "困惑的", ["Puzzled"] = "困惑的", ["Mystified"] = "神秘的", ["Enigmatized"] = "神秘的",
+["Crypticized"] = "神秘的", ["Secreted"] = "隐藏的", ["Hidden"] = "隐藏的", ["Concealed"] = "隐藏的",
+["Covered"] = "覆盖的", ["Masked"] = "掩盖的", ["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的",
+["Invisiblized"] = "隐形的", ["Visiblized"] = "可见的", ["Seen"] = "看见的", ["Observed"] = "观察到的",
+["Noticed"] = "注意到的", ["Detected"] = "检测到的", ["Found"] = "发现的", ["Discovered"] = "发现的",
+["Uncovered"] = "揭露的", ["Revealed"] = "揭示的", ["Exposed"] = "暴露的", ["Shown"] = "显示的",
+["Displayed"] = "显示的", ["Exhibited"] = "展示的", ["Presented"] = "呈现的", ["Demonstrated"] = "演示的",
+["Illustrated"] = "说明的", ["Exemplified"] = "例证的", ["Represented"] = "代表的", ["Symbolized"] = "象征的",
+["Signified"] = "表示的", ["Meant"] = "意味的", ["Intended"] = "打算的", ["Planned"] = "计划的",
+["Designed"] = "设计的", ["Engineered"] = "设计的", ["Constructed"] = "建造的", ["Built"] = "建造的",
+["Made"] = "制造的", ["Created"] = "创造的", ["Formed"] = "形成的", ["Shaped"] = "成型的",
+["Molded"] = "成型的", ["Crafted"] = "制作的", ["Fabricated"] = "制造的", ["Manufactured"] = "制造的",
+["Produced"] = "生产的", ["Generated"] = "生成的", ["Yielded"] = "产生的", ["Provided"] = "提供的",
+["Supplied"] = "供应的", ["Furnished"] = "提供的", ["Equipped"] = "装备的", ["Outfitted"] = "配备的",
+["Prepared"] = "准备好的", ["Ready"] = "准备好的", ["Set"] = "设置好的", ["Arranged"] = "安排好的",
+["Organized"] = "组织好的", ["Ordered"] = "有序的", ["Sorted"] = "分类的", ["Classified"] = "分类的",
+["Categorized"] = "分类的", ["Grouped"] = "分组的", ["Batched"] = "批处理的", ["Processed"] = "处理的",
+["Handled"] = "处理的", ["Managed"] = "管理的", ["Administered"] = "管理的", ["Controlled"] = "控制的",
+["Regulated"] = "调节的", ["Governed"] = "统治的", ["Ruled"] = "统治的", ["Led"] = "领导的",
+["Guided"] = "指导的", ["Directed"] = "指导的", ["Steered"] = "引导的", ["Piloted"] = "驾驶的",
+["Navigated"] = "导航的", ["Sailed"] = "航行的", ["Flown"] = "飞行的", ["Driven"] = "驾驶的",
+["Ridden"] = "骑行的", ["Walked"] = "步行的", ["Ran"] = "跑步的", ["Jumped"] = "跳跃的",
+["Hopped"] = "跳跃的", ["Skipped"] = "跳过的", ["Leaped"] = "跳跃的", ["Bounded"] = "跳跃的",
+["Spring"] = "跳跃的", ["Bounced"] = "弹跳的", ["Rebounded"] = "反弹的", ["Reflected"] = "反射的",
+["Echoed"] = "回响的", ["Reverberated"] = "回响的", ["Resounded"] = "回响的", ["Sounded"] = "发声的",
+["Noised"] = "发出噪音的", ["Silenced"] = "静音的", ["Quieted"] = "安静的", ["Calmed"] = "平静的",
+["Soothing"] = "舒缓的", ["Relaxing"] = "放松的", ["Restful"] = "宁静的", ["Peaceful"] = "和平的",
+["Tranquil"] = "宁静的", ["Serene"] = "宁静的", ["Harmonious"] = "和谐的", ["Balanced"] = "平衡的",
+["Equilibrated"] = "平衡的", ["Stable"] = "稳定的", ["Steady"] = "稳定的", ["Fixed"] = "固定的",
+["Secure"] = "安全的", ["Safe"] = "安全的", ["Protected"] = "受保护的", ["Guarded"] = "守卫的",
+["Defended"] = "防御的", ["Shielded"] = "屏蔽的", ["Armored"] = "装甲的", ["Fortified"] = "加固的",
+["Strengthened"] = "加强的", ["Reinforced"] = "加强的", ["Supported"] = "支持的", ["Backed"] = "支持的",
+["Financed"] = "资助的", ["Funded"] = "资助的", ["Sponsored"] = "赞助的", ["Promoted"] = "推广的",
+["Marketed"] = "营销的", ["Advertised"] = "广告的", ["Publicized"] = "宣传的", ["Announced"] = "宣布的",
+["Declared"] = "声明的", ["Proclaimed"] = "宣布的", ["Broadcasted"] = "广播的", ["Streamed"] = "流媒体的",
+["Transmitted"] = "传输的", ["Sent"] = "发送的", ["Received"] = "接收的", ["Accepted"] = "接受的",
+["Rejected"] = "拒绝的", ["Denied"] = "否认的", ["Refused"] = "拒绝的", ["Declined"] = "拒绝的",
+["Ignored"] = "忽略的", ["Neglected"] = "忽视的", ["Forgotten"] = "忘记的", ["Remembered"] = "记住的",
+["Recalled"] = "回忆的", ["Reminded"] = "提醒的", ["Noticed"] = "注意到的", ["Observed"] = "观察到的",
+["Watched"] = "观看的", ["Looked"] = "看的", ["Seen"] = "看见的", ["Heard"] = "听到的",
+["Listened"] = "听的", ["Smelled"] = "闻到的", ["Tasted"] = "尝到的", ["Touched"] = "触摸的",
+["Felt"] = "感觉的", ["Sensed"] = "感知的", ["Perceived"] = "感知的", ["Detected"] = "检测到的",
+["Discovered"] = "发现的", ["Found"] = "找到的", ["Located"] = "定位的", ["Positioned"] = "定位的",
+["Placed"] = "放置的", ["Set"] = "设置的", ["Put"] = "放的", ["Laid"] = "放置的",
+["Stood"] = "站立的", ["Sat"] = "坐的", ["Lay"] = "躺的", ["Rested"] = "休息的",
+["Slept"] = "睡觉的", ["Dreamed"] = "做梦的", ["Awakened"] = "觉醒的", ["Woke"] = "醒来的",
+["Rose"] = "上升的", ["Got"] = "得到的", ["Became"] = "成为的", ["Turned"] = "变成的",
+["Changed"] = "改变的", ["Transformed"] = "转变的", ["Converted"] = "转换的", ["Shifted"] = "转移的",
+["Moved"] = "移动的", ["Traveled"] = "旅行的", ["Journeyed"] = "旅行的", ["Voyaged"] = "航行的",
+["Sailed"] = "航行的", ["Flew"] = "飞行的", ["Drove"] = "驾驶的", ["Rode"] = "骑行的",
+["Walked"] = "步行的", ["Ran"] = "跑步的", ["Jogged"] = "慢跑的", ["Sprinted"] = "冲刺的",
+["Dashed"] = "猛冲的", ["Raced"] = "比赛的", ["Competed"] = "竞争的", ["Contested"] = "竞争的",
+["Challenged"] = "挑战的", ["Opposed"] = "反对的", ["Resisted"] = "抵抗的", ["Fought"] = "战斗的",
+["Battled"] = "战斗的", ["Struggled"] = "斗争的", ["Strived"] = "努力的", ["Tried"] = "尝试的",
+["Attempted"] = "试图的", ["Endeavored"] = "努力的", ["Sought"] = "寻求的", ["Searched"] = "搜索的",
+["Hunted"] = "狩猎的", ["Pursued"] = "追求的", ["Chased"] = "追逐的", ["Followed"] = "跟随的",
+["Trailed"] = "跟踪的", ["Tracked"] = "跟踪的", ["Stalked"] = "跟踪的", ["Hid"] = "隐藏的",
+["Concealed"] = "隐藏的", ["Covered"] = "覆盖的", ["Masked"] = "掩盖的", ["Disguised"] = "伪装的",
+["Camouflaged"] = "伪装的", ["Blended"] = "混合的", ["Merged"] = "合并的", ["Combined"] = "结合的",
+["United"] = "联合的", ["Joined"] = "加入的", ["Connected"] = "连接的", ["Linked"] = "链接的",
+["Attached"] = "附加的", ["Fastened"] = "固定的", ["Secured"] = "固定的", ["Locked"] = "锁定的",
+["Unlocked"] = "解锁的", ["Opened"] = "打开的", ["Closed"] = "关闭的", ["Shut"] = "关闭的",
+["Sealed"] = "密封的", ["Encrypted"] = "加密的", ["Decrypted"] = "解密的", ["Encoded"] = "编码的",
+["Decoded"] = "解码的", ["Translated"] = "翻译的", ["Interpreted"] = "解释的", ["Explained"] = "解释的",
+["Clarified"] = "澄清的", ["Simplified"] = "简化的", ["Complicated"] = "复杂化的", ["Confused"] = "混淆的",
+["Bewildered"] = "困惑的", ["Perplexed"] = "困惑的", ["Puzzled"] = "困惑的", ["Mystified"] = "神秘的",
+["Enigmatized"] = "神秘的", ["Crypticized"] = "神秘的", ["Secreted"] = "隐藏的", ["Hidden"] = "隐藏的",
+["Concealed"] = "隐藏的", ["Covered"] = "覆盖的", ["Masked"] = "掩盖的", ["Disguised"] = "伪装的",
+["Camouflaged"] = "伪装的", ["Invisiblized"] = "隐形的", ["Visiblized"] = "可见的", ["Seen"] = "看见的",
+["Observed"] = "观察到的", ["Noticed"] = "注意到的", ["Detected"] = "检测到的", ["Found"] = "发现的",
+["Discovered"] = "发现的", ["Uncovered"] = "揭露的", ["Revealed"] = "揭示的", ["Exposed"] = "暴露的",
+["Shown"] = "显示的", ["Displayed"] = "显示的", ["Exhibited"] = "展示的", ["Presented"] = "呈现的",
+["Demonstrated"] = "演示的", ["Illustrated"] = "说明的", ["Exemplified"] = "例证的", ["Represented"] = "代表的",
+["Symbolized"] = "象征的", ["Signified"] = "表示的", ["Meant"] = "意味的", ["Intended"] = "打算的",
+["Planned"] = "计划的", ["Designed"] = "设计的", ["Engineered"] = "设计的", ["Constructed"] = "建造的",
+["Built"] = "建造的", ["Made"] = "制造的", ["Created"] = "创造的", ["Formed"] = "形成的",
+["Shaped"] = "成型的", ["Molded"] = "成型的", ["Crafted"] = "制作的", ["Fabricated"] = "制造的",
+["Manufactured"] = "制造的", ["Produced"] = "生产的", ["Generated"] = "生成的", ["Yielded"] = "产生的",
+["Provided"] = "提供的", ["Supplied"] = "供应的", ["Furnished"] = "提供的", ["Equipped"] = "装备的",
+["Outfitted"] = "配备的", ["Prepared"] = "准备好的", ["Ready"] = "准备好的", ["Set"] = "设置好的",
+["Arranged"] = "安排好的", ["Organized"] = "组织好的", ["Ordered"] = "有序的", ["Sorted"] = "分类的",
+["Classified"] = "分类的", ["Categorized"] = "分类的", ["Grouped"] = "分组的", ["Batched"] = "批处理的",
+["Processed"] = "处理的", ["Handled"] = "处理的", ["Managed"] = "管理的", ["Administered"] = "管理的",
+["Controlled"] = "控制的", ["Regulated"] = "调节的", ["Governed"] = "统治的", ["Ruled"] = "统治的",
+["Led"] = "领导的", ["Guided"] = "指导的", ["Directed"] = "指导的", ["Steered"] = "引导的",
+["Piloted"] = "驾驶的", ["Navigated"] = "导航的", ["Sailed"] = "航行的", ["Flown"] = "飞行的",
+["Driven"] = "驾驶的", ["Ridden"] = "骑行的", ["Walked"] = "步行的", ["Ran"] = "跑步的",
+["Jumped"] = "跳跃的", ["Hopped"] = "跳跃的", ["Skipped"] = "跳过的", ["Leaped"] = "跳跃的",
+["Bounded"] = "跳跃的", ["Spring"] = "跳跃的", ["Bounced"] = "弹跳的", ["Rebounded"] = "反弹的",
+["Reflected"] = "反射的", ["Echoed"] = "回响的", ["Reverberated"] = "回响的", ["Resounded"] = "回响的",
+["Sounded"] = "发声的", ["Noised"] = "发出噪音的", ["Silenced"] = "静音的", ["Quieted"] = "安静的",
+["Calmed"] = "平静的", ["Soothing"] = "舒缓的", ["Relaxing"] = "放松的", ["Restful"] = "宁静的",
+["Peaceful"] = "和平的", ["Tranquil"] = "宁静的", ["Serene"] = "宁静的", ["Harmonious"] = "和谐的",
+["Balanced"] = "平衡的", ["Equilibrated"] = "平衡的", ["Stable"] = "稳定的", ["Steady"] = "稳定的",
+["Fixed"] = "固定的", ["Secure"] = "安全的", ["Safe"] = "安全的", ["Protected"] = "受保护的",
+["Guarded"] = "守卫的", ["Defended"] = "防御的", ["Shielded"] = "屏蔽的", ["Armored"] = "装甲的",
+["Fortified"] = "加固的", ["Strengthened"] = "加强的", ["Reinforced"] = "加强的", ["Supported"] = "支持的",
+["Backed"] = "支持的", ["Financed"] = "资助的", ["Funded"] = "资助的", ["Sponsored"] = "赞助的",
+["Promoted"] = "推广的", ["Marketed"] = "营销的", ["Advertised"] = "广告的", ["Publicized"] = "宣传的",
+["Announced"] = "宣布的", ["Declared"] = "声明的", ["Proclaimed"] = "宣布的", ["Broadcasted"] = "广播的",
+["Streamed"] = "流媒体的", ["Transmitted"] = "传输的", ["Sent"] = "发送的", ["Received"] = "接收的",
+["Accepted"] = "接受的", ["Rejected"] = "拒绝的", ["Denied"] = "否认的", ["Refused"] = "拒绝的",
+["Declined"] = "拒绝的", ["Ignored"] = "忽略的", ["Neglected"] = "忽视的", ["Forgotten"] = "忘记的",
+["Remembered"] = "记住的", ["Recalled"] = "回忆的", ["Reminded"] = "提醒的", ["Noticed"] = "注意到的",
+["Observed"] = "观察到的", ["Watched"] = "观看的", ["Looked"] = "看的", ["Seen"] = "看见的",
+["Heard"] = "听到的", ["Listened"] = "听的", ["Smelled"] = "闻到的", ["Tasted"] = "尝到的",
+["Touched"] = "触摸的", ["Felt"] = "感觉的", ["Sensed"] = "感知的", ["Perceived"] = "感知的",
+["Detected"] = "检测到的", ["Discovered"] = "发现的", ["Found"] = "找到的", ["Located"] = "定位的",
+["Positioned"] = "定位的", ["Placed"] = "放置的", ["Set"] = "设置的", ["Put"] = "放的",
+["Laid"] = "放置的", ["Stood"] = "站立的", ["Sat"] = "坐的", ["Lay"] = "躺的",
+["Rested"] = "休息的", ["Slept"] = "睡觉的", ["Dreamed"] = "做梦的", ["Awakened"] = "觉醒的",
+["Woke"] = "醒来的", ["Rose"] = "上升的", ["Got"] = "得到的", ["Became"] = "成为的",
+["Turned"] = "变成的", ["Changed"] = "改变的", ["Transformed"] = "转变的", ["Converted"] = "转换的",
+["Shifted"] = "转移的", ["Moved"] = "移动的", ["Traveled"] = "旅行的", ["Journeyed"] = "旅行的",
+["Voyaged"] = "航行的", ["Sailed"] = "航行的", ["Flew"] = "飞行的", ["Drove"] = "驾驶的",
+["Rode"] = "骑行的", ["Walked"] = "步行的", ["Ran"] = "跑步的", ["Jogged"] = "慢跑的",
+["Sprinted"] = "冲刺的", ["Dashed"] = "猛冲的", ["Raced"] = "比赛的", ["Competed"] = "竞争的",
+["Contested"] = "竞争的", ["Challenged"] = "挑战的", ["Opposed"] = "反对的", ["Resisted"] = "抵抗的",
+["Fought"] = "战斗的", ["Battled"] = "战斗的", ["Struggled"] = "斗争的", ["Strived"] = "努力的",
+["Tried"] = "尝试的", ["Attempted"] = "试图的", ["Endeavored"] = "努力的", ["Sought"] = "寻求的",
+["Searched"] = "搜索的", ["Hunted"] = "狩猎的", ["Pursued"] = "追求的", ["Chased"] = "追逐的",
+["Followed"] = "跟随的", ["Trailed"] = "跟踪的", ["Tracked"] = "跟踪的", ["Stalked"] = "跟踪的",
+["Hid"] = "隐藏的", ["Concealed"] = "隐藏的", ["Covered"] = "覆盖的", ["Masked"] = "掩盖的",
+["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的", ["Blended"] = "混合的", ["Merged"] = "合并的",
+["Combined"] = "结合的", ["United"] = "联合的", ["Joined"] = "加入的", ["Connected"] = "连接的",
+["Linked"] = "链接的", ["Attached"] = "附加的", ["Fastened"] = "固定的", ["Secured"] = "固定的",
+["Locked"] = "锁定的", ["Unlocked"] = "解锁的", ["Opened"] = "打开的", ["Closed"] = "关闭的",
+["Shut"] = "关闭的", ["Sealed"] = "密封的", ["Encrypted"] = "加密的", ["Decrypted"] = "解密的",
+["Encoded"] = "编码的", ["Decoded"] = "解码的", ["Translated"] = "翻译的", ["Interpreted"] = "解释的",
+["Explained"] = "解释的", ["Clarified"] = "澄清的", ["Simplified"] = "简化的", ["Complicated"] = "复杂化的",
+["Confused"] = "混淆的", ["Bewildered"] = "困惑的", ["Perplexed"] = "困惑的", ["Puzzled"] = "困惑的",
+["Mystified"] = "神秘的", ["Enigmatized"] = "神秘的", ["Crypticized"] = "神秘的", ["Secreted"] = "隐藏的",
+["Hidden"] = "隐藏的", ["Concealed"] = "隐藏的", ["Covered"] = "覆盖的", ["Masked"] = "掩盖的",
+["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的", ["Invisiblized"] = "隐形的", ["Visiblized"] = "可见的",
+["Seen"] = "看见的", ["Observed"] = "观察到的", ["Noticed"] = "注意到的", ["Detected"] = "检测到的",
+["Found"] = "发现的", ["Discovered"] = "发现的", ["Uncovered"] = "揭露的", ["Revealed"] = "揭示的",
+["Exposed"] = "暴露的", ["Shown"] = "显示的", ["Displayed"] = "显示的", ["Exhibited"] = "展示的",
+["Presented"] = "呈现的", ["Demonstrated"] = "演示的", ["Illustrated"] = "说明的", ["Exemplified"] = "例证的",
+["Represented"] = "代表的", ["Symbolized"] = "象征的", ["Signified"] = "表示的", ["Meant"] = "意味的",
+["Intended"] = "打算的", ["Planned"] = "计划的", ["Designed"] = "设计的", ["Engineered"] = "设计的",
+["Constructed"] = "建造的", ["Built"] = "建造的", ["Made"] = "制造的", ["Created"] = "创造的",
+["Formed"] = "形成的", ["Shaped"] = "成型的", ["Molded"] = "成型的", ["Crafted"] = "制作的",
+["Fabricated"] = "制造的", ["Manufactured"] = "制造的", ["Produced"] = "生产的", ["Generated"] = "生成的",
+["Yielded"] = "产生的", ["Provided"] = "提供的", ["Supplied"] = "供应的", ["Furnished"] = "提供的",
+["Equipped"] = "装备的", ["Outfitted"] = "配备的", ["Prepared"] = "准备好的", ["Ready"] = "准备好的",
+["Set"] = "设置好的", ["Arranged"] = "安排好的", ["Organized"] = "组织好的", ["Ordered"] = "有序的",
+["Sorted"] = "分类的", ["Classified"] = "分类的", ["Categorized"] = "分类的", ["Grouped"] = "分组的",
+["Batched"] = "批处理的", ["Processed"] = "处理的", ["Handled"] = "处理的", ["Managed"] = "管理的",
+["Administered"] = "管理的", ["Controlled"] = "控制的", ["Regulated"] = "调节的", ["Governed"] = "统治的",
+["Ruled"] = "统治的", ["Led"] = "领导的", ["Guided"] = "指导的", ["Directed"] = "指导的",
+["Steered"] = "引导的", ["Piloted"] = "驾驶的", ["Navigated"] = "导航的", ["Sailed"] = "航行的",
+["Flown"] = "飞行的", ["Driven"] = "驾驶的", ["Ridden"] = "骑行的", ["Walked"] = "步行的",
+["Ran"] = "跑步的", ["Jumped"] = "跳跃的", ["Hopped"] = "跳跃的", ["Skipped"] = "跳过的",
+["Leaped"] = "跳跃的", ["Bounded"] = "跳跃的", ["Spring"] = "跳跃的", ["Bounced"] = "弹跳的",
+["Rebounded"] = "反弹的", ["Reflected"] = "反射的", ["Echoed"] = "回响的", ["Reverberated"] = "回响的",
+["Resounded"] = "回响的", ["Sounded"] = "发声的", ["Noised"] = "发出噪音的", ["Silenced"] = "静音的",
+["Quieted"] = "安静的", ["Calmed"] = "平静的", ["Soothing"] = "舒缓的", ["Relaxing"] = "放松的",
+["Restful"] = "宁静的", ["Peaceful"] = "和平的", ["Tranquil"] = "宁静的", ["Serene"] = "宁静的",
+["Harmonious"] = "和谐的", ["Balanced"] = "平衡的", ["Equilibrated"] = "平衡的", ["Stable"] = "稳定的",
+["Steady"] = "稳定的", ["Fixed"] = "固定的", ["Secure"] = "安全的", ["Safe"] = "安全的",
+["Protected"] = "受保护的", ["Guarded"] = "守卫的", ["Defended"] = "防御的", ["Shielded"] = "屏蔽的",
+["Armored"] = "装甲的", ["Fortified"] = "加固的", ["Strengthened"] = "加强的", ["Reinforced"] = "加强的",
+["Supported"] = "支持的", ["Backed"] = "支持的", ["Financed"] = "资助的", ["Funded"] = "资助的",
+["Sponsored"] = "赞助的", ["Promoted"] = "推广的", ["Marketed"] = "营销的", ["Advertised"] = "广告的",
+["Publicized"] = "宣传的", ["Announced"] = "宣布的", ["Declared"] = "声明的", ["Proclaimed"] = "宣布的",
+["Broadcasted"] = "广播的", ["Streamed"] = "流媒体的", ["Transmitted"] = "传输的", ["Sent"] = "发送的",
+["Received"] = "接收的", ["Accepted"] = "接受的", ["Rejected"] = "拒绝的", ["Denied"] = "否认的",
+["Refused"] = "拒绝的", ["Declined"] = "拒绝的", ["Ignored"] = "忽略的", ["Neglected"] = "忽视的",
+["Forgotten"] = "忘记的", ["Remembered"] = "记住的", ["Recalled"] = "回忆的", ["Reminded"] = "提醒的",
+["Noticed"] = "注意到的", ["Observed"] = "观察到的", ["Watched"] = "观看的", ["Looked"] = "看的",
+["Seen"] = "看见的", ["Heard"] = "听到的", ["Listened"] = "听的", ["Smelled"] = "闻到的",
+["Tasted"] = "尝到的", ["Touched"] = "触摸的", ["Felt"] = "感觉的", ["Sensed"] = "感知的",
+["Perceived"] = "感知的", ["Detected"] = "检测到的", ["Discovered"] = "发现的", ["Found"] = "找到的",
+["Located"] = "定位的", ["Positioned"] = "定位的", ["Placed"] = "放置的", ["Set"] = "设置的",
+["Put"] = "放的", ["Laid"] = "放置的", ["Stood"] = "站立的", ["Sat"] = "坐的",
+["Lay"] = "躺的", ["Rested"] = "休息的", ["Slept"] = "睡觉的", ["Dreamed"] = "做梦的",
+["Awakened"] = "觉醒的", ["Woke"] = "醒来的", ["Rose"] = "上升的", ["Got"] = "得到的",
+["Became"] = "成为的", ["Turned"] = "变成的", ["Changed"] = "改变的", ["Transformed"] = "转变的",
+["Converted"] = "转换的", ["Shifted"] = "转移的", ["Moved"] = "移动的", ["Traveled"] = "旅行的",
+["Journeyed"] = "旅行的", ["Voyaged"] = "航行的", ["Sailed"] = "航行的", ["Flew"] = "飞行的",
+["Drove"] = "驾驶的", ["Rode"] = "骑行的", ["Walked"] = "步行的", ["Ran"] = "跑步的",
+["Jogged"] = "慢跑的", ["Sprinted"] = "冲刺的", ["Dashed"] = "猛冲的", ["Raced"] = "比赛的",
+["Competed"] = "竞争的", ["Contested"] = "竞争的", ["Challenged"] = "挑战的", ["Opposed"] = "反对的",
+["Resisted"] = "抵抗的", ["Fought"] = "战斗的", ["Battled"] = "战斗的", ["Struggled"] = "斗争的",
+["Strived"] = "努力的", ["Tried"] = "尝试的", ["Attempted"] = "试图的", ["Endeavored"] = "努力的",
+["Sought"] = "寻求的", ["Searched"] = "搜索的", ["Hunted"] = "狩猎的", ["Pursued"] = "追求的",
+["Chased"] = "追逐的", ["Followed"] = "跟随的", ["Trailed"] = "跟踪的", ["Tracked"] = "跟踪的",
+["Stalked"] = "跟踪的", ["Hid"] = "隐藏的", ["Concealed"] = "隐藏的", ["Covered"] = "覆盖的",
+["Masked"] = "掩盖的", ["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的", ["Blended"] = "混合的",
+["Merged"] = "合并的", ["Combined"] = "结合的", ["United"] = "联合的", ["Joined"] = "加入的",
+["Connected"] = "连接的", ["Linked"] = "链接的", ["Attached"] = "附加的", ["Fastened"] = "固定的",
+["Secured"] = "固定的", ["Locked"] = "锁定的", ["Unlocked"] = "解锁的", ["Opened"] = "打开的",
+["Closed"] = "关闭的", ["Shut"] = "关闭的", ["Sealed"] = "密封的", ["Encrypted"] = "加密的",
+["Decrypted"] = "解密的", ["Encoded"] = "编码的", ["Decoded"] = "解码的", ["Translated"] = "翻译的",
+["Interpreted"] = "解释的", ["Explained"] = "解释的", ["Clarified"] = "澄清的", ["Simplified"] = "简化的",
+["Complicated"] = "复杂化的", ["Confused"] = "混淆的", ["Bewildered"] = "困惑的", ["Perplexed"] = "困惑的",
+["Puzzled"] = "困惑的", ["Mystified"] = "神秘的", ["Enigmatized"] = "神秘的", ["Crypticized"] = "神秘的",
+["Secreted"] = "隐藏的", ["Hidden"] = "隐藏的", ["Concealed"] = "隐藏的", ["Covered"] = "覆盖的",
+["Masked"] = "掩盖的", ["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的", ["Invisiblized"] = "隐形的",
+["Visiblized"] = "可见的", ["Seen"] = "看见的", ["Observed"] = "观察到的", ["Noticed"] = "注意到的",
+["Detected"] = "检测到的", ["Found"] = "发现的", ["Discovered"] = "发现的", ["Uncovered"] = "揭露的",
+["Revealed"] = "揭示的", ["Exposed"] = "暴露的", ["Shown"] = "显示的", ["Displayed"] = "显示的",
+["Exhibited"] = "展示的", ["Presented"] = "呈现的", ["Demonstrated"] = "演示的", ["Illustrated"] = "说明的",
+["Exemplified"] = "例证的", ["Represented"] = "代表的", ["Symbolized"] = "象征的", ["Signified"] = "表示的",
+["Meant"] = "意味的", ["Intended"] = "打算的", ["Planned"] = "计划的", ["Designed"] = "设计的",
+["Engineered"] = "设计的", ["Constructed"] = "建造的", ["Built"] = "建造的", ["Made"] = "制造的",
+["Created"] = "创造的", ["Formed"] = "形成的", ["Shaped"] = "成型的", ["Molded"] = "成型的",
+["Crafted"] = "制作的", ["Fabricated"] = "制造的", ["Manufactured"] = "制造的", ["Produced"] = "生产的",
+["Generated"] = "生成的", ["Yielded"] = "产生的", ["Provided"] = "提供的", ["Supplied"] = "供应的",
+["Furnished"] = "提供的", ["Equipped"] = "装备的", ["Outfitted"] = "配备的", ["Prepared"] = "准备好的",
+["Ready"] = "准备好的", ["Set"] = "设置好的", ["Arranged"] = "安排好的", ["Organized"] = "组织好的",
+["Ordered"] = "有序的", ["Sorted"] = "分类的", ["Classified"] = "分类的", ["Categorized"] = "分类的",
+["Grouped"] = "分组的", ["Batched"] = "批处理的", ["Processed"] = "处理的", ["Handled"] = "处理的",
+["Managed"] = "管理的", ["Administered"] = "管理的", ["Controlled"] = "控制的", ["Regulated"] = "调节的",
+["Governed"] = "统治的", ["Ruled"] = "统治的", ["Led"] = "领导的", ["Guided"] = "指导的",
+["Directed"] = "指导的", ["Steered"] = "引导的", ["Piloted"] = "驾驶的", ["Navigated"] = "导航的",
+["Sailed"] = "航行的", ["Flown"] = "飞行的", ["Driven"] = "驾驶的", ["Ridden"] = "骑行的",
+["Walked"] = "步行的", ["Ran"] = "跑步的", ["Jumped"] = "跳跃的", ["Hopped"] = "跳跃的",
+["Skipped"] = "跳过的", ["Leaped"] = "跳跃的", ["Bounded"] = "跳跃的", ["Spring"] = "跳跃的",
+["Bounced"] = "弹跳的", ["Rebounded"] = "反弹的", ["Reflected"] = "反射的", ["Echoed"] = "回响的",
+["Reverberated"] = "回响的", ["Resounded"] = "回响的", ["Sounded"] = "发声的", ["Noised"] = "发出噪音的",
+["Silenced"] = "静音的", ["Quieted"] = "安静的", ["Calmed"] = "平静的", ["Soothing"] = "舒缓的",
+["Relaxing"] = "放松的", ["Restful"] = "宁静的", ["Peaceful"] = "和平的", ["Tranquil"] = "宁静的",
+["Serene"] = "宁静的", ["Harmonious"] = "和谐的", ["Balanced"] = "平衡的", ["Equilibrated"] = "平衡的",
+["Stable"] = "稳定的", ["Steady"] = "稳定的", ["Fixed"] = "固定的", ["Secure"] = "安全的",
+["Safe"] = "安全的", ["Protected"] = "受保护的", ["Guarded"] = "守卫的", ["Defended"] = "防御的",
+["Shielded"] = "屏蔽的", ["Armored"] = "装甲的", ["Fortified"] = "加固的", ["Strengthened"] = "加强的",
+["Reinforced"] = "加强的", ["Supported"] = "支持的", ["Backed"] = "支持的", ["Financed"] = "资助的",
+["Funded"] = "资助的", ["Sponsored"] = "赞助的", ["Promoted"] = "推广的", ["Marketed"] = "营销的",
+["Advertised"] = "广告的", ["Publicized"] = "宣传的", ["Announced"] = "宣布的", ["Declared"] = "声明的",
+["Proclaimed"] = "宣布的", ["Broadcasted"] = "广播的", ["Streamed"] = "流媒体的", ["Transmitted"] = "传输的",
+["Sent"] = "发送的", ["Received"] = "接收的", ["Accepted"] = "接受的", ["Rejected"] = "拒绝的",
+["Denied"] = "否认的", ["Refused"] = "拒绝的", ["Declined"] = "拒绝的", ["Ignored"] = "忽略的",
+["Neglected"] = "忽视的", ["Forgotten"] = "忘记的", ["Remembered"] = "记住的", ["Recalled"] = "回忆的",
+["Reminded"] = "提醒的", ["Noticed"] = "注意到的", ["Observed"] = "观察到的", ["Watched"] = "观看的",
+["Looked"] = "看的", ["Seen"] = "看见的", ["Heard"] = "听到的", ["Listened"] = "听的",
+["Smelled"] = "闻到的", ["Tasted"] = "尝到的", ["Touched"] = "触摸的", ["Felt"] = "感觉的",
+["Sensed"] = "感知的", ["Perceived"] = "感知的", ["Detected"] = "检测到的", ["Discovered"] = "发现的",
+["Found"] = "找到的", ["Located"] = "定位的", ["Positioned"] = "定位的", ["Placed"] = "放置的",
+["Set"] = "设置的", ["Put"] = "放的", ["Laid"] = "放置的", ["Stood"] = "站立的",
+["Sat"] = "坐的", ["Lay"] = "躺的", ["Rested"] = "休息的", ["Slept"] = "睡觉的",
+["Dreamed"] = "做梦的", ["Awakened"] = "觉醒的", ["Woke"] = "醒来的", ["Rose"] = "上升的",
+["Got"] = "得到的", ["Became"] = "成为的", ["Turned"] = "变成的", ["Changed"] = "改变的",
+["Transformed"] = "转变的", ["Converted"] = "转换的", ["Shifted"] = "转移的", ["Moved"] = "移动的",
+["Traveled"] = "旅行的", ["Journeyed"] = "旅行的", ["Voyaged"] = "航行的", ["Sailed"] = "航行的",
+["Flew"] = "飞行的", ["Drove"] = "驾驶的", ["Rode"] = "骑行的", ["Walked"] = "步行的",
+["Ran"] = "跑步的", ["Jogged"] = "慢跑的", ["Sprinted"] = "冲刺的", ["Dashed"] = "猛冲的",
+["Raced"] = "比赛的", ["Competed"] = "竞争的", ["Contested"] = "竞争的", ["Challenged"] = "挑战的",
+["Opposed"] = "反对的", ["Resisted"] = "抵抗的", ["Fought"] = "战斗的", ["Battled"] = "战斗的",
+["Struggled"] = "斗争的", ["Strived"] = "努力的", ["Tried"] = "尝试的", ["Attempted"] = "试图的",
+["Endeavored"] = "努力的", ["Sought"] = "寻求的", ["Searched"] = "搜索的", ["Hunted"] = "狩猎的",
+["Pursued"] = "追求的", ["Chased"] = "追逐的", ["Followed"] = "跟随的", ["Trailed"] = "跟踪的",
+["Tracked"] = "跟踪的", ["Stalked"] = "跟踪的", ["Hid"] = "隐藏的", ["Concealed"] = "隐藏的",
+["Covered"] = "覆盖的", ["Masked"] = "掩盖的", ["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的",
+["Blended"] = "混合的", ["Merged"] = "合并的", ["Combined"] = "结合的", ["United"] = "联合的",
+["Joined"] = "加入的", ["Connected"] = "连接的", ["Linked"] = "链接的", ["Attached"] = "附加的",
+["Fastened"] = "固定的", ["Secured"] = "固定的", ["Locked"] = "锁定的", ["Unlocked"] = "解锁的",
+["Opened"] = "打开的", ["Closed"] = "关闭的", ["Shut"] = "关闭的", ["Sealed"] = "密封的",
+["Encrypted"] = "加密的", ["Decrypted"] = "解密的", ["Encoded"] = "编码的", ["Decoded"] = "解码的",
+["Translated"] = "翻译的", ["Interpreted"] = "解释的", ["Explained"] = "解释的", ["Clarified"] = "澄清的",
+["Simplified"] = "简化的", ["Complicated"] = "复杂化的", ["Confused"] = "混淆的", ["Bewildered"] = "困惑的",
+["Perplexed"] = "困惑的", ["Puzzled"] = "困惑的", ["Mystified"] = "神秘的", ["Enigmatized"] = "神秘的",
+["Crypticized"] = "神秘的", ["Secreted"] = "隐藏的", ["Hidden"] = "隐藏的", ["Concealed"] = "隐藏的",
+["Covered"] = "覆盖的", ["Masked"] = "掩盖的", ["Disguised"] = "伪装的", ["Camouflaged"] = "伪装的",
+["Invisiblized"] = "隐形的", ["Visiblized"] = "可见的", ["Seen"] = "看见的", ["Observed"] = "观察到的",
+["Noticed"] = "注意到的", ["Detected"] = "检测到的", ["Found"] = "发现的", ["Discovered"] = "发现的",
+["Uncovered"] = "揭露的", ["Revealed"] = "揭示的", ["Exposed"] = "暴露的", ["Shown"] = "显示的",
+["Displayed"] = "显示的", ["Exhibited"] = "展示的", ["Presented"] = "呈现的", ["Demonstrated"] = "演示的",
+["Illustrated"] = "说明的", ["Exemplified"] = "例证的", ["Represented"] = "代表的", ["Symbolized"] = "象征的",
+["Signified"] = "表示的", ["Meant"] = "意味的", ["Intended"] = "打算的", ["Planned"] = "计划的",
+["Designed"] = "设计的", ["Engineered"] = "设计的", ["Constructed"] = "建造的", ["Built"] = "建造的",
+["Made"] = "制造的", ["Created"] = "创造的", ["Formed"] = "形成的", ["Shaped"] = "成型的",
+["Molded"] = "成型的", ["Crafted"] = "制作的", ["Fabricated"] = "制造的", ["Manufactured"] = "制造的",
+["Produced"] = "生产的", ["Generated"] = "生成的", ["Yielded"] = "产生的", ["Provided"] = "提供的",
+["Supplied"] = "供应的", ["Furnished"] = "提供的", ["Equipped"] = "装备的", ["Outfitted"] = "配备的",
+["Prepared"] = "准备好的", ["Ready"] = "准备好的", ["Set"] = "设置好的", ["Arranged"] = "安排好的",
+["Organized"] = "组织好的", ["Ordered"] = "有序的", ["Sorted"] = "分类的", ["Classified"] = "分类的",
+["Categorized"] = "分类的", ["Grouped"] = "分组的", ["Batched"] = "批处理的", ["Processed"] = "处理的",
+["Handled"] = "处理的", ["Managed"] = "管理的", ["Administered"] = "管理的", ["Controlled"] = "控制的",
+["Regulated"] = "调节的", ["Governed"] = "统治的", ["Ruled"] = "统治的", ["Led"] = "领导的",
+["Guided"] = "指导的", ["Directed"] = "指导的", ["Steered"] = "引导的", ["Piloted"] = "驾驶的",
+["Navigated"] = "导航的", ["Sailed"] = "航行的", ["Flown"] = "飞行的", ["Driven"] = "驾驶的",
+["Ridden"] = "骑行的", ["Walked"] = "步行的", ["Ran"] = "跑步的", ["Jumped"] = "跳跃的",
+["Hopped"] = "跳跃的", ["Skipped"] = "跳过的", ["Leaped"] = "跳跃的", ["Bounded"] = "跳跃的",
+["Spring"] = "跳跃的", ["Bounced"] = "弹跳的", ["Rebounded"] = "反弹的", ["Reflected"] = "反射的",
+["Echoed"] = "回响的", ["Reverberated"] = "回响的", ["Resounded"] = "回响的", ["Sounded"] = "发声的",
+["Noised"] = "发出噪音的", ["Silenced"] = "静音的", ["Quieted"] = "安静的", ["Calmed"] = "平静的",
+["Soothing"] = "舒缓的", ["Relaxing"] = "放松的", ["Restful"] = "宁静的", ["Peaceful"] = "和平的",
+["Tranquil"] = "宁静的", ["Serene"] = "宁静的", ["Harmonious"] = "和谐的", ["Balanced"] = "平衡的",
+["Equilibrated"] = "平衡的", ["Stable"] = "稳定的", ["Steady"] = "稳定的", ["Fixed"] = "固定的",
+["Secure"] = "安全的", ["Safe"] = "安全的", ["Protected"] = "受保护的", ["Guarded"] = "守卫的",
+["Defended"] = "防御的", ["Shielded"] = "屏蔽的", ["Armored"] = "装甲的", ["Fortified"] = "加固的",
+["Strengthened"] = "加强的", ["Reinforced"] = "加强的", ["Supported"] = "支持的", ["Backed"] = "支持的",
+["Financed"] = "资助的", ["Funded"] = "资助的", ["Sponsored"] = "赞助的", ["Promoted"] = "推广的",
+["Marketed"] = "营销的", ["Advertised"] = "广告的", ["Publicized"] = "宣传的", ["Announced"] = "宣布的",
+["Declared"] = "声明的", ["Proclaimed"] = "宣布的", ["Broadcasted"] = "广播的", ["Streamed"] = "流媒体的",
+["Transmitted"] = "传输的", ["Sent"] = "发送的", ["Received"] = "接收的", ["Accepted"] = "接受的",
+["Rejected"] = "拒绝的", ["Denied"] = "否认的", ["Refused"] = "拒绝的", ["Declined"] = "拒绝的",
+["Ignored"] = "忽略的", ["Neglected"] = "忽视的", ["Forgotten"] = "忘记的", ["Remembered"] = "记住的",
+["Recalled"] = "回忆的", ["Reminded"] = "提醒的", ["Noticed"] = "注意到的", ["Observed"] = "观察到的",
+["Watched"] = "观看的", ["Looked"] = "看的", ["Seen"] = "看见的", ["Heard"] = "听到的",
+["Listened"] = "听的", ["Smelled"] = "闻到的", ["Tasted"] = "尝到的", ["Touched"] = "触摸的",
+["Felt"] = "感觉的", ["Sensed"] = "感知的", ["Perceived"] = "感知的", ["Detected"] = "检测到的",
+["Discovered"] = "发现的", ["Found"] = "找到的", ["Located"] = "定位的", ["Positioned"] = "定位的",
+["Placed"] = "放置的", ["Set"] = "设置的", ["Put"] = "放的", ["Laid"] = "放置的",
+["Stood"] = "站立的", ["Sat"] = "坐的", ["Lay"] = "躺的", ["Rested"] = "休息的",
+["Slept"] = "睡觉的", ["Dreamed"] = "做梦的", ["Awakened"] = "觉醒的", ["Woke"] = "醒来的",
+["Rose"] = "上升的", ["Got"] = "得到的", ["Became"] = "成为的", ["Turned"] = "变成的",
+["Changed"] = "改变的", ["Transformed"] = "转变的", ["Converted"] = "转换的", ["Shifted"] = "转移的",
+["Moved"] = "移动的", ["Traveled"] = "旅行的", ["Journeyed"] = "旅行的", ["Voyaged"] = "航行的",
+["Sailed"] = "航行的", ["Flew"] = "飞行的", ["Drove"] = "驾驶的", ["Rode"] = "骑行的",
+["Walked"] = "步行的", ["Ran"] = "跑步的", ["Jogged"] = "慢跑的", ["Sprinted"] = "冲刺的",
+["Dashed"] = "猛冲的", ["Raced"] = "比赛的", ["Competed"] = "竞争的", ["Contested"] = "竞争的",
+["Challenged"] = "挑战的", ["Opposed"] = "反对的", ["Resisted"] = "抵抗的", ["Fought"] = "战斗的",
+["Battled"] = "战斗的", ["Struggled"] = "斗争的", ["Strived"] = "努力的", ["Tried"] = "尝试的",
+["Attempted"] = "试图的", ["Endeavored"] = "努力的", ["Sought"] = "寻求的", ["Searched"] = "搜索的",
+["Hunted"] = "狩猎的", ["Pursued"] = "追求的", ["Chased"] = "追逐的", ["Followed"] = "跟随的",
+["Trailed"] = "跟踪的", ["Tracked"] = "跟踪的", ["Stalked"] = "跟踪的", ["Hid"] = "隐藏的",
+["Concealed"] = "隐藏的", ["Covered"] = "覆盖的", ["Masked"] = "掩盖的", ["Disguised"] = "伪装的",
+["Camouflaged"] = "伪装的", ["Blended"] = "混合的", ["Merged"] = "合并的", ["Combined"] = "结合的",
+["United"] = "联合的", ["Joined"] = "加入的", ["Connected"] = "连接的", ["Linked"] = "链接的",
+["Attached"] = "附加的", ["Fastened"] = "固定的", ["Secured"] = "固定的", ["Locked"] = "锁定的",
+["Unlocked"] = "解锁的", ["Opened"] = "打开的", ["Closed"] = "关闭的", ["Shut"] = "关闭的",
+["Sealed"] = "密封的", ["Encrypted"] = "加密的", ["Decrypted"] = "解密的", ["Encoded"] = "编码的",
+["Decoded"] = "解码的", ["Translated"] = "翻译的", ["Interpreted"] = "解释的", ["Explained"] = "解释的",
+["Clarified"] = "澄清的", ["Simplified"] = "简化的", ["Complicated"] = "复杂化的", ["Confused"] = "混淆的",
+["Bewildered"] = "困惑的", ["Perplexed"] = "困惑的", ["Puzzled"] = "困惑的", ["Mystified"] = "神秘的",
+["Enigmatized"] = "神秘的", ["Crypticized"] = "神秘的", ["Secreted"] = "隐藏的", ["Hidden"] = "隐藏的",
+["Concealed"] = "隐藏的", ["Covered"] = "覆盖的", ["Masked"] = "掩盖的", ["Disguised"] = "伪装的",
+["Camouflaged"] = "伪装的", ["Invisiblized"] = "隐形的", ["Visiblized"] = "可见的", ["Seen"] = "看见的",
+["Observed"] = "观察到的", ["Noticed"] = "注意到的", ["Detected"] = "检测到的", ["Found"] = "发现的",
+["Discovered"] = "发现的", ["Uncovered"] = "揭露的", ["Revealed"] = "揭示的", ["Exposed"] = "暴露的",
+["Shown"] = "显示的", ["Displayed"] = "显示的", ["Exhibited"] = "展示的", ["Presented"] = "呈现的",
+["Demonstrated"] = "演示的", ["Illustrated"] = "说明的", ["Exemplified"] = "例证的", ["Represented"] = "代表的",
+["Symbolized"] = "象征的", ["Signified"] = "表示的", ["Meant"] = "意味的", ["Intended"] = "打算的",
+["Planned"] = "计划的", ["Designed"] = "设计的", ["Engineered"] = "设计的", ["Constructed"] = "建造的",
+["Built"] = "建造的", ["Made"] = "制造的", ["Created"] = "创造的", ["Formed"] = "形成的",
+["Shaped"] = "成型的", ["Molded"] = "成型的", ["Crafted"] = "制作的", ["Fabricated"] = "制造的",
+["Manufactured"] = "制造的", ["Produced"] = "生产的", ["Generated"] = "生成的", ["Yielded"] = "产生的",
+["Provided"] = "提供的", ["Supplied"] = "供应的", ["Furnished"] = "提供的", ["Equipped"] = "装备的",
+["Outfitted"] = "配备的", ["Prepared"] = "准备好的", ["Ready"] = "准备好的", ["Set"] = "设置好的",
+["Arranged"] = "安排好的", ["Organized"] = "组织好的", ["Ordered"] = "有序的", ["Sorted"] = "分类的",
+["Classified"] = "分类的", ["Categorized"] = "分类的", ["Grouped"] = "分组的", ["Batched"] = "批处理的",
+["Processed"] = "处理的", ["Handled"] = "处理的", ["Managed"] = "管理的", ["Administered"] = "管理的",
+["Controlled"] = "控制的", ["Regulated"] = "调节的", ["Governed"] = "统治的", ["Ruled"] = "统治的",
+["Led"] = "领导的", ["Guided"] = "指导的", ["Directed"] = "指导的", ["Steered"] = "引导的",
+["Piloted"] = "驾驶的", ["Navigated"] = "导航的", ["Sailed"] = "航行的", ["Flown"] = "飞行的",
+["Driven"] = "驾驶的", ["Ridden"] = "骑行的", ["Walked"] = "步行的", ["Ran"] = "跑步的",
+["Jumped"] = "跳跃的", ["Hopped"] = "跳跃的", ["Skipped"] = "跳过的", ["Leaped"] = "跳跃的",
+["Bounded"] = "跳跃的", ["Spring"] = "跳跃的", ["Bounced"] = "弹跳的", ["Script"] = "脚本", ["Execute"] = "执行", ["Injection"] = "注入", ["Exploit"] = "外挂", ["Hack"] = "黑客",
+["Cheat"] = "作弊", ["Mod"] = "修改", ["Auto"] = "自动", ["Farm"] = "刷", ["Grind"] = "刷", ["Bot"] = "机器人",
+["Macro"] = "宏", ["Bypass"] = "绕过", ["Debug"] = "调试", ["Compile"] = "编译", ["Runtime"] = "运行时",
+["Lua"] = "Lua", ["Python"] = "Python", ["JavaScript"] = "JavaScript", ["Code"] = "代码", ["Function"] = "函数",
+["Variable"] = "变量", ["Array"] = "数组", ["String"] = "字符串", ["Number"] = "数字", ["Boolean"] = "布尔值",
+["Loop"] = "循环", ["If"] = "如果", ["Else"] = "否则", ["Then"] = "那么", ["End"] = "结束",
+
+-- Roblox游戏相关
+["Roblox"] = "罗布乐思", ["Studio"] = "工作室", ["Place"] = "地点", ["Game"] = "游戏", ["Avatar"] = "虚拟形象",
+["Character"] = "角色", ["Model"] = "模型", ["Part"] = "部件", ["Brick"] = "砖块", ["Tool"] = "工具",
+["Gear"] = "装备", ["Hat"] = "帽子", ["Shirt"] = "衬衫", ["Pants"] = "裤子", ["Face"] = "脸",
+["Animation"] = "动画", ["Sound"] = "声音", ["Camera"] = "相机", ["Lighting"] = "照明", ["Terrain"] = "地形",
+["UI"] = "用户界面", ["GUI"] = "图形界面", ["Frame"] = "框架", ["Button"] = "按钮", ["Text"] = "文本",
+["Image"] = "图像", ["Scrolling"] = "滚动", ["List"] = "列表", ["Grid"] = "网格", ["Panel"] = "面板",
+
+-- Roblox热门服务器
+["Adopt Me"] = "收养我吧", ["Brookhaven"] = "布鲁克海文", ["Piggy"] = "小猪", ["Murder Mystery"] = "谋杀之谜",
+["Tower of Hell"] = "地狱塔", ["Jailbreak"] = "越狱", ["MeepCity"] = "米普城", ["Royale High"] = "皇家高中",
+["Bloxburg"] = "布洛克堡", ["Arsenal"] = "兵工厂", ["Phantom Forces"] = "幻影力量", ["Mad City"] = "疯狂城市",
+["Vehicle Simulator"] = "载具模拟器", ["Shindo Life"] = "忍道人生", ["Pet Simulator"] = "宠物模拟器",
+["Dragon Adventures"] = "龙之冒险", ["Bee Swarm Simulator"] = "蜜蜂群模拟器", ["Tower Defense"] = "塔防",
+["Obby"] = "障碍赛", ["Tycoon"] = "大亨", ["Simulator"] = "模拟器", ["Roleplay"] = "角色扮演",
+["Survival"] = "生存", ["Fighting"] = "格斗", ["Racing"] = "赛车", ["Shooting"] = "射击",
+
+-- 脚本执行器
+["Executor"] = "执行器", ["Injector"] = "注入器", ["Synapse"] = "突触", ["Krnl"] = "内核",
+["Script-Ware"] = "脚本仓库", ["Fluxus"] = "磁通量", ["Comet"] = "彗星", ["Oxygen"] = "氧气",
+["Electron"] = "电子", ["Delta"] = "三角洲", ["Nihon"] = "日本", ["Valyse"] = "瓦利斯",
+["Calamari"] = "鱿鱼", ["Elysian"] = "极乐世界", ["Trigon"] = "三角", ["Hydrogen"] = "氢",
+["Arceus"] = "阿尔宙斯", ["Sentinel"] = "哨兵", ["SirHurt"] = "伤害先生", ["Vega"] = "织女星",
+["Furk"] = "福克", ["Turtle"] = "乌龟", ["Atlas"] = "阿特拉斯", ["Codex"] = "法典",
+
+-- 甩飞
+["Yeet"] = "甩飞", ["Throw"] = "投掷", ["Launch"] = "发射", ["Fling"] = "抛掷", ["Toss"] = "扔",
+["Hurl"] = "猛投", ["Catapult"] = "弹射", ["Slingshot"] = "弹弓", ["Projectile"] = "抛射物",
+["Velocity"] = "速度", ["Force"] = "力", ["Power"] = "力量", ["Boost"] = "助推", ["Propulsion"] = "推进",
+["Acceleration"] = "加速", ["Momentum"] = "动量", ["Trajectory"] = "轨迹", ["Arc"] = "弧线",
+["Distance"] = "距离", ["Height"] = "高度", ["Angle"] = "角度", ["Direction"] = "方向",
+
+-- 飞行
+["Fly"] = "飞行", ["Flight"] = "飞行", ["Flying"] = "飞行中", ["Hover"] = "悬浮", ["Glide"] = "滑翔",
+["Soar"] = "翱翔", ["Float"] = "漂浮", ["Levitate"] = "飘浮", ["Wings"] = "翅膀", ["Jetpack"] = "喷气背包",
+["Rocket"] = "火箭", ["Plane"] = "飞机", ["Helicopter"] = "直升机", ["Drone"] = "无人机",
+["Altitude"] = "海拔", ["Sky"] = "天空", ["Cloud"] = "云", ["Air"] = "空气", ["Wind"] = "风",
+["Speed"] = "速度", ["Control"] = "控制", ["Stabilize"] = "稳定", ["Land"] = "降落", ["Takeoff"] = "起飞",
+
+-- 修改
+["Modify"] = "修改", ["Change"] = "改变", ["Edit"] = "编辑", ["Alter"] = "改动", ["Adjust"] = "调整",
+["Tweak"] = "微调", ["Customize"] = "自定义", ["Transform"] = "转换", ["Convert"] = "转换",
+["Update"] = "更新", ["Upgrade"] = "升级", ["Downgrade"] = "降级", ["Improve"] = "改进",
+["Enhance"] = "增强", ["Optimize"] = "优化", ["Fix"] = "修复", ["Patch"] = "补丁", ["Hack"] = "破解",
+["Cheat"] = "作弊", ["Exploit"] = "利用", ["Bypass"] = "绕过", ["Override"] = "覆盖", ["Manipulate"] = "操控"
+}
+
+-- 翻译函数
+local function translateText(text)
+    if not text or text == "" then return text end
+    
+    -- 检查缓存
+    if translationCache[text] then
+        return translationCache[text]
+    end
+    
+    local translated = text
+    
+    -- 根据目标语言选择翻译方向
+    if TranslationSettings.TargetLanguage == "英→中" then
+        for english, chinese in pairs(translationDictionary) do
+            if type(english) == "string" then
+                -- 全词匹配
+                local pattern = "%f[%a]" .. english .. "%f[%A]"
+                translated = string.gsub(translated, pattern, chinese)
+                
+                -- 首字母大写
+                local capitalized = english:gsub("^%l", string.upper)
+                local pattern2 = "%f[%a]" .. capitalized .. "%f[%A]"
+                translated = string.gsub(translated, pattern2, chinese)
+                
+                -- 全大写
+                local upper = english:upper()
+                local pattern3 = "%f[%a]" .. upper .. "%f[%A]"
+                translated = string.gsub(translated, pattern3, chinese)
+            end
+        end
+    else
+        -- 中文到英文 - 需要反向词典
+        for english, chinese in pairs(translationDictionary) do
+            if type(chinese) == "string" then
+                translated = string.gsub(translated, chinese, english)
+            end
+        end
+    end
+    
+    -- 存储到缓存
+    translationCache[text] = translated
+    return translated
+end
+
+-- 完整的UI扫描翻译
+local function fullTranslate()
+    if not TranslationSettings.Enabled then return 0 end
+    
+    local count = 0
+    translationCounter = 0
+    
+    -- 扫描所有GUI
+    local guis = {}
+    table.insert(guis, LocalPlayer.PlayerGui)
+    table.insert(guis, CoreGui)
+    
+    for _, gui in ipairs(guis) do
+        for _, element in ipairs(gui:GetDescendants()) do
+            if element:IsA("TextLabel") or element:IsA("TextButton") or element:IsA("TextBox") then
+                local originalText = element.Text
+                if originalText and originalText ~= "" then
+                    local translatedText = translateText(originalText)
+                    if translatedText ~= originalText then
+                        if not currentTranslations[element] then
+                            currentTranslations[element] = originalText
+                        end
+                        element.Text = translatedText
+                        count = count + 1
+                        translationCounter = translationCounter + 1
+                    end
+                end
+            end
+        end
+    end
+    
+    lastFullTranslationTime = tick()
+    TranslationSettings.TranslationCount = translationCounter
+    return count
+end
+
+-- 自动翻译函数
+local function autoTranslate()
+    if not TranslationSettings.AutoTranslate or not TranslationSettings.Enabled then return end
+    
+    local currentTime = tick()
+    if currentTime - lastTranslationTime < TranslationSettings.TranslateSpeed then return end
+    
+    lastTranslationTime = currentTime
+    
+    -- 快速扫描新文本
+    local count = 0
+    
+    local guis = {}
+    table.insert(guis, LocalPlayer.PlayerGui)
+    table.insert(guis, CoreGui)
+    
+    for _, gui in ipairs(guis) do
+        for _, element in ipairs(gui:GetDescendants()) do
+            if element:IsA("TextLabel") or element:IsA("TextButton") or element:IsA("TextBox") then
+                if not currentTranslations[element] then
+                    local originalText = element.Text
+                    if originalText and originalText ~= "" then
+                        local translatedText = translateText(originalText)
+                        if translatedText ~= originalText then
+                            currentTranslations[element] = originalText
+                            element.Text = translatedText
+                            count = count + 1
+                            translationCounter = translationCounter + 1
+                        end
+                    end
+                end
+            end
+        end
+    end
+    
+    TranslationSettings.TranslationCount = translationCounter
+end
+
+-- 恢复原始文本
+local function restoreOriginalText()
+    local restoredCount = 0
+    for element, originalText in pairs(currentTranslations) do
+        if element and element.Parent then
+            element.Text = originalText
+            restoredCount = restoredCount + 1
+        end
+    end
+    currentTranslations = {}
+    translationCache = {}
+    translationCounter = 0
+    TranslationSettings.TranslationCount = 0
+    return restoredCount
+end
+
+-- 创建UI窗口
+local Window = Library:CreateWindow({
+    Title = "高级翻译器",
+    Footer = "v2.2",
+    Center = true,
+    AutoShow = true
+})
+
+-- 标签页
+local Tabs = {
+    Main = Window:AddTab("主页", "home"),
+    Settings = Window:AddTab("设置", "settings"),
+    Info = Window:AddTab("信息", "info")
+}
+
+-- 主页标签
+local MainBox = Tabs.Main:AddLeftGroupbox("翻译控制")
+MainBox:AddToggle("EnabledToggle", {
+    Text = "启用翻译",
+    Default = TranslationSettings.Enabled
+}):OnChanged(function(Value)
+    TranslationSettings.Enabled = Value
+    if not Value then
+        local restored = restoreOriginalText()
+        createNotification("翻译已关闭", string.format("已恢复 %d 个文本", restored), TranslationSettings.NotificationDuration)
+    else
+        createNotification("翻译已启用", "自动翻译系统已启动", TranslationSettings.NotificationDuration)
+    end
+end)
+
+MainBox:AddToggle("AutoTranslateToggle", {
+    Text = "自动翻译",
+    Default = TranslationSettings.AutoTranslate
+}):OnChanged(function(Value)
+    TranslationSettings.AutoTranslate = Value
+    if Value then
+        createNotification("自动翻译", "已启用自动翻译模式", TranslationSettings.NotificationDuration)
+    else
+        createNotification("自动翻译", "已关闭自动翻译模式", TranslationSettings.NotificationDuration)
+    end
+end)
+
+MainBox:AddSlider("TranslateSpeedSlider", {
+    Text = "翻译速度",
+    Default = TranslationSettings.TranslateSpeed,
+    Min = 0.05,
+    Max = 5,
+    Rounding = 2,
+    Suffix = "秒"
+}):OnChanged(function(Value)
+    TranslationSettings.TranslateSpeed = Value
+    createNotification("翻译速度", string.format("已设置为 %.2f 秒", Value), TranslationSettings.NotificationDuration)
+end)
+
+MainBox:AddDropdown("LanguageDropdown", {
+    Text = "翻译方向",
+    Default = TranslationSettings.TargetLanguage,
+    Values = {"英→中", "中→英"}
+}):OnChanged(function(Value)
+    TranslationSettings.TargetLanguage = Value
+    translationCache = {}
+    if TranslationSettings.Enabled then
+        restoreOriginalText()
+        local count = fullTranslate()
+        createNotification("语言切换", string.format("已切换至 %s\n翻译了 %d 个文本", Value, count), TranslationSettings.NotificationDuration)
+    else
+        createNotification("语言切换", string.format("已切换至 %s", Value), TranslationSettings.NotificationDuration)
+    end
+end)
+
+-- 添加翻译计数显示
+local translationCountLabel = MainBox:AddLabel(string.format("已翻译: %d 个文本", TranslationSettings.TranslationCount))
+
+MainBox:AddButton("立即翻译", function()
+    if TranslationSettings.Enabled then
+        local count = fullTranslate()
+        createNotification("立即翻译", string.format("成功翻译了 %d 个文本", count), TranslationSettings.NotificationDuration)
+        translationCountLabel:SetText(string.format("已翻译: %d 个文本", TranslationSettings.TranslationCount))
+    else
+        createNotification("错误", "请先启用翻译功能", TranslationSettings.NotificationDuration)
+    end
+end)
+
+MainBox:AddButton("恢复原文", function()
+    local restored = restoreOriginalText()
+    createNotification("恢复原文", string.format("已恢复 %d 个文本", restored), TranslationSettings.NotificationDuration)
+    translationCountLabel:SetText(string.format("已翻译: %d 个文本", TranslationSettings.TranslationCount))
+end)
+
+MainBox:AddButton("复制源代码", function()
+    local link = "https://github.com/454244513/auto-translation/tree/main"
+    
+    -- 尝试复制到剪贴板
+    local success = pcall(function()
+        setclipboard(link)
+    end)
+    
+    if success then
+        createNotification("链接已复制", "GitHub仓库链接已复制到剪贴板:\n" .. link, TranslationSettings.NotificationDuration)
+    else
+        createNotification("复制失败", "无法复制链接，请手动复制:\n" .. link, TranslationSettings.NotificationDuration)
+    end
+    TranslationSettings.TranslationLinkCopied = true
+end)
+
+-- 设置标签
+local SettingsBox = Tabs.Settings:AddLeftGroupbox("显示设置")
+SettingsBox:AddToggle("ShowTimeToggle", {
+    Text = "显示当前时间",
+    Default = TranslationSettings.ShowCurrentTime
+}):OnChanged(function(Value)
+    TranslationSettings.ShowCurrentTime = Value
+    createNotification("显示设置", Value and "已显示当前时间" or "已隐藏当前时间", TranslationSettings.NotificationDuration)
+end)
+
+SettingsBox:AddToggle("ShowPlayerToggle", {
+    Text = "显示玩家名称",
+    Default = TranslationSettings.ShowPlayerName
+}):OnChanged(function(Value)
+    TranslationSettings.ShowPlayerName = Value
+    createNotification("显示设置", Value and "已显示玩家名称" or "已隐藏玩家名称", TranslationSettings.NotificationDuration)
+end)
+
+SettingsBox:AddToggle("ShowNewYearToggle", {
+    Text = "显示跨年倒计时",
+    Default = TranslationSettings.ShowNewYearCountdown
+}):OnChanged(function(Value)
+    TranslationSettings.ShowNewYearCountdown = Value
+    createNotification("显示设置", Value and "已显示跨年倒计时" or "已隐藏跨年倒计时", TranslationSettings.NotificationDuration)
+end)
+
+SettingsBox:AddToggle("ShowExecutorToggle", {
+    Text = "显示注入器信息",
+    Default = TranslationSettings.ShowExecutorInfo
+}):OnChanged(function(Value)
+    TranslationSettings.ShowExecutorInfo = Value
+    createNotification("显示设置", Value and "已显示注入器信息" or "已隐藏注入器信息", TranslationSettings.NotificationDuration)
+end)
+
+SettingsBox:AddToggle("ShowServerToggle", {
+    Text = "显示服务器ID",
+    Default = TranslationSettings.ShowServerID
+}):OnChanged(function(Value)
+    TranslationSettings.ShowServerID = Value
+    createNotification("显示设置", Value and "已显示服务器ID" or "已隐藏服务器ID", TranslationSettings.NotificationDuration)
+end)
+
+-- 添加通知持续时间设置
+SettingsBox:AddSlider("NotificationDurationSlider", {
+    Text = "通知持续时间",
+    Default = TranslationSettings.NotificationDuration,
+    Min = 1,
+    Max = 10,
+    Rounding = 0,
+    Suffix = "秒"
+}):OnChanged(function(Value)
+    TranslationSettings.NotificationDuration = Value
+    createNotification("通知设置", string.format("通知持续时间已设置为 %d 秒", Value), Value)
+end)
+
+-- 信息标签
+local InfoBox = Tabs.Info:AddLeftGroupbox("系统信息")
+
+-- 当前时间显示
+local timeLabel = InfoBox:AddLabel("当前时间: 加载中...")
+
+-- 玩家名称显示
+local playerLabel = InfoBox:AddLabel("玩家名称: 加载中...")
+
+-- 跨年倒计时显示
+local newYearLabel = InfoBox:AddLabel("跨年倒计时: 加载中...")
+
+-- 注入器信息显示
+local executorLabel = InfoBox:AddLabel("注入器: 加载中...")
+
+-- 服务器ID显示
+local serverLabel = InfoBox:AddLabel("服务器ID: 加载中...")
+
+-- 计算跨年时间
+local function getNewYearCountdown()
+    local now = os.time()
+    local currentYear = os.date("%Y", now)
+    local nextYear = tonumber(currentYear) + 1
+    local newYearTime = os.time({year = nextYear, month = 1, day = 1, hour = 0, min = 0, sec = 0})
+    
+    local secondsLeft = newYearTime - now
+    local days = math.floor(secondsLeft / 86400)
+    local hours = math.floor((secondsLeft % 86400) / 3600)
+    local minutes = math.floor((secondsLeft % 3600) / 60)
+    local seconds = secondsLeft % 60
+    
+    return string.format("%d天 %02d:%02d:%02d", days, hours, minutes, seconds)
+end
+
+-- 更新信息显示
+RunService.Heartbeat:Connect(function()
+    -- 更新当前时间
+    if TranslationSettings.ShowCurrentTime then
+        timeLabel:SetText("当前时间: " .. os.date("%Y-%m-%d %H:%M:%S"))
+    else
+        timeLabel:SetText("当前时间: 已隐藏")
+    end
+    
+    -- 更新玩家名称
+    if TranslationSettings.ShowPlayerName then
+        playerLabel:SetText("玩家名称: " .. LocalPlayer.Name)
+    else
+        playerLabel:SetText("玩家名称: 已隐藏")
+    end
+    
+    -- 更新跨年倒计时
+    if TranslationSettings.ShowNewYearCountdown then
+        newYearLabel:SetText("跨年倒计时: " .. getNewYearCountdown())
+        -- 设置红色文本颜色
+        pcall(function()
+            newYearLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+        end)
+    else
+        newYearLabel:SetText("跨年倒计时: 已隐藏")
+        pcall(function()
+            newYearLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end)
+    end
+    
+    -- 更新注入器信息
+    if TranslationSettings.ShowExecutorInfo then
+        local executorName = "未知"
+        pcall(function()
+            if identifyexecutor then
+                executorName = identifyexecutor()
+            end
+        end)
+        executorLabel:SetText("注入器: " .. executorName)
+    else
+        executorLabel:SetText("注入器: 已隐藏")
+    end
+    
+    -- 更新服务器ID
+    if TranslationSettings.ShowServerID then
+        serverLabel:SetText("服务器ID: " .. tostring(game.GameId))
+        -- 设置黄色文本颜色
+        pcall(function()
+            serverLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+        end)
+    else
+        serverLabel:SetText("服务器ID: 已隐藏")
+        pcall(function()
+            serverLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end)
+    end
+    
+    -- 更新翻译计数显示
+    translationCountLabel:SetText(string.format("已翻译: %d 个文本", TranslationSettings.TranslationCount))
+    
+    -- 自动翻译
+    if TranslationSettings.Enabled and TranslationSettings.AutoTranslate then
+        autoTranslate()
+    end
+    
+    -- 定期执行完整翻译（每30秒）
+    if TranslationSettings.Enabled and TranslationSettings.AutoTranslate and tick() - lastFullTranslationTime > 30 then
+        fullTranslate()
+    end
+end)
+
+-- 初始化
+task.spawn(function()
+    createNotification("高级翻译器已加载", "欢迎使用自动翻译系统\n点击按钮开始翻译", TranslationSettings.NotificationDuration)
+    
+    -- 初始翻译
+    if TranslationSettings.Enabled then
+        task.wait(2)
+        local count = fullTranslate()
+        createNotification("初始翻译完成", string.format("已翻译 %d 个文本", count), TranslationSettings.NotificationDuration)
+    end
+end)
+
+-- 清理函数
+Library:OnUnload(function()
+    restoreOriginalText()
+    
+    -- 清理通知GUI
+    if NotificationGui then
+        NotificationGui:Destroy()
+    end
+    
+    createNotification("翻译器已卸载", "所有文本已恢复原状", 3)
+    
+    -- 等待通知显示后再完全卸载
+    task.wait(3.5)
+end)
+
+-- 设置主题
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({"MenuKeybind"})
+SaveManager:SetFolder("AdvancedTranslator/Configs")
+
+ThemeManager:ApplyToTab(Tabs.Settings)
+SaveManager:LoadAutoloadConfig()
