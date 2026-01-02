@@ -2258,7 +2258,265 @@ local translationDictionary = {
 ["Politics"] = "政治", ["Policy"] = "政策", ["Law"] = "法律", ["Rule"] = "规则", ["Regulation"] = "规定",
 ["Guideline"] = "指导方针", ["Principle"] = "原则", ["Value"] = "价值", ["Belief"] = "信念",
 ["Faith"] = "信仰", ["Religion"] = "宗教", ["Spirituality"] = "灵性", ["Philosophy"] = "哲学",
-["Ideology"] = "意识形态", ["Theory"] = "理论", ["Concept"] = "概念"
+["Ideology"] = "意识形态", ["Theory"] = "理论", ["Concept"] = "概念", ["Gun"] = "枪", ["Sword"] = "剑", ["Knife"] = "刀", ["Shield"] = "盾", ["Armor"] = "盔甲",
+["Helmet"] = "头盔", ["Bullet"] = "子弹", ["Bomb"] = "炸弹", ["Grenade"] = "手榴弹", ["Missile"] = "导弹",
+["Tank"] = "坦克", ["Soldier"] = "士兵", ["General"] = "将军", ["Captain"] = "上尉", ["Lieutenant"] = "中尉",
+["Sergeant"] = "中士", ["Private"] = "列兵", ["Warrior"] = "战士", ["Archer"] = "弓箭手", ["Sniper"] = "狙击手",
+["Commando"] = "突击队员", ["Special Forces"] = "特种部队", ["Military"] = "军事", ["Navy"] = "海军",
+["Air Force"] = "空军", ["Marine"] = "海军陆战队", ["Infantry"] = "步兵", ["Cavalry"] = "骑兵",
+["Artillery"] = "炮兵", ["Drone"] = "无人机", ["Radar"] = "雷达", ["Satellite"] = "卫星",
+
+-- 脚本与编程
+["Script"] = "脚本", ["Function"] = "函数", ["Variable"] = "变量", ["Loop"] = "循环", ["Condition"] = "条件",
+["Array"] = "数组", ["String"] = "字符串", ["Number"] = "数字", ["Boolean"] = "布尔", ["Object"] = "对象",
+["Class"] = "类", ["Method"] = "方法", ["Property"] = "属性", ["Event"] = "事件", ["Callback"] = "回调",
+["Library"] = "库", ["Module"] = "模块", ["Package"] = "包", ["Import"] = "导入", ["Export"] = "导出",
+["Debug"] = "调试", ["Error"] = "错误", ["Exception"] = "异常", ["Warning"] = "警告", ["Log"] = "日志",
+["Console"] = "控制台", ["Terminal"] = "终端", ["Command"] = "命令", ["Argument"] = "参数", ["Parameter"] = "参数",
+["Return"] = "返回", ["Yield"] = "暂停", ["Thread"] = "线程", ["Process"] = "进程", ["Memory"] = "内存",
+["Performance"] = "性能", ["Optimization"] = "优化", ["Algorithm"] = "算法", ["Data Structure"] = "数据结构",
+
+-- Roblox相关
+["Roblox"] = "罗布乐思", ["Studio"] = "工作室", ["Place"] = "场景", ["Model"] = "模型", ["Part"] = "部件",
+["Mesh"] = "网格", ["Texture"] = "纹理", ["Material"] = "材质", ["Lighting"] = "光照", ["Camera"] = "摄像机",
+["UI"] = "用户界面", ["GUI"] = "图形用户界面", ["HUD"] = "平视显示器", ["Character"] = "角色", ["Avatar"] = "虚拟形象",
+["Animation"] = "动画", ["Rig"] = "骨架", ["Bone"] = "骨骼", ["Joint"] = "关节", ["Constraint"] = "约束",
+["Physics"] = "物理", ["Collision"] = "碰撞", ["Raycast"] = "射线检测", ["Terrain"] = "地形", ["Voxel"] = "体素",
+["Plugin"] = "插件", ["Tool"] = "工具", ["Gamepass"] = "游戏通行证", ["Robux"] = "罗布币", ["Developer"] = "开发者",
+["Player"] = "玩家", ["Admin"] = "管理员", ["Moderator"] = "版主", ["VIP"] = "贵宾", ["Premium"] = "高级",
+
+-- 移动与操作
+["Touch"] = "触摸", ["Swipe"] = "滑动", ["Pinch"] = "捏合", ["Zoom"] = "缩放", ["Scroll"] = "滚动",
+["Drag"] = "拖动", ["Drop"] = "放下", ["Tap"] = "点击", ["Double Tap"] = "双击", ["Long Press"] = "长按",
+["Rotate"] = "旋转", ["Tilt"] = "倾斜", ["Shake"] = "摇晃", ["Swipe Left"] = "向左滑动", ["Swipe Right"] = "向右滑动",
+["Swipe Up"] = "向上滑动", ["Swipe Down"] = "向下滑动", ["Gesture"] = "手势", ["Multi-touch"] = "多点触控",
+["Joystick"] = "操纵杆", ["D-pad"] = "方向键", ["Button"] = "按钮", ["Key"] = "键", ["Shortcut"] = "快捷键",
+
+-- 游戏机制
+["Quest"] = "任务", ["Achievement"] = "成就", ["Trophy"] = "奖杯", ["Badge"] = "徽章", ["Medal"] = "奖牌",
+["Level"] = "等级", ["XP"] = "经验值", ["Skill"] = "技能", ["Talent"] = "天赋", ["Perk"] = "增益",
+["Buff"] = "增益效果", ["Debuff"] = "减益效果", ["Status"] = "状态", ["Effect"] = "效果", ["Aura"] = "光环",
+["Cooldown"] = "冷却", ["Duration"] = "持续时间", ["Timer"] = "计时器", ["Countdown"] = "倒计时", ["Wave"] = "波次",
+["Round"] = "回合", ["Match"] = "比赛", ["Tournament"] = "锦标赛", ["League"] = "联赛", ["Season"] = "赛季",
+["Rank"] = "排名", ["Division"] = "段位", ["Elo"] = "等级分", ["MMR"] = "匹配等级", ["Leaderboard"] = "排行榜",
+
+-- 经济与交易
+["Currency"] = "货币", ["Gold"] = "金币", ["Silver"] = "银币", ["Copper"] = "铜币", ["Diamond"] = "钻石",
+["Gem"] = "宝石", ["Crystal"] = "水晶", ["Token"] = "代币", ["Ticket"] = "票券", ["Voucher"] = "代金券",
+["Coupon"] = "优惠券", ["Price"] = "价格", ["Cost"] = "成本", ["Value"] = "价值", ["Discount"] = "折扣",
+["Sale"] = "促销", ["Offer"] = "优惠", ["Deal"] = "交易", ["Bargain"] = "讨价还价", ["Negotiate"] = "谈判",
+["Auction"] = "拍卖", ["Bid"] = "出价", ["Offer"] = "报价", ["Contract"] = "合同", ["Agreement"] = "协议",
+
+-- 社交与交流
+["Friend"] = "好友", ["Follow"] = "关注", ["Unfollow"] = "取消关注", ["Like"] = "点赞", ["Dislike"] = "点踩",
+["Comment"] = "评论", ["Share"] = "分享", ["Post"] = "帖子", ["Tweet"] = "推文", ["Message"] = "消息",
+["Chat"] = "聊天", ["Voice"] = "语音", ["Video"] = "视频", ["Call"] = "通话", ["Conference"] = "会议",
+["Group"] = "群组", ["Community"] = "社区", ["Forum"] = "论坛", ["Blog"] = "博客", ["Profile"] = "个人资料",
+["Avatar"] = "头像", ["Bio"] = "简介", ["Status"] = "状态", ["Mood"] = "心情", ["Emoji"] = "表情符号",
+
+-- 界面与设计
+["Menu"] = "菜单", ["Submenu"] = "子菜单", ["Dropdown"] = "下拉列表", ["Checkbox"] = "复选框", ["Radio"] = "单选按钮",
+["Slider"] = "滑动条", ["Progress Bar"] = "进度条", ["Loading"] = "加载中", ["Spinner"] = "加载指示器",
+["Icon"] = "图标", ["Thumbnail"] = "缩略图", ["Preview"] = "预览", ["Screenshot"] = "截图", ["Screenshot"] = "屏幕截图",
+["Layout"] = "布局", ["Grid"] = "网格", ["List"] = "列表", ["Card"] = "卡片", ["Tile"] = "磁贴",
+["Modal"] = "模态框", ["Popup"] = "弹出框", ["Tooltip"] = "工具提示", ["Hint"] = "提示", ["Guide"] = "指南",
+
+-- 网络与连接
+["Internet"] = "互联网", ["WiFi"] = "无线网络", ["Ethernet"] = "以太网", ["Bluetooth"] = "蓝牙", ["NFC"] = "近场通信",
+["Connection"] = "连接", ["Disconnect"] = "断开连接", ["Reconnect"] = "重新连接", ["Latency"] = "延迟",
+["Ping"] = "延迟", ["Lag"] = "卡顿", ["Packet Loss"] = "丢包", ["Bandwidth"] = "带宽", ["Speed"] = "速度",
+["Download"] = "下载", ["Upload"] = "上传", ["Stream"] = "流媒体", ["Buffer"] = "缓冲", ["Cache"] = "缓存",
+
+-- 安全与隐私
+["Security"] = "安全", ["Privacy"] = "隐私", ["Password"] = "密码", ["PIN"] = "PIN码", ["Biometric"] = "生物识别",
+["Fingerprint"] = "指纹", ["Face ID"] = "面容ID", ["Two-Factor"] = "双因素", ["Authentication"] = "身份验证",
+["Authorization"] = "授权", ["Permission"] = "权限", ["Access"] = "访问", ["Block"] = "屏蔽", ["Allow"] = "允许",
+["Deny"] = "拒绝", ["Restrict"] = "限制", ["Filter"] = "过滤", ["Censor"] = "审查", ["Encrypt"] = "加密",
+
+-- 媒体与娱乐
+["Music"] = "音乐", ["Video"] = "视频", ["Movie"] = "电影", ["TV Show"] = "电视节目", ["Podcast"] = "播客",
+["Stream"] = "流媒体", ["Live"] = "直播", ["Record"] = "录制", ["Play"] = "播放", ["Pause"] = "暂停",
+["Stop"] = "停止", ["Rewind"] = "回退", ["Forward"] = "前进", ["Skip"] = "跳过", ["Volume"] = "音量",
+["Mute"] = "静音", ["Unmute"] = "取消静音", ["Headphones"] = "耳机", ["Speaker"] = "扬声器", ["Microphone"] = "麦克风",
+
+-- 学校与教育
+["School"] = "学校", ["University"] = "大学", ["College"] = "学院", ["Class"] = "班级", ["Course"] = "课程",
+["Lesson"] = "课程", ["Lecture"] = "讲座", ["Homework"] = "家庭作业", ["Assignment"] = "作业", ["Project"] = "项目",
+["Exam"] = "考试", ["Test"] = "测试", ["Quiz"] = "测验", ["Grade"] = "成绩", ["Score"] = "分数",
+["Pass"] = "及格", ["Fail"] = "不及格", ["Graduate"] = "毕业", ["Diploma"] = "文凭", ["Degree"] = "学位",
+
+-- 工作与职业
+["Job"] = "工作", ["Career"] = "职业生涯", ["Profession"] = "职业", ["Occupation"] = "职业", ["Position"] = "职位",
+["Title"] = "头衔", ["Manager"] = "经理", ["Director"] = "总监", ["CEO"] = "首席执行官", ["President"] = "总裁",
+["Employee"] = "员工", ["Employer"] = "雇主", ["Colleague"] = "同事", ["Team"] = "团队", ["Department"] = "部门",
+["Office"] = "办公室", ["Remote"] = "远程", ["Workplace"] = "工作场所", ["Salary"] = "工资", ["Bonus"] = "奖金",
+
+-- 旅行与交通
+["Travel"] = "旅行", ["Trip"] = "旅行", ["Journey"] = "旅程", ["Vacation"] = "假期", ["Holiday"] = "假日",
+["Flight"] = "航班", ["Train"] = "火车", ["Bus"] = "公交车", ["Taxi"] = "出租车", ["Car"] = "汽车",
+["Bicycle"] = "自行车", ["Walk"] = "步行", ["Map"] = "地图", ["GPS"] = "GPS", ["Navigation"] = "导航",
+["Destination"] = "目的地", ["Route"] = "路线", ["Distance"] = "距离", ["Time"] = "时间", ["Schedule"] = "时刻表",
+
+-- 健康与健身
+["Health"] = "健康", ["Fitness"] = "健身", ["Exercise"] = "锻炼", ["Workout"] = "锻炼", ["Gym"] = "健身房",
+["Yoga"] = "瑜伽", ["Meditation"] = "冥想", ["Sleep"] = "睡眠", ["Diet"] = "饮食", ["Nutrition"] = "营养",
+["Calorie"] = "卡路里", ["Weight"] = "体重", ["Height"] = "身高", ["BMI"] = "身体质量指数", ["Heart Rate"] = "心率",
+["Step"] = "步数", ["Distance"] = "距离", ["Goal"] = "目标", ["Progress"] = "进度", ["Achievement"] = "成就",
+
+-- 家庭与生活
+["Family"] = "家庭", ["Home"] = "家", ["House"] = "房子", ["Apartment"] = "公寓", ["Room"] = "房间",
+["Kitchen"] = "厨房", ["Bathroom"] = "浴室", ["Bedroom"] = "卧室", ["Living Room"] = "客厅", ["Garden"] = "花园",
+["Furniture"] = "家具", ["Appliance"] = "电器", ["Food"] = "食物", ["Drink"] = "饮料", ["Recipe"] = "食谱",
+["Cook"] = "烹饪", ["Clean"] = "清洁", ["Wash"] = "洗涤", ["Dry"] = "干燥", ["Organize"] = "整理",
+
+-- 天气与自然
+["Weather"] = "天气", ["Temperature"] = "温度", ["Humidity"] = "湿度", ["Wind"] = "风", ["Rain"] = "雨",
+["Snow"] = "雪", ["Sun"] = "太阳", ["Cloud"] = "云", ["Storm"] = "风暴", ["Lightning"] = "闪电",
+["Thunder"] = "雷声", ["Fog"] = "雾", ["Mist"] = "薄雾", ["Dew"] = "露水", ["Frost"] = "霜",
+["Season"] = "季节", ["Spring"] = "春天", ["Summer"] = "夏天", ["Autumn"] = "秋天", ["Winter"] = "冬天",
+
+-- 时间与日期
+["Time"] = "时间", ["Date"] = "日期", ["Day"] = "天", ["Week"] = "周", ["Month"] = "月",
+["Year"] = "年", ["Hour"] = "小时", ["Minute"] = "分钟", ["Second"] = "秒", ["Millisecond"] = "毫秒",
+["Clock"] = "时钟", ["Calendar"] = "日历", ["Schedule"] = "日程", ["Appointment"] = "约会", ["Reminder"] = "提醒",
+["Deadline"] = "截止日期", ["Duration"] = "持续时间", ["Interval"] = "间隔", ["Frequency"] = "频率", ["Period"] = "周期",
+
+-- 数字与数学
+["Number"] = "数字", ["Digit"] = "数字", ["Integer"] = "整数", ["Decimal"] = "小数", ["Fraction"] = "分数",
+["Percent"] = "百分比", ["Ratio"] = "比率", ["Probability"] = "概率", ["Statistics"] = "统计", ["Graph"] = "图表",
+["Chart"] = "图表", ["Diagram"] = "图表", ["Table"] = "表格", ["Data"] = "数据", ["Analysis"] = "分析",
+["Calculate"] = "计算", ["Compute"] = "计算", ["Solve"] = "解决", ["Equation"] = "方程", ["Formula"] = "公式",
+
+-- 方向与位置
+["Direction"] = "方向", ["Position"] = "位置", ["Location"] = "位置", ["Coordinate"] = "坐标", ["Latitude"] = "纬度",
+["Longitude"] = "经度", ["Altitude"] = "海拔", ["Depth"] = "深度", ["Height"] = "高度", ["Width"] = "宽度",
+["Length"] = "长度", ["Distance"] = "距离", ["Area"] = "面积", ["Volume"] = "体积", ["Speed"] = "速度",
+
+-- 颜色与外观
+["Color"] = "颜色", ["Colour"] = "颜色", ["Red"] = "红色", ["Green"] = "绿色", ["Blue"] = "蓝色",
+["Yellow"] = "黄色", ["Purple"] = "紫色", ["Orange"] = "橙色", ["Pink"] = "粉色", ["Brown"] = "棕色",
+["Black"] = "黑色", ["White"] = "白色", ["Gray"] = "灰色", ["Silver"] = "银色", ["Gold"] = "金色",
+["Transparent"] = "透明", ["Opaque"] = "不透明", ["Shiny"] = "闪亮", ["Matte"] = "磨砂", ["Glossy"] = "光滑",
+
+-- 形状与几何
+["Shape"] = "形状", ["Circle"] = "圆形", ["Square"] = "正方形", ["Triangle"] = "三角形", ["Rectangle"] = "矩形",
+["Oval"] = "椭圆形", ["Diamond"] = "菱形", ["Star"] = "星星", ["Heart"] = "心形", ["Polygon"] = "多边形",
+["Sphere"] = "球体", ["Cube"] = "立方体", ["Cone"] = "圆锥", ["Cylinder"] = "圆柱", ["Pyramid"] = "金字塔",
+
+-- 声音与音频
+["Sound"] = "声音", ["Audio"] = "音频", ["Voice"] = "语音", ["Music"] = "音乐", ["Noise"] = "噪音",
+["Volume"] = "音量", ["Pitch"] = "音高", ["Tone"] = "音调", ["Frequency"] = "频率", ["Wave"] = "波形",
+["Speaker"] = "扬声器", ["Headphone"] = "耳机", ["Microphone"] = "麦克风", ["Amplifier"] = "放大器", ["Equalizer"] = "均衡器",
+
+-- 光与视觉
+["Light"] = "光", ["Dark"] = "暗", ["Bright"] = "明亮", ["Dim"] = "昏暗", ["Shadow"] = "影子",
+["Reflection"] = "反射", ["Refraction"] = "折射", ["Lens"] = "镜头", ["Mirror"] = "镜子", ["Glass"] = "玻璃",
+["Transparent"] = "透明", ["Translucent"] = "半透明", ["Opaque"] = "不透明", ["Color"] = "颜色", ["Spectrum"] = "光谱",
+
+-- 物质与材料
+["Material"] = "材料", ["Substance"] = "物质", ["Solid"] = "固体", ["Liquid"] = "液体", ["Gas"] = "气体",
+["Plasma"] = "等离子", ["Metal"] = "金属", ["Wood"] = "木材", ["Plastic"] = "塑料", ["Glass"] = "玻璃",
+["Fabric"] = "织物", ["Leather"] = "皮革", ["Rubber"] = "橡胶", ["Ceramic"] = "陶瓷", ["Concrete"] = "混凝土",
+
+-- 运动与物理
+["Motion"] = "运动", ["Movement"] = "移动", ["Speed"] = "速度", ["Velocity"] = "速度", ["Acceleration"] = "加速度",
+["Force"] = "力", ["Energy"] = "能量", ["Power"] = "功率", ["Work"] = "功", ["Friction"] = "摩擦",
+["Gravity"] = "重力", ["Magnetism"] = "磁力", ["Electricity"] = "电", ["Heat"] = "热", ["Cold"] = "冷",
+
+-- 生物与生命
+["Life"] = "生命", ["Living"] = "生物", ["Organism"] = "有机体", ["Cell"] = "细胞", ["DNA"] = "DNA",
+["Gene"] = "基因", ["Evolution"] = "进化", ["Species"] = "物种", ["Plant"] = "植物", ["Animal"] = "动物",
+["Human"] = "人类", ["Insect"] = "昆虫", ["Fish"] = "鱼", ["Bird"] = "鸟", ["Mammal"] = "哺乳动物",
+
+-- 宇宙与空间
+["Universe"] = "宇宙", ["Space"] = "太空", ["Galaxy"] = "星系", ["Star"] = "恒星", ["Planet"] = "行星",
+["Moon"] = "卫星", ["Sun"] = "太阳", ["Earth"] = "地球", ["Mars"] = "火星", ["Jupiter"] = "木星",
+["Satellite"] = "卫星", ["Asteroid"] = "小行星", ["Comet"] = "彗星", ["Black Hole"] = "黑洞", ["Nebula"] = "星云",
+
+-- 技术与创新
+["Technology"] = "技术", ["Innovation"] = "创新", ["Invention"] = "发明", ["Discovery"] = "发现", ["Research"] = "研究",
+["Development"] = "开发", ["Design"] = "设计", ["Engineering"] = "工程", ["Manufacturing"] = "制造", ["Production"] = "生产",
+["Automation"] = "自动化", ["Robot"] = "机器人", ["AI"] = "人工智能", ["Machine Learning"] = "机器学习", ["Data Science"] = "数据科学",
+["Blockchain"] = "区块链", ["Cryptocurrency"] = "加密货币", ["Bitcoin"] = "比特币", ["Ethereum"] = "以太坊", ["NFT"] = "非同质化代币",
+
+-- 商业与市场
+["Business"] = "商业", ["Market"] = "市场", ["Industry"] = "行业", ["Trade"] = "贸易", ["Commerce"] = "商业",
+["Company"] = "公司", ["Corporation"] = "公司", ["Enterprise"] = "企业", ["Startup"] = "初创公司", ["Venture"] = "风险投资",
+["Investment"] = "投资", ["Stock"] = "股票", ["Share"] = "股份", ["Bond"] = "债券", ["Dividend"] = "股息",
+["Profit"] = "利润", ["Loss"] = "损失", ["Revenue"] = "收入", ["Expense"] = "支出", ["Budget"] = "预算",
+
+-- 法律与政治
+["Law"] = "法律", ["Legal"] = "合法的", ["Illegal"] = "非法的", ["Court"] = "法院", ["Judge"] = "法官",
+["Lawyer"] = "律师", ["Case"] = "案件", ["Trial"] = "审判", ["Verdict"] = "判决", ["Sentence"] = "判决",
+["Politics"] = "政治", ["Government"] = "政府", ["President"] = "总统", ["Prime Minister"] = "总理", ["Minister"] = "部长",
+["Parliament"] = "议会", ["Congress"] = "国会", ["Senate"] = "参议院", ["Vote"] = "投票", ["Election"] = "选举",
+
+-- 宗教与信仰
+["Religion"] = "宗教", ["Faith"] = "信仰", ["Belief"] = "信念", ["God"] = "神", ["Goddess"] = "女神",
+["Church"] = "教堂", ["Temple"] = "寺庙", ["Mosque"] = "清真寺", ["Synagogue"] = "犹太教堂", ["Prayer"] = "祈祷",
+["Meditation"] = "冥想", ["Spirit"] = "精神", ["Soul"] = "灵魂", ["Heaven"] = "天堂", ["Hell"] = "地狱",
+["Angel"] = "天使", ["Demon"] = "恶魔", ["Devil"] = "魔鬼", ["Ghost"] = "鬼魂", ["Afterlife"] = "来世",
+
+-- 艺术与文化
+["Art"] = "艺术", ["Culture"] = "文化", ["Tradition"] = "传统", ["Custom"] = "习俗", ["Heritage"] = "遗产",
+["History"] = "历史", ["Mythology"] = "神话", ["Legend"] = "传说", ["Folklore"] = "民间传说", ["Literature"] = "文学",
+["Poetry"] = "诗歌", ["Drama"] = "戏剧", ["Theater"] = "剧院", ["Cinema"] = "电影", ["Photography"] = "摄影",
+["Painting"] = "绘画", ["Sculpture"] = "雕塑", ["Architecture"] = "建筑", ["Fashion"] = "时尚", ["Design"] = "设计",
+
+-- 运动与竞技
+["Sport"] = "运动", ["Game"] = "游戏", ["Athlete"] = "运动员", ["Team"] = "团队", ["Coach"] = "教练",
+["Referee"] = "裁判", ["Stadium"] = "体育场", ["Field"] = "场地", ["Court"] = "球场", ["Track"] = "跑道",
+["Score"] = "得分", ["Goal"] = "进球", ["Point"] = "分数", ["Win"] = "胜利", ["Lose"] = "失败",
+["Draw"] = "平局", ["Champion"] = "冠军", ["Tournament"] = "锦标赛", ["Competition"] = "比赛", ["Olympics"] = "奥运会",
+
+-- 饮食与烹饪
+["Food"] = "食物", ["Drink"] = "饮料", ["Water"] = "水", ["Juice"] = "果汁", ["Soda"] = "汽水",
+["Coffee"] = "咖啡", ["Tea"] = "茶", ["Milk"] = "牛奶", ["Bread"] = "面包", ["Rice"] = "米饭",
+["Meat"] = "肉", ["Vegetable"] = "蔬菜", ["Fruit"] = "水果", ["Dessert"] = "甜点", ["Snack"] = "零食",
+["Cook"] = "烹饪", ["Recipe"] = "食谱", ["Ingredient"] = "食材", ["Spice"] = "香料", ["Flavor"] = "味道",
+
+-- 医疗与健康
+["Medicine"] = "医学", ["Health"] = "健康", ["Doctor"] = "医生", ["Nurse"] = "护士", ["Hospital"] = "医院",
+["Clinic"] = "诊所", ["Pharmacy"] = "药店", ["Drug"] = "药物", ["Pill"] = "药丸", ["Vaccine"] = "疫苗",
+["Surgery"] = "手术", ["Treatment"] = "治疗", ["Therapy"] = "治疗", ["Recovery"] = "恢复", ["Rehabilitation"] = "康复",
+["Pain"] = "疼痛", ["Fever"] = "发烧", ["Cough"] = "咳嗽", ["Cold"] = "感冒", ["Flu"] = "流感",
+
+-- 情感与心理
+["Emotion"] = "情感", ["Feeling"] = "感觉", ["Mood"] = "心情", ["Happy"] = "快乐", ["Sad"] = "悲伤",
+["Angry"] = "愤怒", ["Fear"] = "恐惧", ["Love"] = "爱", ["Hate"] = "恨", ["Joy"] = "喜悦",
+["Sorrow"] = "悲伤", ["Anxiety"] = "焦虑", ["Stress"] = "压力", ["Depression"] = "抑郁", ["Happiness"] = "幸福",
+["Psychology"] = "心理学", ["Mind"] = "心灵", ["Brain"] = "大脑", ["Memory"] = "记忆", ["Thought"] = "思想",
+
+-- 交通与运输
+["Transport"] = "运输", ["Transportation"] = "运输", ["Vehicle"] = "车辆", ["Car"] = "汽车", ["Bus"] = "公交车",
+["Train"] = "火车", ["Plane"] = "飞机", ["Ship"] = "船", ["Bicycle"] = "自行车", ["Motorcycle"] = "摩托车",
+["Road"] = "道路", ["Street"] = "街道", ["Highway"] = "高速公路", ["Bridge"] = "桥", ["Tunnel"] = "隧道",
+["Traffic"] = "交通", ["Signal"] = "信号", ["Stop"] = "停止", ["Go"] = "前进", ["Yield"] = "让行",
+
+-- 通信与媒体
+["Communication"] = "通信", ["Media"] = "媒体", ["News"] = "新闻", ["Newspaper"] = "报纸", ["Magazine"] = "杂志",
+["Radio"] = "收音机", ["Television"] = "电视", ["Internet"] = "互联网", ["Social Media"] = "社交媒体", ["Email"] = "电子邮件",
+["Message"] = "消息", ["Text"] = "文本", ["Call"] = "呼叫", ["Video Call"] = "视频通话", ["Conference"] = "会议",
+
+-- 建筑与工程
+["Building"] = "建筑", ["Construction"] = "建造", ["Architecture"] = "建筑学", ["Engineer"] = "工程师", ["Blueprint"] = "蓝图",
+["Foundation"] = "地基", ["Wall"] = "墙", ["Roof"] = "屋顶", ["Floor"] = "地板", ["Window"] = "窗户",
+["Door"] = "门", ["Stairs"] = "楼梯", ["Elevator"] = "电梯", ["Escalator"] = "自动扶梯", ["Structure"] = "结构",
+
+-- 农业与自然
+["Agriculture"] = "农业", ["Farm"] = "农场", ["Field"] = "田地", ["Crop"] = "作物", ["Harvest"] = "收获",
+["Plant"] = "植物", ["Seed"] = "种子", ["Soil"] = "土壤", ["Water"] = "水", ["Fertilizer"] = "肥料",
+["Nature"] = "自然", ["Environment"] = "环境", ["Ecology"] = "生态学", ["Pollution"] = "污染", ["Conservation"] = "保护",
+
+-- 海洋与水域
+["Ocean"] = "海洋", ["Sea"] = "海", ["Lake"] = "湖", ["River"] = "河流", ["Stream"] = "小溪",
+["Waterfall"] = "瀑布", ["Beach"] = "海滩", ["Coast"] = "海岸", ["Island"] = "岛屿", ["Peninsula"] = "半岛",
+["Bay"] = "海湾", ["Harbor"] = "港口", ["Port"] = "港口", ["Ship"] = "船", ["Boat"] = "小船",
+
+-- 山地与地形
+["Mountain"] = "山", ["Hill"] = "山丘", ["Valley"] = "山谷", ["Canyon"] = "峡谷", ["Cliff"] = "悬崖",
+["Cave"] = "洞穴", ["Volcano"] = "火山", ["Desert"] = "沙漠", ["Forest"] = "森林", ["Jungle"] = "丛林",
+["Plain"] = "平原", ["Plateau"] = "高原", ["Glacier"] = "冰川", ["Ice"] = "冰", ["Snow"] = "雪"
 }
 
 -- 翻译函数
