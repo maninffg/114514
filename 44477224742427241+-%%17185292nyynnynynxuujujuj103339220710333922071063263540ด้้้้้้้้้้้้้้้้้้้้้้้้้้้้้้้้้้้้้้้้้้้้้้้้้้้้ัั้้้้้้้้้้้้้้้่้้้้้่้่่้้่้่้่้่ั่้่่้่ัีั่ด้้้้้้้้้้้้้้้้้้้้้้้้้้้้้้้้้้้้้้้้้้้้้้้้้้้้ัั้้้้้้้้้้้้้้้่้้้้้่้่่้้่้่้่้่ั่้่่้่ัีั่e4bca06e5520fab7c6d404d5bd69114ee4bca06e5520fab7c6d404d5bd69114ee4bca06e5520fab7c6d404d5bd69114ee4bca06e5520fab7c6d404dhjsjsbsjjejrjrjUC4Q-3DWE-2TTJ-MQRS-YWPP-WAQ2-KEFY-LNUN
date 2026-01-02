@@ -2516,7 +2516,1122 @@ local translationDictionary = {
 -- 山地与地形
 ["Mountain"] = "山", ["Hill"] = "山丘", ["Valley"] = "山谷", ["Canyon"] = "峡谷", ["Cliff"] = "悬崖",
 ["Cave"] = "洞穴", ["Volcano"] = "火山", ["Desert"] = "沙漠", ["Forest"] = "森林", ["Jungle"] = "丛林",
-["Plain"] = "平原", ["Plateau"] = "高原", ["Glacier"] = "冰川", ["Ice"] = "冰", ["Snow"] = "雪"
+["Plain"] = "平原", ["Plateau"] = "高原", ["Glacier"] = "冰川", ["Ice"] = "冰", ["Snow"] = "雪", ["Main Menu"] = "主菜单", ["Settings"] = "设置", ["Options"] = "选项", ["Graphics"] = "图形", ["Audio"] = "音频",
+["Controls"] = "控制", ["Keyboard"] = "键盘", ["Mouse"] = "鼠标", ["Controller"] = "控制器", ["Gamepad"] = "游戏手柄",
+["Sensitivity"] = "灵敏度", ["Invert"] = "反转", ["Brightness"] = "亮度", ["Contrast"] = "对比度", ["Gamma"] = "伽马",
+["Resolution"] = "分辨率", ["Fullscreen"] = "全屏", ["Windowed"] = "窗口化", ["Borderless"] = "无边框", ["VSync"] = "垂直同步",
+["Anti-Aliasing"] = "抗锯齿", ["Texture Quality"] = "纹理质量", ["Shadow Quality"] = "阴影质量", ["Model Quality"] = "模型质量",
+["Effects Quality"] = "特效质量", ["Post Processing"] = "后期处理", ["Motion Blur"] = "运动模糊", ["Depth of Field"] = "景深",
+["Ambient Occlusion"] = "环境光遮蔽", ["Tessellation"] = "曲面细分", ["Render Distance"] = "渲染距离", ["View Distance"] = "视野距离",
+["Field of View"] = "视野范围", ["FPS Limit"] = "帧率限制", ["Show FPS"] = "显示FPS", ["Show Ping"] = "显示延迟",
+["Language"] = "语言", ["Subtitles"] = "字幕", ["Voice Chat"] = "语音聊天", ["Push to Talk"] = "按键说话",
+
+-- 游戏进度
+["Save"] = "保存", ["Load"] = "加载", ["Continue"] = "继续", ["New Game"] = "新游戏", ["Load Game"] = "载入游戏",
+["Save Game"] = "保存游戏", ["Quick Save"] = "快速保存", ["Quick Load"] = "快速加载", ["Auto Save"] = "自动保存",
+["Checkpoint"] = "检查点", ["Restart"] = "重新开始", ["Restart Level"] = "重新开始关卡", ["Restart Mission"] = "重新开始任务",
+["Skip"] = "跳过", ["Skip Cutscene"] = "跳过过场动画", ["Pause"] = "暂停", ["Resume"] = "继续游戏", ["Exit"] = "退出",
+
+-- 游戏类型
+["Action"] = "动作", ["Adventure"] = "冒险", ["Role Playing"] = "角色扮演", ["Strategy"] = "策略", ["Simulation"] = "模拟",
+["Sports"] = "体育", ["Racing"] = "竞速", ["Fighting"] = "格斗", ["Shooter"] = "射击", ["Stealth"] = "潜行",
+["Survival"] = "生存", ["Horror"] = "恐怖", ["Puzzle"] = "解谜", ["Music"] = "音乐", ["Educational"] = "教育",
+["Casual"] = "休闲", ["MMO"] = "大型多人在线", ["MOBA"] = "多人在线战术竞技", ["Battle Royale"] = "大逃杀", ["Sandbox"] = "沙盒",
+
+-- 游戏内活动
+["Quest"] = "任务", ["Main Quest"] = "主线任务", ["Side Quest"] = "支线任务", ["Daily Quest"] = "每日任务", ["Weekly Quest"] = "每周任务",
+["Event"] = "活动", ["Limited Event"] = "限时活动", ["Season Event"] = "赛季活动", ["Holiday Event"] = "节日活动", ["Special Event"] = "特殊活动",
+["Challenge"] = "挑战", ["Daily Challenge"] = "每日挑战", ["Weekly Challenge"] = "每周挑战", ["Achievement"] = "成就", ["Trophy"] = "奖杯",
+["Collection"] = "收集", ["Crafting"] = "制作", ["Upgrading"] = "升级", ["Enchanting"] = "附魔", ["Refining"] = "精炼",
+
+-- 游戏角色
+["Character"] = "角色", ["Player"] = "玩家", ["NPC"] = "非玩家角色", ["Enemy"] = "敌人", ["Boss"] = "首领",
+["Companion"] = "同伴", ["Follower"] = "追随者", ["Pet"] = "宠物", ["Mount"] = "坐骑", ["Summon"] = "召唤物",
+["Class"] = "职业", ["Warrior"] = "战士", ["Mage"] = "法师", ["Archer"] = "弓箭手", ["Rogue"] = "盗贼",
+["Cleric"] = "牧师", ["Paladin"] = "圣骑士", ["Necromancer"] = "死灵法师", ["Druid"] = "德鲁伊", ["Monk"] = "武僧",
+["Race"] = "种族", ["Human"] = "人类", ["Elf"] = "精灵", ["Dwarf"] = "矮人", ["Orc"] = "兽人",
+["Goblin"] = "哥布林", ["Undead"] = "亡灵", ["Demon"] = "恶魔", ["Angel"] = "天使", ["Alien"] = "外星人",
+
+-- 游戏属性
+["Strength"] = "力量", ["Agility"] = "敏捷", ["Intelligence"] = "智力", ["Wisdom"] = "智慧", ["Charisma"] = "魅力",
+["Stamina"] = "耐力", ["Vitality"] = "活力", ["Luck"] = "幸运", ["Health"] = "生命值", ["Mana"] = "魔法值",
+["Energy"] = "能量", ["Rage"] = "怒气", ["Focus"] = "集中", ["Armor"] = "护甲", ["Magic Resistance"] = "魔法抗性",
+["Attack Power"] = "攻击力", ["Spell Power"] = "法术强度", ["Critical Chance"] = "暴击几率", ["Critical Damage"] = "暴击伤害",
+["Attack Speed"] = "攻击速度", ["Movement Speed"] = "移动速度", ["Dodge"] = "闪避", ["Parry"] = "招架", ["Block"] = "格挡",
+
+-- 游戏物品
+["Item"] = "物品", ["Weapon"] = "武器", ["Sword"] = "剑", ["Axe"] = "斧", ["Mace"] = "锤",
+["Dagger"] = "匕首", ["Staff"] = "法杖", ["Wand"] = "魔杖", ["Bow"] = "弓", ["Crossbow"] = "弩",
+["Gun"] = "枪", ["Pistol"] = "手枪", ["Rifle"] = "步枪", ["Shotgun"] = "霰弹枪", ["Sniper Rifle"] = "狙击步枪",
+["Armor"] = "护甲", ["Helmet"] = "头盔", ["Chestplate"] = "胸甲", ["Leggings"] = "护腿", ["Boots"] = "靴子",
+["Gloves"] = "手套", ["Shield"] = "盾牌", ["Ring"] = "戒指", ["Necklace"] = "项链", ["Amulet"] = "护身符",
+["Consumable"] = "消耗品", ["Potion"] = "药水", ["Health Potion"] = "生命药水", ["Mana Potion"] = "魔法药水", ["Food"] = "食物",
+["Drink"] = "饮料", ["Scroll"] = "卷轴", ["Key"] = "钥匙", ["Coin"] = "硬币", ["Gem"] = "宝石",
+
+-- 游戏技能
+["Skill"] = "技能", ["Ability"] = "能力", ["Spell"] = "法术", ["Magic"] = "魔法", ["Attack"] = "攻击",
+["Melee Attack"] = "近战攻击", ["Ranged Attack"] = "远程攻击", ["Magic Attack"] = "魔法攻击", ["Area of Effect"] = "范围效果",
+["Single Target"] = "单一目标", ["Heal"] = "治疗", ["Buff"] = "增益", ["Debuff"] = "减益", ["Crowd Control"] = "控制",
+["Stun"] = "击晕", ["Slow"] = "减速", ["Root"] = "定身", ["Silence"] = "沉默", ["Fear"] = "恐惧",
+["Taunt"] = "嘲讽", ["Pull"] = "拉拽", ["Push"] = "推开", ["Teleport"] = "传送", ["Invisibility"] = "隐形",
+["Resurrection"] = "复活", ["Summon"] = "召唤", ["Transformation"] = "变形", ["Flight"] = "飞行", ["Swim"] = "游泳",
+
+-- 游戏经济
+["Currency"] = "货币", ["Gold"] = "金币", ["Silver"] = "银币", ["Copper"] = "铜币", ["Platinum"] = "白金",
+["Credit"] = "信用点", ["Token"] = "代币", ["Gem"] = "宝石", ["Crystal"] = "水晶", ["Diamond"] = "钻石",
+["Trade"] = "交易", ["Buy"] = "购买", ["Sell"] = "出售", ["Auction"] = "拍卖", ["Bid"] = "出价",
+["Price"] = "价格", ["Cost"] = "成本", ["Value"] = "价值", ["Discount"] = "折扣", ["Sale"] = "促销",
+["Shop"] = "商店", ["Market"] = "市场", ["Vendor"] = "商人", ["Merchant"] = "商人", ["Trader"] = "贸易商",
+
+-- 游戏社交
+["Friend"] = "好友", ["Guild"] = "公会", ["Clan"] = "氏族", ["Team"] = "队伍", ["Party"] = "队伍",
+["Group"] = "组", ["Alliance"] = "联盟", ["Community"] = "社区", ["Chat"] = "聊天", ["Whisper"] = "私聊",
+["Say"] = "说", ["Yell"] = "大喊", ["Emote"] = "表情", ["Dance"] = "跳舞", ["Wave"] = "挥手",
+["Invite"] = "邀请", ["Join"] = "加入", ["Leave"] = "离开", ["Kick"] = "踢出", ["Promote"] = "晋升",
+["Demote"] = "降级", ["Leader"] = "领袖", ["Officer"] = "官员", ["Member"] = "成员", ["Recruit"] = "新成员",
+
+-- 游戏界面提示
+["Press"] = "按下", ["Hold"] = "按住", ["Release"] = "松开", ["Tap"] = "点击", ["Double Tap"] = "双击",
+["Swipe"] = "滑动", ["Drag"] = "拖动", ["Drop"] = "放下", ["Rotate"] = "旋转", ["Zoom"] = "缩放",
+["Confirm"] = "确认", ["Cancel"] = "取消", ["Accept"] = "接受", ["Decline"] = "拒绝", ["Yes"] = "是",
+["No"] = "否", ["OK"] = "确定", ["Back"] = "返回", ["Next"] = "下一步", ["Previous"] = "上一步",
+["Continue"] = "继续", ["Skip"] = "跳过", ["Retry"] = "重试", ["Restart"] = "重新开始", ["Exit"] = "退出",
+
+-- 游戏状态
+["Loading"] = "加载中", ["Connecting"] = "连接中", ["Saving"] = "保存中", ["Processing"] = "处理中", ["Waiting"] = "等待中",
+["Ready"] = "就绪", ["In Progress"] = "进行中", ["Completed"] = "已完成", ["Failed"] = "失败", ["Success"] = "成功",
+["Victory"] = "胜利", ["Defeat"] = "失败", ["Win"] = "胜利", ["Lose"] = "失败", ["Draw"] = "平局",
+["Paused"] = "已暂停", ["Resumed"] = "已继续", ["Started"] = "已开始", ["Finished"] = "已完成", ["Stopped"] = "已停止",
+
+-- 游戏指令
+["Command"] = "命令", ["Kill"] = "击杀", ["Destroy"] = "摧毁", ["Build"] = "建造", ["Create"] = "创建",
+["Spawn"] = "生成", ["Despawn"] = "消失", ["Teleport"] = "传送", ["Fly"] = "飞行", ["Noclip"] = "穿墙",
+["Godmode"] = "上帝模式", ["Invisible"] = "隐形", ["Visible"] = "可见", ["Freeze"] = "冻结", ["Unfreeze"] = "解冻",
+["Mute"] = "静音", ["Unmute"] = "取消静音", ["Kick"] = "踢出", ["Ban"] = "封禁", ["Unban"] = "解封",
+["Warn"] = "警告", ["Report"] = "举报", ["Help"] = "帮助", ["Support"] = "支持", ["Feedback"] = "反馈",
+
+-- 移动端特定
+["Mobile"] = "移动", ["Touch"] = "触摸", ["Swipe Left"] = "向左滑动", ["Swipe Right"] = "向右滑动", ["Swipe Up"] = "向上滑动",
+["Swipe Down"] = "向下滑动", ["Pinch In"] = "捏合", ["Pinch Out"] = "张开", ["Tap and Hold"] = "长按", ["Double Tap"] = "双击",
+["Shake"] = "摇晃", ["Tilt"] = "倾斜", ["Gyro"] = "陀螺仪", ["Accelerometer"] = "加速度计", ["Orientation"] = "方向",
+["Portrait"] = "竖屏", ["Landscape"] = "横屏", ["Auto Rotate"] = "自动旋转", ["Lock Rotation"] = "锁定旋转", ["Fullscreen"] = "全屏",
+
+-- 脚本与编程
+["Script"] = "脚本", ["Code"] = "代码", ["Programming"] = "编程", ["Developer"] = "开发者", ["Debug"] = "调试",
+["Error"] = "错误", ["Warning"] = "警告", ["Log"] = "日志", ["Console"] = "控制台", ["Terminal"] = "终端",
+["Variable"] = "变量", ["Function"] = "函数", ["Class"] = "类", ["Object"] = "对象", ["Array"] = "数组",
+["String"] = "字符串", ["Number"] = "数字", ["Boolean"] = "布尔", ["Null"] = "空", ["Undefined"] = "未定义",
+["Loop"] = "循环", ["For Loop"] = "For循环", ["While Loop"] = "While循环", ["If Statement"] = "If语句", ["Else"] = "否则",
+["Return"] = "返回", ["Break"] = "中断", ["Continue"] = "继续", ["Import"] = "导入", ["Export"] = "导出",
+
+-- 网络相关
+["Network"] = "网络", ["Internet"] = "互联网", ["WiFi"] = "无线网络", ["Ethernet"] = "以太网", ["Bluetooth"] = "蓝牙",
+["Connection"] = "连接", ["Disconnect"] = "断开连接", ["Reconnect"] = "重新连接", ["Latency"] = "延迟", ["Ping"] = "延迟",
+["Packet Loss"] = "丢包", ["Bandwidth"] = "带宽", ["Download"] = "下载", ["Upload"] = "上传", ["Stream"] = "流媒体",
+["Server"] = "服务器", ["Client"] = "客户端", ["Host"] = "主机", ["Peer"] = "对等", ["Multiplayer"] = "多人游戏",
+
+-- 安全与隐私
+["Security"] = "安全", ["Privacy"] = "隐私", ["Password"] = "密码", ["PIN"] = "PIN码", ["Biometric"] = "生物识别",
+["Two-Factor"] = "双因素", ["Authentication"] = "身份验证", ["Authorization"] = "授权", ["Permission"] = "权限", ["Access"] = "访问",
+["Block"] = "屏蔽", ["Allow"] = "允许", ["Deny"] = "拒绝", ["Restrict"] = "限制", ["Filter"] = "过滤",
+["Encrypt"] = "加密", ["Decrypt"] = "解密", ["Hash"] = "哈希", ["Signature"] = "签名", ["Certificate"] = "证书",
+
+-- 音频设置
+["Audio"] = "音频", ["Sound"] = "声音", ["Music"] = "音乐", ["Voice"] = "语音", ["Effects"] = "音效",
+["Volume"] = "音量", ["Master Volume"] = "主音量", ["Music Volume"] = "音乐音量", ["Sound Volume"] = "音效音量", ["Voice Volume"] = "语音音量",
+["Mute"] = "静音", ["Unmute"] = "取消静音", ["Headphones"] = "耳机", ["Speakers"] = "扬声器", ["Microphone"] = "麦克风",
+["Voice Chat"] = "语音聊天", ["Push to Talk"] = "按键说话", ["Voice Activation"] = "语音激活", ["Input Device"] = "输入设备", ["Output Device"] = "输出设备",
+
+-- 视频设置
+["Video"] = "视频", ["Graphics"] = "图形", ["Display"] = "显示", ["Monitor"] = "显示器", ["Screen"] = "屏幕",
+["Resolution"] = "分辨率", ["Aspect Ratio"] = "宽高比", ["Refresh Rate"] = "刷新率", ["Frame Rate"] = "帧率", ["FPS"] = "帧每秒",
+["VSync"] = "垂直同步", ["Anti-Aliasing"] = "抗锯齿", ["Texture Quality"] = "纹理质量", ["Shadow Quality"] = "阴影质量", ["Model Quality"] = "模型质量",
+["Effects Quality"] = "特效质量", ["Post Processing"] = "后期处理", ["Motion Blur"] = "运动模糊", ["Depth of Field"] = "景深", ["Ambient Occlusion"] = "环境光遮蔽",
+
+-- 控制设置
+["Controls"] = "控制", ["Keybind"] = "按键绑定", ["Hotkey"] = "快捷键", ["Keyboard"] = "键盘", ["Mouse"] = "鼠标",
+["Controller"] = "控制器", ["Gamepad"] = "游戏手柄", ["Joystick"] = "操纵杆", ["Touch"] = "触摸", ["Gyro"] = "陀螺仪",
+["Sensitivity"] = "灵敏度", ["Invert"] = "反转", ["Deadzone"] = "死区", ["Response Curve"] = "响应曲线", ["Vibration"] = "震动",
+
+-- 界面设置
+["Interface"] = "界面", ["UI"] = "用户界面", ["HUD"] = "平视显示器", ["Minimap"] = "小地图", ["Compass"] = "指南针",
+["Health Bar"] = "生命条", ["Mana Bar"] = "魔法条", ["Stamina Bar"] = "耐力条", ["Experience Bar"] = "经验条", ["Quest Tracker"] = "任务追踪",
+["Chat Box"] = "聊天框", ["Inventory"] = "背包", ["Skill Bar"] = "技能栏", ["Hotbar"] = "快捷栏", ["Crosshair"] = "准星",
+["Opacity"] = "不透明度", ["Scale"] = "缩放", ["Position"] = "位置", ["Lock"] = "锁定", ["Unlock"] = "解锁",
+
+-- 辅助功能
+["Accessibility"] = "辅助功能", ["Color Blind"] = "色盲", ["Deuteranopia"] = "绿色盲", ["Protanopia"] = "红色盲", ["Tritanopia"] = "蓝色盲",
+["High Contrast"] = "高对比度", ["Large Text"] = "大文字", ["Text Size"] = "文字大小", ["Subtitles"] = "字幕", ["Closed Captions"] = "隐藏式字幕",
+["Audio Cues"] = "音频提示", ["Visual Cues"] = "视觉提示", ["Haptic Feedback"] = "触觉反馈", ["Vibration"] = "震动", ["One-Handed"] = "单手操作",
+
+-- 性能与优化
+["Performance"] = "性能", ["Optimization"] = "优化", ["FPS"] = "帧每秒", ["Frame Rate"] = "帧率", ["Frame Time"] = "帧时间",
+["Latency"] = "延迟", ["Ping"] = "延迟", ["Packet Loss"] = "丢包", ["Bandwidth"] = "带宽", ["CPU"] = "中央处理器",
+["GPU"] = "图形处理器", ["RAM"] = "内存", ["VRAM"] = "显存", ["Storage"] = "存储", ["SSD"] = "固态硬盘",
+["HDD"] = "机械硬盘", ["Temperature"] = "温度", ["Fan Speed"] = "风扇速度", ["Power Usage"] = "功耗", ["Battery"] = "电池",
+
+-- 系统信息
+["System"] = "系统", ["OS"] = "操作系统", ["Windows"] = "Windows", ["macOS"] = "macOS", ["Linux"] = "Linux",
+["Android"] = "Android", ["iOS"] = "iOS", ["Processor"] = "处理器", ["Graphics Card"] = "显卡", ["Memory"] = "内存",
+["Storage"] = "存储", ["Network"] = "网络", ["Driver"] = "驱动", ["Update"] = "更新", ["Version"] = "版本",
+
+-- 文件操作
+["File"] = "文件", ["Folder"] = "文件夹", ["Directory"] = "目录", ["Path"] = "路径", ["Extension"] = "扩展名",
+["Create"] = "创建", ["Delete"] = "删除", ["Rename"] = "重命名", ["Move"] = "移动", ["Copy"] = "复制",
+["Paste"] = "粘贴", ["Cut"] = "剪切", ["Select"] = "选择", ["Select All"] = "全选", ["Deselect"] = "取消选择",
+["Open"] = "打开", ["Close"] = "关闭", ["Save"] = "保存", ["Save As"] = "另存为", ["Export"] = "导出",
+
+-- 数学与物理
+["Math"] = "数学", ["Physics"] = "物理", ["Number"] = "数字", ["Integer"] = "整数", ["Float"] = "浮点数",
+["Vector"] = "向量", ["Matrix"] = "矩阵", ["Angle"] = "角度", ["Degree"] = "度", ["Radian"] = "弧度",
+["Velocity"] = "速度", ["Acceleration"] = "加速度", ["Force"] = "力", ["Mass"] = "质量", ["Gravity"] = "重力",
+["Friction"] = "摩擦", ["Collision"] = "碰撞", ["Raycast"] = "射线检测", ["Trigger"] = "触发器", ["Joint"] = "关节",
+
+-- 时间与日期
+["Time"] = "时间", ["Date"] = "日期", ["Clock"] = "时钟", ["Calendar"] = "日历", ["Stopwatch"] = "秒表",
+["Timer"] = "计时器", ["Countdown"] = "倒计时", ["Second"] = "秒", ["Minute"] = "分钟", ["Hour"] = "小时",
+["Day"] = "天", ["Week"] = "周", ["Month"] = "月", ["Year"] = "年", ["Decade"] = "十年",
+["Century"] = "世纪", ["Millennium"] = "千年", ["Past"] = "过去", ["Present"] = "现在", ["Future"] = "未来",
+
+-- 颜色与材质
+["Color"] = "颜色", ["Material"] = "材质", ["Texture"] = "纹理", ["Shader"] = "着色器", ["Light"] = "光",
+["Dark"] = "暗", ["Bright"] = "明亮", ["Saturation"] = "饱和度", ["Hue"] = "色调", ["Value"] = "明度",
+["Red"] = "红色", ["Green"] = "绿色", ["Blue"] = "蓝色", ["Yellow"] = "黄色", ["Cyan"] = "青色",
+["Magenta"] = "洋红色", ["Black"] = "黑色", ["White"] = "白色", ["Gray"] = "灰色", ["Transparent"] = "透明",
+
+-- 形状与几何
+["Shape"] = "形状", ["Geometry"] = "几何", ["Point"] = "点", ["Line"] = "线", ["Plane"] = "平面",
+["Circle"] = "圆形", ["Square"] = "正方形", ["Triangle"] = "三角形", ["Rectangle"] = "矩形", ["Polygon"] = "多边形",
+["Sphere"] = "球体", ["Cube"] = "立方体", ["Cylinder"] = "圆柱", ["Cone"] = "圆锥", ["Pyramid"] = "金字塔",
+["Torus"] = "圆环", ["Mesh"] = "网格", ["Vertex"] = "顶点", ["Edge"] = "边", ["Face"] = "面",
+
+-- 声音与音乐
+["Sound"] = "声音", ["Music"] = "音乐", ["Audio"] = "音频", ["Pitch"] = "音高", ["Volume"] = "音量",
+["Frequency"] = "频率", ["Amplitude"] = "振幅", ["Wave"] = "波形", ["Sine"] = "正弦波", ["Square"] = "方波",
+["Sawtooth"] = "锯齿波", ["Noise"] = "噪声", ["Echo"] = "回声", ["Reverb"] = "混响", ["Delay"] = "延迟",
+["Filter"] = "滤波器", ["Equalizer"] = "均衡器", ["Compressor"] = "压缩器", ["Limiter"] = "限制器", ["Normalize"] = "标准化",
+
+-- 文本与字体
+["Text"] = "文本", ["Font"] = "字体", ["Size"] = "大小", ["Style"] = "样式", ["Bold"] = "粗体",
+["Italic"] = "斜体", ["Underline"] = "下划线", ["Strikethrough"] = "删除线", ["Color"] = "颜色", ["Alignment"] = "对齐",
+["Left"] = "左对齐", ["Center"] = "居中", ["Right"] = "右对齐", ["Justify"] = "两端对齐", ["Line Height"] = "行高",
+["Letter Spacing"] = "字间距", ["Word Spacing"] = "词间距", ["Indent"] = "缩进", ["Margin"] = "边距", ["Padding"] = "内边距",
+
+-- 网络游戏术语
+["MMO"] = "大型多人在线", ["MMORPG"] = "大型多人在线角色扮演游戏", ["MOBA"] = "多人在线战术竞技游戏", ["FPS"] = "第一人称射击",
+["TPS"] = "第三人称射击", ["RTS"] = "即时战略", ["RPG"] = "角色扮演游戏", ["ARPG"] = "动作角色扮演游戏", ["JRPG"] = "日式角色扮演游戏",
+["SRPG"] = "策略角色扮演游戏", ["Simulation"] = "模拟游戏", ["Sports"] = "体育游戏", ["Racing"] = "竞速游戏", ["Fighting"] = "格斗游戏",
+["Platformer"] = "平台游戏", ["Puzzle"] = "解谜游戏", ["Rhythm"] = "节奏游戏", ["Survival"] = "生存游戏", ["Horror"] = "恐怖游戏",
+["Sandbox"] = "沙盒游戏", ["Open World"] = "开放世界", ["Linear"] = "线性", ["Non-linear"] = "非线性", ["Procedural"] = "程序生成",
+
+-- 电子竞技
+["Esports"] = "电子竞技", ["Tournament"] = "锦标赛", ["League"] = "联赛", ["Match"] = "比赛", ["Round"] = "回合",
+["Set"] = "局", ["Game"] = "游戏", ["Point"] = "分数", ["Score"] = "得分", ["Kill"] = "击杀",
+["Death"] = "死亡", ["Assist"] = "助攻", ["KDA"] = "击杀/死亡/助攻", ["Win"] = "胜利", ["Loss"] = "失败",
+["Draw"] = "平局", ["Rank"] = "排名", ["Division"] = "段位", ["Tier"] = "等级", ["Rating"] = "评分",
+["Elo"] = "ELO等级分", ["MMR"] = "匹配等级", ["LP"] = "联赛点数", ["Promotion"] = "晋级", ["Demotion"] = "降级",
+
+-- 虚拟现实
+["VR"] = "虚拟现实", ["AR"] = "增强现实", ["MR"] = "混合现实", ["XR"] = "扩展现实", ["Headset"] = "头戴设备",
+["Controller"] = "控制器", ["Tracking"] = "追踪", ["Room Scale"] = "房间尺度", ["Standing"] = "站立", ["Seated"] = "坐式",
+["Field of View"] = "视野范围", ["Refresh Rate"] = "刷新率", ["Resolution"] = "分辨率", ["Latency"] = "延迟", ["Motion Sickness"] = "晕动症",
+["Teleport"] = "传送", ["Smooth Movement"] = "平滑移动", ["Snap Turn"] = "瞬转", ["Smooth Turn"] = "平滑转向", ["Hand Tracking"] = "手部追踪",
+
+-- 云游戏
+["Cloud Gaming"] = "云游戏", ["Streaming"] = "流媒体", ["Latency"] = "延迟", ["Bandwidth"] = "带宽", ["Resolution"] = "分辨率",
+["Frame Rate"] = "帧率", ["Bitrate"] = "比特率", ["Compression"] = "压缩", ["Codec"] = "编解码器", ["Server"] = "服务器",
+["Client"] = "客户端", ["Subscription"] = "订阅", ["Free Tier"] = "免费层", ["Premium"] = "高级", ["Library"] = "游戏库",
+["Cross-Platform"] = "跨平台", ["Cross-Play"] = "跨平台联机", ["Cross-Progression"] = "跨平台进度", ["Save Data"] = "保存数据", ["Sync"] = "同步",
+
+-- 游戏开发
+["Development"] = "开发", ["Game Engine"] = "游戏引擎", ["Editor"] = "编辑器", ["Scripting"] = "脚本编写", ["Programming"] = "编程",
+["Art"] = "美术", ["Design"] = "设计", ["Sound"] = "音频", ["Testing"] = "测试", ["Debugging"] = "调试",
+["Optimization"] = "优化", ["Performance"] = "性能", ["Profiling"] = "性能分析", ["Build"] = "构建", ["Release"] = "发布",
+["Patch"] = "补丁", ["Update"] = "更新", ["DLC"] = "可下载内容", ["Expansion"] = "扩展包", ["Mod"] = "模组",
+
+-- 玩家行为
+["Play"] = "游玩", ["Pause"] = "暂停", ["Stop"] = "停止", ["Restart"] = "重新开始", ["Continue"] = "继续",
+["Save"] = "保存", ["Load"] = "加载", ["Quit"] = "退出", ["Exit"] = "退出", ["Alt+F4"] = "Alt+F4",
+["Jump"] = "跳跃", ["Crouch"] = "蹲下", ["Sprint"] = "冲刺", ["Walk"] = "行走", ["Run"] = "奔跑",
+["Attack"] = "攻击", ["Defend"] = "防御", ["Block"] = "格挡", ["Dodge"] = "躲避", ["Parry"] = "招架",
+["Use"] = "使用", ["Interact"] = "互动", ["Pick Up"] = "拾取", ["Drop"] = "丢弃", ["Equip"] = "装备",
+["Unequip"] = "卸下", ["Inventory"] = "背包", ["Craft"] = "制作", ["Build"] = "建造", ["Destroy"] = "摧毁",
+
+-- 游戏内通信
+["Chat"] = "聊天", ["Message"] = "消息", ["Whisper"] = "私聊", ["Say"] = "说", ["Yell"] = "大喊",
+["Party"] = "队伍", ["Guild"] = "公会", ["Global"] = "全局", ["Local"] = "本地", ["System"] = "系统",
+["Emote"] = "表情", ["Dance"] = "跳舞", ["Wave"] = "挥手", ["Bow"] = "鞠躬", ["Salute"] = "敬礼",
+["Laugh"] = "大笑", ["Cry"] = "哭泣", ["Angry"] = "愤怒", ["Happy"] = "高兴", ["Sad"] = "悲伤",
+["Voice Chat"] = "语音聊天", ["Push to Talk"] = "按键说话", ["Voice Activation"] = "语音激活", ["Mute"] = "静音", ["Unmute"] = "取消静音",
+
+-- 游戏内经济
+["Gold"] = "金币", ["Silver"] = "银币", ["Copper"] = "铜币", ["Platinum"] = "白金", ["Diamond"] = "钻石",
+["Credit"] = "信用点", ["Token"] = "代币", ["Gem"] = "宝石", ["Crystal"] = "水晶", ["Coin"] = "硬币",
+["Money"] = "金钱", ["Currency"] = "货币", ["Price"] = "价格", ["Cost"] = "成本", ["Value"] = "价值",
+["Buy"] = "购买", ["Sell"] = "出售", ["Trade"] = "交易", ["Auction"] = "拍卖", ["Bid"] = "出价",
+["Shop"] = "商店", ["Market"] = "市场", ["Vendor"] = "商人", ["Merchant"] = "商人", ["Trader"] = "贸易商",
+
+-- 游戏内进度
+["Level"] = "等级", ["Experience"] = "经验", ["XP"] = "经验值", ["Skill"] = "技能", ["Talent"] = "天赋",
+["Perk"] = "特长", ["Achievement"] = "成就", ["Trophy"] = "奖杯", ["Badge"] = "徽章", ["Medal"] = "奖牌",
+["Quest"] = "任务", ["Mission"] = "任务", ["Objective"] = "目标", ["Goal"] = "目标", ["Challenge"] = "挑战",
+["Reward"] = "奖励", ["Loot"] = "战利品", ["Drop"] = "掉落", ["Collection"] = "收集", ["Completion"] = "完成度",
+
+-- 游戏内界面
+["HUD"] = "平视显示器", ["UI"] = "用户界面", ["Minimap"] = "小地图", ["Compass"] = "指南针", ["Radar"] = "雷达",
+["Health Bar"] = "生命条", ["Mana Bar"] = "魔法条", ["Stamina Bar"] = "耐力条", ["Experience Bar"] = "经验条", ["Quest Log"] = "任务日志",
+["Inventory"] = "背包", ["Skill Tree"] = "技能树", ["Talent Tree"] = "天赋树", ["Map"] = "地图", ["Journal"] = "日志",
+["Settings"] = "设置", ["Options"] = "选项", ["Graphics"] = "图形", ["Audio"] = "音频", ["Controls"] = "控制",
+
+-- 游戏内提示
+["Hint"] = "提示", ["Tip"] = "技巧", ["Tutorial"] = "教程", ["Guide"] = "指南", ["Help"] = "帮助",
+["Instruction"] = "说明", ["Warning"] = "警告", ["Caution"] = "注意", ["Danger"] = "危险", ["Notice"] = "通知",
+["Information"] = "信息", ["Details"] = "详细信息", ["Description"] = "描述", ["Explanation"] = "解释", ["Example"] = "示例",
+
+-- 游戏内状态
+["Active"] = "激活", ["Inactive"] = "未激活", ["Enabled"] = "启用", ["Disabled"] = "禁用", ["On"] = "开",
+["Off"] = "关", ["Ready"] = "就绪", ["Not Ready"] = "未就绪", ["Available"] = "可用", ["Unavailable"] = "不可用",
+["Complete"] = "完成", ["Incomplete"] = "未完成", ["Finished"] = "已完成", ["Unfinished"] = "未完成", ["Success"] = "成功",
+["Failure"] = "失败", ["Victory"] = "胜利", ["Defeat"] = "失败", ["Win"] = "胜利", ["Loss"] = "失败",
+
+-- 游戏内时间
+["Day"] = "白天", ["Night"] = "夜晚", ["Dawn"] = "黎明", ["Dusk"] = "黄昏", ["Morning"] = "早晨",
+["Afternoon"] = "下午", ["Evening"] = "晚上", ["Midnight"] = "午夜", ["Noon"] = "中午", ["Sunrise"] = "日出",
+["Sunset"] = "日落", ["Season"] = "季节", ["Spring"] = "春天", ["Summer"] = "夏天", ["Autumn"] = "秋天",
+["Winter"] = "冬天", ["Weather"] = "天气", ["Sunny"] = "晴朗", ["Rainy"] = "下雨", ["Cloudy"] = "多云",
+["Snowy"] = "下雪", ["Windy"] = "有风", ["Stormy"] = "暴风雨", ["Foggy"] = "有雾", ["Clear"] = "晴朗",
+
+-- 游戏内环境
+["World"] = "世界", ["Environment"] = "环境", ["Terrain"] = "地形", ["Landscape"] = "景观", ["Sky"] = "天空",
+["Ground"] = "地面", ["Water"] = "水", ["Ocean"] = "海洋", ["Sea"] = "海", ["Lake"] = "湖",
+["River"] = "河流", ["Mountain"] = "山", ["Hill"] = "山丘", ["Valley"] = "山谷", ["Forest"] = "森林",
+["Desert"] = "沙漠", ["Jungle"] = "丛林", ["Cave"] = "洞穴", ["Dungeon"] = "地下城", ["Castle"] = "城堡",
+["City"] = "城市", ["Town"] = "城镇", ["Village"] = "村庄", ["House"] = "房子", ["Building"] = "建筑",
+
+-- 游戏内生物
+["Creature"] = "生物", ["Animal"] = "动物", ["Monster"] = "怪物", ["Beast"] = "野兽", ["Dragon"] = "龙",
+["Bird"] = "鸟", ["Fish"] = "鱼", ["Insect"] = "昆虫", ["Spider"] = "蜘蛛", ["Snake"] = "蛇",
+["Wolf"] = "狼", ["Bear"] = "熊", ["Lion"] = "狮子", ["Tiger"] = "老虎", ["Elephant"] = "大象",
+["Plant"] = "植物", ["Tree"] = "树", ["Flower"] = "花", ["Grass"] = "草", ["Bush"] = "灌木",
+
+-- 游戏内物品品质
+["Quality"] = "品质", ["Common"] = "普通", ["Uncommon"] = "罕见", ["Rare"] = "稀有", ["Epic"] = "史诗",
+["Legendary"] = "传奇", ["Mythic"] = "神话", ["Unique"] = "独特", ["Set"] = "套装", ["Normal"] = "普通",
+["Magic"] = "魔法", ["Rare"] = "稀有", ["Set"] = "套装", ["Unique"] = "独特", ["Crafted"] = "制作",
+["Dropped"] = "掉落", ["Quest"] = "任务", ["Vendor"] = "商人", ["World Drop"] = "世界掉落", ["Boss Drop"] = "首领掉落",
+
+-- 游戏内属性类型
+["Attribute"] = "属性", ["Primary"] = "主要", ["Secondary"] = "次要", ["Offensive"] = "攻击", ["Defensive"] = "防御",
+["Utility"] = "实用", ["Physical"] = "物理", ["Magic"] = "魔法", ["Fire"] = "火焰", ["Ice"] = "冰霜",
+["Lightning"] = "闪电", ["Poison"] = "毒素", ["Holy"] = "神圣", ["Shadow"] = "暗影", ["Nature"] = "自然",
+["Arcane"] = "奥术", ["Chaos"] = "混沌", ["Void"] = "虚空", ["Light"] = "光", ["Dark"] = "暗",
+
+-- 游戏内技能类型
+["Skill Type"] = "技能类型", ["Active"] = "主动", ["Passive"] = "被动", ["Toggle"] = "切换", ["Channel"] = "引导",
+["Instant"] = "瞬发", ["Casted"] = "施法", ["Ground Targeted"] = "地面目标", ["Unit Targeted"] = "单位目标", ["Self"] = "自身",
+["Area"] = "区域", ["Cone"] = "锥形", ["Line"] = "直线", ["Projectile"] = "投射物", ["Melee"] = "近战",
+["Ranged"] = "远程", ["Magic"] = "魔法", ["Physical"] = "物理", ["Healing"] = "治疗", ["Damage"] = "伤害",
+["Crowd Control"] = "控制", ["Buff"] = "增益", ["Debuff"] = "减益", ["Summon"] = "召唤", ["Transformation"] = "变形",
+
+-- 游戏内状态效果
+["Status Effect"] = "状态效果", ["Burning"] = "燃烧", ["Frozen"] = "冻结", ["Shocked"] = "电击", ["Poisoned"] = "中毒",
+["Bleeding"] = "流血", ["Stunned"] = "击晕", ["Slowed"] = "减速", ["Rooted"] = "定身", ["Silenced"] = "沉默",
+["Blinded"] = "致盲", ["Confused"] = "混乱", ["Fear"] = "恐惧", ["Charmed"] = "魅惑", ["Taunted"] = "嘲讽",
+["Invulnerable"] = "无敌", ["Invisible"] = "隐形", ["Stealth"] = "潜行", ["Hasted"] = "加速", ["Slowed"] = "减速",
+["Weakened"] = "虚弱", ["Empowered"] = "强化", ["Blessed"] = "祝福", ["Cursed"] = "诅咒", ["Polymorphed"] = "变形",
+
+-- 游戏内队伍
+["Party"] = "队伍", ["Raid"] = "团队", ["Guild"] = "公会", ["Alliance"] = "联盟", ["Group"] = "组",
+["Solo"] = "单人", ["Duo"] = "双人", ["Trio"] = "三人", ["Quad"] = "四人", ["Squad"] = "小队",
+["Team"] = "队伍", ["Blue Team"] = "蓝队", ["Red Team"] = "红队", ["Green Team"] = "绿队", ["Yellow Team"] = "黄队",
+["Attackers"] = "进攻方", ["Defenders"] = "防守方", ["Allies"] = "盟友", ["Enemies"] = "敌人", ["Neutral"] = "中立",
+
+-- 游戏内难度
+["Difficulty"] = "难度", ["Easy"] = "简单", ["Normal"] = "普通", ["Hard"] = "困难", ["Very Hard"] = "非常困难",
+["Expert"] = "专家", ["Master"] = "大师", ["Legend"] = "传奇", ["Nightmare"] = "噩梦", ["Impossible"] = "不可能",
+["Casual"] = "休闲", ["Standard"] = "标准", ["Advanced"] = "高级", ["Elite"] = "精英", ["Ultimate"] = "终极",
+
+-- 游戏内模式
+["Mode"] = "模式", ["Campaign"] = "战役", ["Story"] = "故事", ["Adventure"] = "冒险", ["Exploration"] = "探索",
+["Survival"] = "生存", ["Horde"] = "无尽", ["Wave"] = "波次", ["Time Trial"] = "计时赛", ["Race"] = "竞速",
+["Deathmatch"] = "死斗", ["Team Deathmatch"] = "团队死斗", ["Capture the Flag"] = "夺旗", ["King of the Hill"] = "山丘之王", ["Domination"] = "统治",
+["Conquest"] = "征服", ["Assault"] = "突击", ["Defense"] = "防守", ["Escort"] = "护送", ["Payload"] = "运载目标",
+["Search and Destroy"] = "搜索与摧毁", ["Bomb"] = "炸弹", ["Hostage"] = "人质", ["Infection"] = "感染", ["Zombies"] = "僵尸",
+
+-- 游戏内地图
+["Map"] = "地图", ["World Map"] = "世界地图", ["Minimap"] = "小地图", ["Radar"] = "雷达", ["Compass"] = "指南针",
+["Location"] = "位置", ["Area"] = "区域", ["Zone"] = "区域", ["Region"] = "地区", ["Continent"] = "大陆",
+["Dungeon"] = "地下城", ["Raid"] = "团队副本", ["Instance"] = "副本", ["Arena"] = "竞技场", ["Battleground"] = "战场",
+["City"] = "城市", ["Town"] = "城镇", ["Village"] = "村庄", ["Camp"] = "营地", ["Outpost"] = "前哨",
+["Fortress"] = "要塞", ["Castle"] = "城堡", ["Temple"] = "神庙", ["Crypt"] = "墓穴", ["Cavern"] = "洞穴",
+
+-- 游戏内交互
+["Interact"] = "互动", ["Talk"] = "交谈", ["Trade"] = "交易", ["Quest"] = "任务", ["Vendor"] = "商人",
+["Trainer"] = "训练师", ["Bank"] = "银行", ["Auction House"] = "拍卖行", ["Mailbox"] = "邮箱", ["Inn"] = "旅店",
+["Stable"] = "兽栏", ["Forge"] = "锻造", ["Anvil"] = "铁砧", ["Workbench"] = "工作台", ["Alchemy Table"] = "炼金台",
+["Enchanting Table"] = "附魔台", ["Cooking Fire"] = "烹饪火堆", ["Fishing Spot"] = "钓鱼点", ["Mining Node"] = "采矿点", ["Herb"] = "草药",
+
+-- 游戏内收集
+["Collect"] = "收集", ["Gather"] = "采集", ["Mine"] = "采矿", ["Herbalism"] = "采药", ["Skinning"] = "剥皮",
+["Fishing"] = "钓鱼", ["Lumberjacking"] = "伐木", ["Farming"] = "耕种", ["Hunting"] = "狩猎", ["Trapping"] = "陷阱",
+["Archaeology"] = "考古", ["Treasure Hunting"] = "寻宝", ["Scavenging"] = "拾荒", ["Salvaging"] = "打捞", ["Disenchanting"] = "分解",
+
+-- 游戏内制作
+["Craft"] = "制作", ["Smithing"] = "锻造", ["Tailoring"] = "裁缝", ["Leatherworking"] = "制皮", ["Engineering"] = "工程学",
+["Alchemy"] = "炼金术", ["Enchanting"] = "附魔", ["Jewelcrafting"] = "珠宝加工", ["Inscription"] = "铭文", ["Cooking"] = "烹饪",
+["Brewing"] = "酿造", ["Fletching"] = "制箭", ["Weaving"] = "编织", ["Pottery"] = "制陶", ["Scribing"] = "抄写",
+
+-- 游戏内升级
+["Upgrade"] = "升级", ["Enhance"] = "增强", ["Refine"] = "精炼", ["Polish"] = "抛光", ["Temper"] = "回火",
+["Harden"] = "硬化", ["Sharpen"] = "锐化", ["Enchant"] = "附魔", ["Socket"] = "镶嵌", ["Augment"] = "增强",
+["Transmute"] = "转化", ["Transmogrify"] = "幻化", ["Dye"] = "染色", ["Polish"] = "抛光", ["Repair"] = "修理",
+
+-- 游戏内社交动作
+["Emote"] = "表情", ["Dance"] = "跳舞", ["Wave"] = "挥手", ["Bow"] = "鞠躬", ["Salute"] = "敬礼",
+["Cheer"] = "欢呼", ["Clap"] = "鼓掌", ["Cry"] = "哭泣", ["Laugh"] = "大笑", ["Point"] = "指向",
+["Sit"] = "坐下", ["Stand"] = "站立", ["Lay"] = "躺下", ["Sleep"] = "睡觉", ["Kneel"] = "跪下",
+["Pray"] = "祈祷", ["Meditate"] = "冥想", ["Stretch"] = "伸展", ["Flex"] = "展示肌肉", ["Thumbs Up"] = "点赞",
+["Thumbs Down"] = "点踩", ["Facepalm"] = "捂脸", ["Shrug"] = "耸肩", ["Headbang"] = "甩头", ["Spin"] = "旋转",
+
+-- 游戏内语音
+["Voice"] = "语音", ["Chat"] = "聊天", ["Talk"] = "说话", ["Whisper"] = "私聊", ["Shout"] = "大喊",
+["Yell"] = "大喊", ["Say"] = "说", ["Party"] = "队伍", ["Guild"] = "公会", ["Raid"] = "团队",
+["Battleground"] = "战场", ["Arena"] = "竞技场", ["Instance"] = "副本", ["Local"] = "本地", ["Global"] = "全局",
+["System"] = "系统", ["Announcement"] = "公告", ["Notification"] = "通知", ["Alert"] = "警报", ["Warning"] = "警告",
+
+-- 游戏内提示信息
+["Hint"] = "提示", ["Tip"] = "技巧", ["Tutorial"] = "教程", ["Guide"] = "指南", ["Help"] = "帮助",
+["Information"] = "信息", ["Details"] = "详细信息", ["Description"] = "描述", ["Explanation"] = "解释", ["Example"] = "示例",
+["Warning"] = "警告", ["Caution"] = "注意", ["Danger"] = "危险", ["Notice"] = "通知", ["Alert"] = "警报",
+["Error"] = "错误", ["Bug"] = "漏洞", ["Glitch"] = "故障", ["Issue"] = "问题", ["Problem"] = "问题",
+["Solution"] = "解决方案", ["Fix"] = "修复", ["Patch"] = "补丁", ["Update"] = "更新", ["Hotfix"] = "热修复",
+
+-- 游戏内成就
+["Achievement"] = "成就", ["Trophy"] = "奖杯", ["Badge"] = "徽章", ["Medal"] = "奖牌", ["Award"] = "奖励",
+["Unlock"] = "解锁", ["Complete"] = "完成", ["Progress"] = "进度", ["Percentage"] = "百分比", ["Score"] = "得分",
+["Points"] = "点数", ["Rank"] = "排名", ["Leaderboard"] = "排行榜", ["Challenge"] = "挑战", ["Goal"] = "目标",
+["Milestone"] = "里程碑", ["Feat"] = "壮举", ["Accomplishment"] = "成就", ["Success"] = "成功", ["Victory"] = "胜利",
+
+-- 游戏内商店
+["Shop"] = "商店", ["Store"] = "商店", ["Market"] = "市场", ["Vendor"] = "商人", ["Merchant"] = "商人",
+["Trader"] = "贸易商", ["Bazaar"] = "集市", ["Auction House"] = "拍卖行", ["Marketplace"] = "市场", ["Black Market"] = "黑市",
+["Item Shop"] = "道具商店", ["Cosmetic Shop"] = "外观商店", ["Currency Exchange"] = "货币兑换", ["Trade Post"] = "贸易站", ["Guild Store"] = "公会商店",
+
+-- 游戏内货币
+["Gold"] = "金币", ["Silver"] = "银币", ["Copper"] = "铜币", ["Platinum"] = "白金", ["Diamond"] = "钻石",
+["Credit"] = "信用点", ["Token"] = "代币", ["Gem"] = "宝石", ["Crystal"] = "水晶", ["Coin"] = "硬币",
+["Cash"] = "现金", ["Money"] = "金钱", ["Currency"] = "货币", ["Funds"] = "资金", ["Wealth"] = "财富",
+["Treasure"] = "宝藏", ["Loot"] = "战利品", ["Reward"] = "奖励", ["Bounty"] = "赏金", ["Prize"] = "奖品",
+
+-- 游戏内交易
+["Trade"] = "交易", ["Exchange"] = "交换", ["Barter"] = "以物易物", ["Negotiate"] = "谈判", ["Deal"] = "交易",
+["Agreement"] = "协议", ["Contract"] = "合同", ["Purchase"] = "购买", ["Sale"] = "销售", ["Buy"] = "购买",
+["Sell"] = "出售", ["Acquire"] = "获得", ["Obtain"] = "获取", ["Receive"] = "收到", ["Give"] = "给予",
+["Take"] = "拿走", ["Steal"] = "偷窃", ["Loot"] = "掠夺", ["Plunder"] = "掠夺", ["Rob"] = "抢劫",
+
+-- 游戏内战斗
+["Fight"] = "战斗", ["Battle"] = "战斗", ["Combat"] = "战斗", ["War"] = "战争", ["Conflict"] = "冲突",
+["Duel"] = "决斗", ["Skirmish"] = "小规模战斗", ["Clash"] = "冲突", ["Encounter"] = "遭遇", ["Engagement"] = "交战",
+["Attack"] = "攻击", ["Defend"] = "防御", ["Retreat"] = "撤退", ["Advance"] = "前进", ["Charge"] = "冲锋",
+["Assault"] = "突击", ["Raid"] = "袭击", ["Ambush"] = "伏击", ["Siege"] = "围攻", ["Invasion"] = "入侵",
+
+-- 游戏内探索
+["Explore"] = "探索", ["Discover"] = "发现", ["Search"] = "搜索", ["Find"] = "找到", ["Locate"] = "定位",
+["Navigate"] = "导航", ["Travel"] = "旅行", ["Journey"] = "旅程", ["Adventure"] = "冒险", ["Expedition"] = "远征",
+["Quest"] = "任务", ["Mission"] = "任务", ["Objective"] = "目标", ["Goal"] = "目标", ["Destination"] = "目的地",
+["Path"] = "路径", ["Route"] = "路线", ["Trail"] = "小径", ["Waypoint"] = "路点", ["Checkpoint"] = "检查点",
+
+-- 游戏内解谜
+["Puzzle"] = "谜题", ["Riddle"] = "谜语", ["Mystery"] = "神秘", ["Secret"] = "秘密", ["Clue"] = "线索",
+["Hint"] = "提示", ["Solution"] = "解决方案", ["Answer"] = "答案", ["Question"] = "问题", ["Challenge"] = "挑战",
+["Test"] = "测试", ["Trial"] = "考验", ["Obstacle"] = "障碍", ["Barrier"] = "屏障", ["Lock"] = "锁",
+["Key"] = "钥匙", ["Code"] = "代码", ["Password"] = "密码", ["Pattern"] = "图案", ["Sequence"] = "序列",
+
+-- 游戏内建造
+["Build"] = "建造", ["Construct"] = "建造", ["Create"] = "创建", ["Make"] = "制作", ["Craft"] = "制作",
+["Assemble"] = "组装", ["Form"] = "形成", ["Shape"] = "塑造", ["Design"] = "设计", ["Plan"] = "计划",
+["Blueprint"] = "蓝图", ["Template"] = "模板", ["Model"] = "模型", ["Structure"] = "结构", ["Building"] = "建筑",
+["House"] = "房子", ["Castle"] = "城堡", ["Fortress"] = "要塞", ["Wall"] = "墙", ["Tower"] = "塔",
+
+-- 游戏内破坏
+["Destroy"] = "摧毁", ["Break"] = "破坏", ["Smash"] = "粉碎", ["Crush"] = "压碎", ["Shatter"] = "粉碎",
+["Demolish"] = "拆除", ["Raze"] = "夷为平地", ["Ruin"] = "毁灭", ["Wreck"] = "破坏", ["Damage"] = "损坏",
+["Harm"] = "伤害", ["Injure"] = "伤害", ["Kill"] = "杀死", ["Eliminate"] = "消灭", ["Annihilate"] = "歼灭",
+["Obliterate"] = "湮灭", ["Eradicate"] = "根除", ["Extinguish"] = "熄灭", ["Remove"] = "移除", ["Delete"] = "删除",
+
+-- 游戏内生存
+["Survive"] = "生存", ["Live"] = "活着", ["Endure"] = "忍受", ["Persist"] = "坚持", ["Last"] = "持续",
+["Health"] = "生命值", ["Hunger"] = "饥饿", ["Thirst"] = "口渴", ["Stamina"] = "耐力", ["Fatigue"] = "疲劳",
+["Temperature"] = "温度", ["Cold"] = "寒冷", ["Heat"] = "炎热", ["Shelter"] = "庇护所", ["Food"] = "食物",
+["Water"] = "水", ["Rest"] = "休息", ["Sleep"] = "睡眠", ["Heal"] = "治疗", ["Recover"] = "恢复",
+
+-- 游戏内魔法
+["Magic"] = "魔法", ["Spell"] = "法术", ["Incantation"] = "咒语", ["Enchantment"] = "附魔", ["Curse"] = "诅咒",
+["Blessing"] = "祝福", ["Ritual"] = "仪式", ["Ceremony"] = "典礼", ["Arcane"] = "奥术", ["Mystic"] = "神秘",
+["Wizard"] = "巫师", ["Mage"] = "法师", ["Sorcerer"] = "术士", ["Warlock"] = "术士", ["Witch"] = "女巫",
+["Necromancer"] = "死灵法师", ["Druid"] = "德鲁伊", ["Shaman"] = "萨满", ["Cleric"] = "牧师", ["Paladin"] = "圣骑士",
+
+-- 游戏内科技
+["Technology"] = "科技", ["Science"] = "科学", ["Engineering"] = "工程学", ["Mechanics"] = "机械", ["Electronics"] = "电子",
+["Programming"] = "编程", ["Coding"] = "编码", ["Robot"] = "机器人", ["Drone"] = "无人机", ["AI"] = "人工智能",
+["Cyborg"] = "赛博格", ["Android"] = "安卓", ["Machine"] = "机器", ["Device"] = "设备", ["Gadget"] = "小工具",
+["Tool"] = "工具", ["Instrument"] = "仪器", ["Apparatus"] = "装置", ["Equipment"] = "设备", ["Gear"] = "装备",
+
+-- 游戏内载具
+["Vehicle"] = "载具", ["Car"] = "汽车", ["Truck"] = "卡车", ["Motorcycle"] = "摩托车", ["Bicycle"] = "自行车",
+["Boat"] = "船", ["Ship"] = "船", ["Submarine"] = "潜艇", ["Plane"] = "飞机", ["Helicopter"] = "直升机",
+["Spaceship"] = "宇宙飞船", ["Rocket"] = "火箭", ["Train"] = "火车", ["Bus"] = "公交车", ["Taxi"] = "出租车",
+["Tank"] = "坦克", ["Mecha"] = "机甲", ["Hovercraft"] = "气垫船", ["Jetpack"] = "喷气背包", ["Mount"] = "坐骑",
+
+-- 游戏内宠物
+["Pet"] = "宠物", ["Companion"] = "同伴", ["Familiar"] = "使魔", ["Mount"] = "坐骑", ["Steed"] = "坐骑",
+["Animal"] = "动物", ["Creature"] = "生物", ["Beast"] = "野兽", ["Monster"] = "怪物", ["Dragon"] = "龙",
+["Cat"] = "猫", ["Dog"] = "狗", ["Bird"] = "鸟", ["Fish"] = "鱼", ["Horse"] = "马",
+["Wolf"] = "狼", ["Bear"] = "熊", ["Lion"] = "狮子", ["Tiger"] = "老虎", ["Elephant"] = "大象",
+
+-- 游戏内节日
+["Festival"] = "节日", ["Holiday"] = "假日", ["Celebration"] = "庆祝", ["Event"] = "活动", ["Season"] = "季节",
+["Christmas"] = "圣诞节", ["Halloween"] = "万圣节", ["Easter"] = "复活节", ["Valentine"] = "情人节", ["New Year"] = "新年",
+["Thanksgiving"] = "感恩节", ["Birthday"] = "生日", ["Anniversary"] = "周年纪念", ["Carnival"] = "嘉年华", ["Parade"] = "游行",
+["Fireworks"] = "烟花", ["Decoration"] = "装饰", ["Costume"] = "服装", ["Mask"] = "面具", ["Gift"] = "礼物",
+
+-- 游戏内天气
+["Weather"] = "天气", ["Climate"] = "气候", ["Sunny"] = "晴朗", ["Rainy"] = "下雨", ["Cloudy"] = "多云",
+["Snowy"] = "下雪", ["Windy"] = "有风", ["Stormy"] = "暴风雨", ["Foggy"] = "有雾", ["Misty"] = "薄雾",
+["Clear"] = "晴朗", ["Overcast"] = "阴天", ["Drizzle"] = "毛毛雨", ["Shower"] = "阵雨", ["Thunderstorm"] = "雷暴",
+["Blizzard"] = "暴风雪", ["Tornado"] = "龙卷风", ["Hurricane"] = "飓风", ["Typhoon"] = "台风", ["Monsoon"] = "季风",
+
+-- 游戏内时间
+["Time"] = "时间", ["Clock"] = "时钟", ["Hour"] = "小时", ["Minute"] = "分钟", ["Second"] = "秒",
+["Day"] = "天", ["Night"] = "夜晚", ["Dawn"] = "黎明", ["Dusk"] = "黄昏", ["Morning"] = "早晨",
+["Afternoon"] = "下午", ["Evening"] = "晚上", ["Midnight"] = "午夜", ["Noon"] = "中午", ["Sunrise"] = "日出",
+["Sunset"] = "日落", ["Season"] = "季节", ["Spring"] = "春天", ["Summer"] = "夏天", ["Autumn"] = "秋天",
+["Winter"] = "冬天", ["Year"] = "年", ["Month"] = "月", ["Week"] = "周", ["Date"] = "日期",
+
+-- 游戏内空间
+["Space"] = "空间", ["Dimension"] = "维度", ["Universe"] = "宇宙", ["World"] = "世界", ["Realm"] = "领域",
+["Plane"] = "位面", ["Zone"] = "区域", ["Area"] = "区域", ["Region"] = "地区", ["Location"] = "位置",
+["Position"] = "位置", ["Coordinate"] = "坐标", ["Vector"] = "向量", ["Point"] = "点", ["Line"] = "线",
+["Plane"] = "平面", ["Volume"] = "体积", ["Surface"] = "表面", ["Edge"] = "边缘", ["Corner"] = "角落",
+
+-- 游戏内物理
+["Physics"] = "物理", ["Gravity"] = "重力", ["Force"] = "力", ["Mass"] = "质量", ["Velocity"] = "速度",
+["Acceleration"] = "加速度", ["Momentum"] = "动量", ["Energy"] = "能量", ["Power"] = "功率", ["Friction"] = "摩擦",
+["Collision"] = "碰撞", ["Impact"] = "冲击", ["Explosion"] = "爆炸", ["Implosion"] = "内爆", ["Pressure"] = "压力",
+["Density"] = "密度", ["Temperature"] = "温度", ["Heat"] = "热", ["Cold"] = "冷", ["Light"] = "光",
+["Sound"] = "声音", ["Wave"] = "波", ["Particle"] = "粒子", ["Atom"] = "原子", ["Molecule"] = "分子",
+
+-- 游戏内化学
+["Chemistry"] = "化学", ["Element"] = "元素", ["Compound"] = "化合物", ["Mixture"] = "混合物", ["Solution"] = "溶液",
+["Acid"] = "酸", ["Base"] = "碱", ["Salt"] = "盐", ["Metal"] = "金属", ["Nonmetal"] = "非金属",
+["Gas"] = "气体", ["Liquid"] = "液体", ["Solid"] = "固体", ["Plasma"] = "等离子", ["Crystal"] = "晶体",
+["Powder"] = "粉末", ["Dust"] = "灰尘", ["Smoke"] = "烟", ["Steam"] = "蒸汽", ["Ice"] = "冰",
+["Fire"] = "火", ["Water"] = "水", ["Air"] = "空气", ["Earth"] = "土", ["Stone"] = "石头",
+
+-- 游戏内生物
+["Biology"] = "生物", ["Life"] = "生命", ["Organism"] = "有机体", ["Cell"] = "细胞", ["DNA"] = "DNA",
+["Gene"] = "基因", ["Evolution"] = "进化", ["Species"] = "物种", ["Animal"] = "动物", ["Plant"] = "植物",
+["Fungus"] = "真菌", ["Bacteria"] = "细菌", ["Virus"] = "病毒", ["Insect"] = "昆虫", ["Fish"] = "鱼",
+["Bird"] = "鸟", ["Mammal"] = "哺乳动物", ["Reptile"] = "爬行动物", ["Amphibian"] = "两栖动物", ["Human"] = "人类",
+["Monster"] = "怪物", ["Beast"] = "野兽", ["Creature"] = "生物", ["Dragon"] = "龙", ["Demon"] = "恶魔",
+
+-- 游戏内数学
+["Math"] = "数学", ["Number"] = "数字", ["Integer"] = "整数", ["Fraction"] = "分数", ["Decimal"] = "小数",
+["Percentage"] = "百分比", ["Algebra"] = "代数", ["Geometry"] = "几何", ["Calculus"] = "微积分", ["Statistics"] = "统计",
+["Probability"] = "概率", ["Equation"] = "方程", ["Formula"] = "公式", ["Variable"] = "变量", ["Constant"] = "常数",
+["Function"] = "函数", ["Graph"] = "图形", ["Chart"] = "图表", ["Table"] = "表格", ["Data"] = "数据",
+["Analysis"] = "分析", ["Logic"] = "逻辑", ["Set"] = "集合", ["Matrix"] = "矩阵", ["Vector"] = "向量",
+
+-- 游戏内编程
+["Programming"] = "编程", ["Code"] = "代码", ["Script"] = "脚本", ["Algorithm"] = "算法", ["Function"] = "函数",
+["Variable"] = "变量", ["Constant"] = "常量", ["Array"] = "数组", ["List"] = "列表", ["Dictionary"] = "字典",
+["Object"] = "对象", ["Class"] = "类", ["Method"] = "方法", ["Property"] = "属性", ["Event"] = "事件",
+["Loop"] = "循环", ["Condition"] = "条件", ["Statement"] = "语句", ["Expression"] = "表达式", ["Operator"] = "运算符",
+["Syntax"] = "语法", ["Error"] = "错误", ["Debug"] = "调试", ["Compile"] = "编译", ["Execute"] = "执行",
+
+-- 游戏内网络
+["Network"] = "网络", ["Internet"] = "互联网", ["Server"] = "服务器", ["Client"] = "客户端", ["Host"] = "主机",
+["Peer"] = "对等", ["Connection"] = "连接", ["Packet"] = "数据包", ["Protocol"] = "协议", ["IP"] = "IP地址",
+["DNS"] = "域名系统", ["HTTP"] = "超文本传输协议", ["HTTPS"] = "安全超文本传输协议", ["FTP"] = "文件传输协议", ["TCP"] = "传输控制协议",
+["UDP"] = "用户数据报协议", ["Port"] = "端口", ["Firewall"] = "防火墙", ["Router"] = "路由器", ["Switch"] = "交换机",
+
+-- 游戏内安全
+["Security"] = "安全", ["Privacy"] = "隐私", ["Encryption"] = "加密", ["Decryption"] = "解密", ["Password"] = "密码",
+["Key"] = "密钥", ["Certificate"] = "证书", ["Signature"] = "签名", ["Authentication"] = "身份验证", ["Authorization"] = "授权",
+["Permission"] = "权限", ["Access"] = "访问", ["Block"] = "阻止", ["Allow"] = "允许", ["Deny"] = "拒绝",
+["Firewall"] = "防火墙", ["Antivirus"] = "杀毒软件", ["Malware"] = "恶意软件", ["Virus"] = "病毒", ["Trojan"] = "木马",
+["Spyware"] = "间谍软件", ["Ransomware"] = "勒索软件", ["Phishing"] = "网络钓鱼", ["Hacking"] = "黑客攻击", ["Exploit"] = "漏洞利用",
+
+-- 游戏内人工智能
+["AI"] = "人工智能", ["Machine Learning"] = "机器学习", ["Neural Network"] = "神经网络", ["Algorithm"] = "算法", ["Model"] = "模型",
+["Training"] = "训练", ["Testing"] = "测试", ["Prediction"] = "预测", ["Classification"] = "分类", ["Regression"] = "回归",
+["Clustering"] = "聚类", ["Reinforcement Learning"] = "强化学习", ["Deep Learning"] = "深度学习", ["Natural Language"] = "自然语言", ["Computer Vision"] = "计算机视觉",
+["Robot"] = "机器人", ["Automation"] = "自动化", ["Smart"] = "智能", ["Intelligent"] = "智能", ["Cognitive"] = "认知",
+
+-- 游戏内区块链
+["Blockchain"] = "区块链", ["Cryptocurrency"] = "加密货币", ["Bitcoin"] = "比特币", ["Ethereum"] = "以太坊", ["Smart Contract"] = "智能合约",
+["Token"] = "代币", ["NFT"] = "非同质化代币", ["Wallet"] = "钱包", ["Mining"] = "挖矿", ["Transaction"] = "交易",
+["Decentralized"] = "去中心化", ["Distributed"] = "分布式", ["Ledger"] = "账本", ["Consensus"] = "共识", ["Proof of Work"] = "工作量证明",
+["Proof of Stake"] = "权益证明", ["Gas"] = "燃料", ["Hash"] = "哈希", ["Address"] = "地址", ["Private Key"] = "私钥",
+
+-- 游戏内虚拟现实
+["VR"] = "虚拟现实", ["AR"] = "增强现实", ["MR"] = "混合现实", ["XR"] = "扩展现实", ["Headset"] = "头戴设备",
+["Controller"] = "控制器", ["Tracking"] = "追踪", ["Room Scale"] = "房间尺度", ["Immersion"] = "沉浸", ["Presence"] = "存在感",
+["Haptic"] = "触觉", ["Feedback"] = "反馈", ["Motion"] = "运动", ["Gesture"] = "手势", ["Voice"] = "语音",
+["Eye Tracking"] = "眼动追踪", ["Hand Tracking"] = "手部追踪", ["Body Tracking"] = "身体追踪", ["Spatial"] = "空间", ["3D"] = "三维",
+
+-- 游戏内云技术
+["Cloud"] = "云", ["Cloud Computing"] = "云计算", ["Serverless"] = "无服务器", ["Virtual Machine"] = "虚拟机", ["Container"] = "容器",
+["Microservice"] = "微服务", ["API"] = "应用程序接口", ["REST"] = "表述性状态转移", ["GraphQL"] = "GraphQL", ["Database"] = "数据库",
+["Storage"] = "存储", ["Backup"] = "备份", ["Sync"] = "同步", ["Streaming"] = "流媒体", ["Processing"] = "处理",
+["Analytics"] = "分析", ["Big Data"] = "大数据", ["IoT"] = "物联网", ["Edge Computing"] = "边缘计算", ["Hybrid Cloud"] = "混合云",
+
+-- 游戏内移动开发
+["Mobile"] = "移动", ["Android"] = "安卓", ["iOS"] = "iOS", ["App"] = "应用", ["Application"] = "应用程序",
+["Store"] = "商店", ["Play Store"] = "Play商店", ["App Store"] = "App Store", ["Download"] = "下载", ["Update"] = "更新",
+["Notification"] = "通知", ["Push"] = "推送", ["Permission"] = "权限", ["Camera"] = "相机", ["Microphone"] = "麦克风",
+["Location"] = "位置", ["GPS"] = "全球定位系统", ["Bluetooth"] = "蓝牙", ["WiFi"] = "无线网络", ["NFC"] = "近场通信",
+["Touch"] = "触摸", ["Gesture"] = "手势", ["Swipe"] = "滑动", ["Pinch"] = "捏合", ["Tap"] = "点击",
+["Vibration"] = "震动", ["Haptic"] = "触觉", ["Battery"] = "电池", ["Power"] = "电源", ["Charging"] = "充电",
+
+-- 游戏内Web开发
+["Web"] = "网页", ["Website"] = "网站", ["Browser"] = "浏览器", ["Chrome"] = "Chrome", ["Firefox"] = "Firefox",
+["Safari"] = "Safari", ["Edge"] = "Edge", ["HTML"] = "HTML", ["CSS"] = "CSS", ["JavaScript"] = "JavaScript",
+["TypeScript"] = "TypeScript", ["React"] = "React", ["Vue"] = "Vue", ["Angular"] = "Angular", ["Node.js"] = "Node.js",
+["PHP"] = "PHP", ["Python"] = "Python", ["Ruby"] = "Ruby", ["Java"] = "Java", ["C#"] = "C#",
+["SQL"] = "SQL", ["NoSQL"] = "NoSQL", ["API"] = "API", ["REST"] = "REST", ["GraphQL"] = "GraphQL",
+["Server"] = "服务器", ["Client"] = "客户端", ["Frontend"] = "前端", ["Backend"] = "后端", ["Fullstack"] = "全栈",
+
+-- 游戏内数据库
+["Database"] = "数据库", ["SQL"] = "SQL", ["MySQL"] = "MySQL", ["PostgreSQL"] = "PostgreSQL", ["SQLite"] = "SQLite",
+["NoSQL"] = "NoSQL", ["MongoDB"] = "MongoDB", ["Redis"] = "Redis", ["Cassandra"] = "Cassandra", ["Elasticsearch"] = "Elasticsearch",
+["Table"] = "表", ["Row"] = "行", ["Column"] = "列", ["Query"] = "查询", ["Index"] = "索引",
+["Transaction"] = "事务", ["ACID"] = "ACID", ["Replication"] = "复制", ["Sharding"] = "分片", ["Backup"] = "备份",
+["Restore"] = "恢复", ["Migration"] = "迁移", ["Schema"] = "模式", ["Data"] = "数据", ["Record"] = "记录",
+
+-- 游戏内操作系统
+["OS"] = "操作系统", ["Windows"] = "Windows", ["macOS"] = "macOS", ["Linux"] = "Linux", ["Unix"] = "Unix",
+["Android"] = "Android", ["iOS"] = "iOS", ["Kernel"] = "内核", ["Shell"] = "外壳", ["Terminal"] = "终端",
+["Command Line"] = "命令行", ["GUI"] = "图形用户界面", ["File System"] = "文件系统", ["Process"] = "进程", ["Thread"] = "线程",
+["Memory"] = "内存", ["Storage"] = "存储", ["Network"] = "网络", ["Driver"] = "驱动", ["Service"] = "服务",
+["Daemon"] = "守护进程", ["Package"] = "包", ["Repository"] = "仓库", ["Update"] = "更新", ["Security"] = "安全",
+
+-- 游戏内硬件
+["Hardware"] = "硬件", ["CPU"] = "中央处理器", ["GPU"] = "图形处理器", ["RAM"] = "内存", ["ROM"] = "只读存储器",
+["Storage"] = "存储", ["SSD"] = "固态硬盘", ["HDD"] = "机械硬盘", ["Motherboard"] = "主板", ["Power Supply"] = "电源",
+["Cooling"] = "冷却", ["Fan"] = "风扇", ["Liquid Cooling"] = "液冷", ["Thermal Paste"] = "导热膏", ["Case"] = "机箱",
+["Peripheral"] = "外设", ["Keyboard"] = "键盘", ["Mouse"] = "鼠标", ["Monitor"] = "显示器", ["Speaker"] = "扬声器",
+["Headphones"] = "耳机", ["Microphone"] = "麦克风", ["Webcam"] = "网络摄像头", ["Printer"] = "打印机", ["Scanner"] = "扫描仪",
+
+-- 游戏内网络设备
+["Network Device"] = "网络设备", ["Router"] = "路由器", ["Switch"] = "交换机", ["Hub"] = "集线器", ["Modem"] = "调制解调器",
+["Access Point"] = "接入点", ["Firewall"] = "防火墙", ["NAS"] = "网络附加存储", ["Server"] = "服务器", ["Client"] = "客户端",
+["Cable"] = "电缆", ["Ethernet"] = "以太网", ["Fiber"] = "光纤", ["Coaxial"] = "同轴", ["Wireless"] = "无线",
+["WiFi"] = "无线网络", ["Bluetooth"] = "蓝牙", ["NFC"] = "近场通信", ["RFID"] = "射频识别", ["GPS"] = "全球定位系统",
+
+-- 游戏内输入设备
+["Input Device"] = "输入设备", ["Keyboard"] = "键盘", ["Mouse"] = "鼠标", ["Gamepad"] = "游戏手柄", ["Joystick"] = "操纵杆",
+["Touchscreen"] = "触摸屏", ["Trackpad"] = "触控板", ["Stylus"] = "触控笔", ["Graphics Tablet"] = "绘图板", ["Scanner"] = "扫描仪",
+["Webcam"] = "网络摄像头", ["Microphone"] = "麦克风", ["Motion Sensor"] = "运动传感器", ["Gyroscope"] = "陀螺仪", ["Accelerometer"] = "加速度计",
+["Compass"] = "指南针", ["Barometer"] = "气压计", ["Thermometer"] = "温度计", ["Light Sensor"] = "光线传感器", ["Proximity Sensor"] = "接近传感器",
+
+-- 游戏内输出设备
+["Output Device"] = "输出设备", ["Monitor"] = "显示器", ["Projector"] = "投影仪", ["Printer"] = "打印机", ["Plotter"] = "绘图仪",
+["Speaker"] = "扬声器", ["Headphones"] = "耳机", ["Haptic Device"] = "触觉设备", ["Vibration"] = "震动", ["LED"] = "发光二极管",
+["Display"] = "显示", ["Screen"] = "屏幕", ["CRT"] = "阴极射线管", ["LCD"] = "液晶显示器", ["OLED"] = "有机发光二极管",
+["Touchscreen"] = "触摸屏", ["E-ink"] = "电子墨水", ["Hologram"] = "全息图", ["VR Headset"] = "虚拟现实头戴设备", ["AR Glasses"] = "增强现实眼镜",
+
+-- 游戏内存储设备
+["Storage Device"] = "存储设备", ["Hard Drive"] = "硬盘", ["SSD"] = "固态硬盘", ["HDD"] = "机械硬盘", ["Flash Drive"] = "闪存驱动器",
+["Memory Card"] = "存储卡", ["CD"] = "光盘", ["DVD"] = "数字多功能光盘", ["Blu-ray"] = "蓝光", ["Tape"] = "磁带",
+["NAS"] = "网络附加存储", ["SAN"] = "存储区域网络", ["Cloud Storage"] = "云存储", ["RAID"] = "独立磁盘冗余阵列", ["Backup"] = "备份",
+["Archive"] = "归档", ["Compression"] = "压缩", ["Encryption"] = "加密", ["Partition"] = "分区", ["Format"] = "格式化",
+
+-- 游戏内通信设备
+["Communication Device"] = "通信设备", ["Phone"] = "电话", ["Smartphone"] = "智能手机", ["Tablet"] = "平板", ["Laptop"] = "笔记本电脑",
+["Desktop"] = "台式机", ["Server"] = "服务器", ["Router"] = "路由器", ["Modem"] = "调制解调器", ["Satellite"] = "卫星",
+["Radio"] = "无线电", ["Television"] = "电视", ["Walkie-talkie"] = "对讲机", ["Intercom"] = "对讲系统", ["Pager"] = "寻呼机",
+["Fax"] = "传真", ["Telegram"] = "电报", ["Email"] = "电子邮件", ["Instant Messaging"] = "即时通讯", ["Video Conferencing"] = "视频会议",
+
+-- 游戏内传感器
+["Sensor"] = "传感器", ["Motion Sensor"] = "运动传感器", ["Light Sensor"] = "光线传感器", ["Temperature Sensor"] = "温度传感器", ["Humidity Sensor"] = "湿度传感器",
+["Pressure Sensor"] = "压力传感器", ["Proximity Sensor"] = "接近传感器", ["Touch Sensor"] = "触摸传感器", ["Sound Sensor"] = "声音传感器", ["Gas Sensor"] = "气体传感器",
+["Smoke Sensor"] = "烟雾传感器", ["Fire Sensor"] = "火灾传感器", ["Water Sensor"] = "水传感器", ["Vibration Sensor"] = "震动传感器", ["Tilt Sensor"] = "倾斜传感器",
+["GPS"] = "全球定位系统", ["Accelerometer"] = "加速度计", ["Gyroscope"] = "陀螺仪", ["Magnetometer"] = "磁力计", ["Compass"] = "指南针",
+["Barometer"] = "气压计", ["Thermometer"] = "温度计", ["Hygrometer"] = "湿度计", ["Anemometer"] = "风速计", ["Rain Gauge"] = "雨量计",
+
+-- 游戏内能源
+["Energy"] = "能源", ["Power"] = "电力", ["Electricity"] = "电", ["Battery"] = "电池", ["Solar"] = "太阳能",
+["Wind"] = "风能", ["Hydro"] = "水能", ["Nuclear"] = "核能", ["Fossil Fuel"] = "化石燃料", ["Coal"] = "煤",
+["Oil"] = "石油", ["Gas"] = "天然气", ["Geothermal"] = "地热能", ["Tidal"] = "潮汐能", ["Biomass"] = "生物质能",
+["Generator"] = "发电机", ["Transformer"] = "变压器", ["Inverter"] = "逆变器", ["Charger"] = "充电器", ["Plug"] = "插头",
+["Socket"] = "插座", ["Wire"] = "电线", ["Cable"] = "电缆", ["Circuit"] = "电路", ["Switch"] = "开关",
+
+-- 游戏内材料
+["Material"] = "材料", ["Metal"] = "金属", ["Wood"] = "木材", ["Stone"] = "石头", ["Plastic"] = "塑料",
+["Glass"] = "玻璃", ["Ceramic"] = "陶瓷", ["Concrete"] = "混凝土", ["Brick"] = "砖", ["Fabric"] = "织物",
+["Leather"] = "皮革", ["Rubber"] = "橡胶", ["Paper"] = "纸", ["Cardboard"] = "纸板", ["Foam"] = "泡沫",
+["Adhesive"] = "粘合剂", ["Paint"] = "油漆", ["Varnish"] = "清漆", ["Wax"] = "蜡", ["Oil"] = "油",
+["Chemical"] = "化学品", ["Powder"] = "粉末", ["Liquid"] = "液体", ["Gas"] = "气体", ["Crystal"] = "晶体",
+
+-- 游戏内工具
+["Tool"] = "工具", ["Hammer"] = "锤子", ["Screwdriver"] = "螺丝刀", ["Wrench"] = "扳手", ["Pliers"] = "钳子",
+["Saw"] = "锯", ["Drill"] = "钻", ["Knife"] = "刀", ["Scissors"] = "剪刀", ["Axe"] = "斧",
+["Shovel"] = "铲", ["Rake"] = "耙", ["Hoe"] = "锄", ["Sickle"] = "镰刀", ["Chisel"] = "凿子",
+["File"] = "锉刀", ["Sandpaper"] = "砂纸", ["Brush"] = "刷子", ["Roller"] = "滚筒", ["Sprayer"] = "喷雾器",
+["Measuring Tape"] = "卷尺", ["Ruler"] = "尺", ["Level"] = "水平仪", ["Square"] = "角尺", ["Compass"] = "圆规",
+
+-- 游戏内机械
+["Machine"] = "机器", ["Engine"] = "发动机", ["Motor"] = "电动机", ["Generator"] = "发电机", ["Pump"] = "泵",
+["Compressor"] = "压缩机", ["Turbine"] = "涡轮", ["Fan"] = "风扇", ["Blower"] = "鼓风机", ["Conveyor"] = "输送机",
+["Crane"] = "起重机", ["Forklift"] = "叉车", ["Excavator"] = "挖掘机", ["Bulldozer"] = "推土机", ["Loader"] = "装载机",
+["Tractor"] = "拖拉机", ["Harvester"] = "收割机", ["Mill"] = "磨坊", ["Lathe"] = "车床", ["Milling Machine"] = "铣床",
+["Drill Press"] = "钻床", ["Grinder"] = "磨床", ["Press"] = "压力机", ["Saw"] = "锯床", ["Robot"] = "机器人",
+
+-- 游戏内电子
+["Electronics"] = "电子", ["Circuit"] = "电路", ["Resistor"] = "电阻", ["Capacitor"] = "电容", ["Inductor"] = "电感",
+["Diode"] = "二极管", ["Transistor"] = "晶体管", ["Integrated Circuit"] = "集成电路", ["Microchip"] = "微芯片", ["Processor"] = "处理器",
+["Memory"] = "存储器", ["Storage"] = "存储", ["Display"] = "显示器", ["Sensor"] = "传感器", ["Actuator"] = "执行器",
+["Switch"] = "开关", ["Button"] = "按钮", ["LED"] = "发光二极管", ["Battery"] = "电池", ["Power Supply"] = "电源",
+["Amplifier"] = "放大器", ["Oscillator"] = "振荡器", ["Filter"] = "滤波器", ["Modulator"] = "调制器", ["Demodulator"] = "解调器",
+
+-- 游戏内光学
+["Optics"] = "光学", ["Light"] = "光", ["Lens"] = "透镜", ["Mirror"] = "镜子", ["Prism"] = "棱镜",
+["Filter"] = "滤光片", ["Polarizer"] = "偏振器", ["Diffuser"] = "漫射器", ["Reflector"] = "反射器", ["Projector"] = "投影仪",
+["Camera"] = "相机", ["Telescope"] = "望远镜", ["Microscope"] = "显微镜", ["Binoculars"] = "双筒望远镜", ["Magnifier"] = "放大镜",
+["Laser"] = "激光", ["LED"] = "发光二极管", ["OLED"] = "有机发光二极管", ["LCD"] = "液晶显示器", ["CRT"] = "阴极射线管",
+["Fiber Optic"] = "光纤", ["Hologram"] = "全息图", ["3D"] = "三维", ["Virtual Reality"] = "虚拟现实", ["Augmented Reality"] = "增强现实",
+
+-- 游戏内声学
+["Acoustics"] = "声学", ["Sound"] = "声音", ["Wave"] = "波", ["Frequency"] = "频率", ["Amplitude"] = "振幅",
+["Pitch"] = "音高", ["Volume"] = "音量", ["Echo"] = "回声", ["Reverb"] = "混响", ["Delay"] = "延迟",
+["Microphone"] = "麦克风", ["Speaker"] = "扬声器", ["Headphones"] = "耳机", ["Amplifier"] = "放大器", ["Mixer"] = "混音器",
+["Equalizer"] = "均衡器", ["Compressor"] = "压缩器", ["Limiter"] = "限制器", ["Noise Gate"] = "噪声门", ["Filter"] = "滤波器",
+["Synthesizer"] = "合成器", ["Sampler"] = "采样器", ["Drum Machine"] = "鼓机", ["Sequencer"] = "音序器", ["MIDI"] = "MIDI",
+
+-- 游戏内热力学
+["Thermodynamics"] = "热力学", ["Heat"] = "热", ["Temperature"] = "温度", ["Pressure"] = "压力", ["Volume"] = "体积",
+["Energy"] = "能量", ["Work"] = "功", ["Entropy"] = "熵", ["Enthalpy"] = "焓", ["Internal Energy"] = "内能",
+["Heat Transfer"] = "热传递", ["Conduction"] = "传导", ["Convection"] = "对流", ["Radiation"] = "辐射", ["Insulation"] = "绝缘",
+["Cooling"] = "冷却", ["Heating"] = "加热", ["Refrigeration"] = "制冷", ["Air Conditioning"] = "空调", ["Heat Exchanger"] = "热交换器",
+["Boiler"] = "锅炉", ["Furnace"] = "炉子", ["Oven"] = "烤箱", ["Stove"] = "炉灶", ["Heater"] = "加热器",
+
+-- 游戏内流体力学
+["Fluid Mechanics"] = "流体力学", ["Fluid"] = "流体", ["Liquid"] = "液体", ["Gas"] = "气体", ["Plasma"] = "等离子",
+["Flow"] = "流动", ["Velocity"] = "速度", ["Pressure"] = "压力", ["Density"] = "密度", ["Viscosity"] = "粘度",
+["Turbulence"] = "湍流", ["Laminar"] = "层流", ["Pipe"] = "管道", ["Valve"] = "阀门", ["Pump"] = "泵",
+["Compressor"] = "压缩机", ["Turbine"] = "涡轮", ["Nozzle"] = "喷嘴", ["Venturi"] = "文丘里管", ["Orifice"] = "孔口",
+["Hydraulics"] = "液压", ["Pneumatics"] = "气动", ["Aerodynamics"] = "空气动力学", ["Hydrodynamics"] = "流体动力学", ["Cavitation"] = "空化",
+
+-- 游戏内电磁学
+["Electromagnetism"] = "电磁学", ["Electricity"] = "电", ["Magnetism"] = "磁", ["Electromagnetic"] = "电磁", ["Field"] = "场",
+["Charge"] = "电荷", ["Current"] = "电流", ["Voltage"] = "电压", ["Resistance"] = "电阻", ["Capacitance"] = "电容",
+["Inductance"] = "电感", ["Impedance"] = "阻抗", ["Power"] = "功率", ["Energy"] = "能量", ["Wave"] = "波",
+["Radio"] = "无线电", ["Microwave"] = "微波", ["Infrared"] = "红外", ["Visible Light"] = "可见光", ["Ultraviolet"] = "紫外线",
+["X-ray"] = "X射线", ["Gamma Ray"] = "伽马射线", ["Antenna"] = "天线", ["Transmitter"] = "发射器", ["Receiver"] = "接收器",
+
+-- 游戏内量子力学
+["Quantum Mechanics"] = "量子力学", ["Quantum"] = "量子", ["Particle"] = "粒子", ["Wave"] = "波", ["Superposition"] = "叠加",
+["Entanglement"] = "纠缠", ["Observer"] = "观察者", ["Measurement"] = "测量", ["Uncertainty"] = "不确定性", ["Probability"] = "概率",
+["Atom"] = "原子", ["Electron"] = "电子", ["Proton"] = "质子", ["Neutron"] = "中子", ["Photon"] = "光子",
+["Quark"] = "夸克", ["Lepton"] = "轻子", ["Boson"] = "玻色子", ["Fermion"] = "费米子", ["Higgs"] = "希格斯",
+["Quantum Computer"] = "量子计算机", ["Qubit"] = "量子比特", ["Quantum Algorithm"] = "量子算法", ["Quantum Cryptography"] = "量子密码学", ["Quantum Teleportation"] = "量子隐形传态",
+
+-- 游戏内相对论
+["Relativity"] = "相对论", ["Special Relativity"] = "狭义相对论", ["General Relativity"] = "广义相对论", ["Space"] = "空间", ["Time"] = "时间",
+["Spacetime"] = "时空", ["Gravity"] = "引力", ["Mass"] = "质量", ["Energy"] = "能量", ["Speed of Light"] = "光速",
+["Lorentz Transformation"] = "洛伦兹变换", ["Time Dilation"] = "时间膨胀", ["Length Contraction"] = "长度收缩", ["Relativistic Mass"] = "相对论质量", ["Black Hole"] = "黑洞",
+["Singularity"] = "奇点", ["Event Horizon"] = "事件视界", ["Wormhole"] = "虫洞", ["Time Travel"] = "时间旅行", ["Parallel Universe"] = "平行宇宙",
+
+-- 游戏内弦理论
+["String Theory"] = "弦理论", ["String"] = "弦", ["Brane"] = "膜", ["Dimension"] = "维度", ["Multiverse"] = "多重宇宙",
+["Unified Theory"] = "统一理论", ["Quantum Gravity"] = "量子引力", ["Superstring"] = "超弦", ["M-theory"] = "M理论", ["Calabi-Yau"] = "卡拉比-丘流形",
+["Compactification"] = "紧致化", ["Duality"] = "对偶性", ["Symmetry"] = "对称性", ["Supersymmetry"] = "超对称", ["Extra Dimension"] = "额外维度",
+["Parallel Universe"] = "平行宇宙", ["Multiverse"] = "多重宇宙", ["Cosmos"] = "宇宙", ["Reality"] = "现实", ["Existence"] = "存在",
+
+-- 游戏内天文学
+["Astronomy"] = "天文学", ["Universe"] = "宇宙", ["Galaxy"] = "星系", ["Star"] = "恒星", ["Planet"] = "行星",
+["Moon"] = "卫星", ["Asteroid"] = "小行星", ["Comet"] = "彗星", ["Nebula"] = "星云", ["Black Hole"] = "黑洞",
+["Supernova"] = "超新星", ["Pulsar"] = "脉冲星", ["Quasar"] = "类星体", ["Dark Matter"] = "暗物质", ["Dark Energy"] = "暗能量",
+["Solar System"] = "太阳系", ["Milky Way"] = "银河系", ["Andromeda"] = "仙女座", ["Cosmos"] = "宇宙", ["Space"] = "太空",
+["Telescope"] = "望远镜", ["Observatory"] = "天文台", ["Satellite"] = "卫星", ["Spacecraft"] = "航天器", ["Rocket"] = "火箭",
+
+-- 游戏内地理学
+["Geography"] = "地理学", ["Earth"] = "地球", ["Continent"] = "大陆", ["Ocean"] = "海洋", ["Sea"] = "海",
+["Lake"] = "湖", ["River"] = "河流", ["Mountain"] = "山", ["Valley"] = "山谷", ["Desert"] = "沙漠",
+["Forest"] = "森林", ["Jungle"] = "丛林", ["Island"] = "岛屿", ["Peninsula"] = "半岛", ["Archipelago"] = "群岛",
+["Climate"] = "气候", ["Weather"] = "天气", ["Ecosystem"] = "生态系统", ["Biome"] = "生物群落", ["Environment"] = "环境",
+["Map"] = "地图", ["Globe"] = "地球仪", ["Compass"] = "指南针", ["GPS"] = "全球定位系统", ["Satellite"] = "卫星",
+
+-- 游戏内生物学
+["Biology"] = "生物学", ["Life"] = "生命", ["Organism"] = "有机体", ["Cell"] = "细胞", ["DNA"] = "脱氧核糖核酸",
+["Gene"] = "基因", ["Evolution"] = "进化", ["Species"] = "物种", ["Ecosystem"] = "生态系统", ["Food Chain"] = "食物链",
+["Animal"] = "动物", ["Plant"] = "植物", ["Fungus"] = "真菌", ["Bacteria"] = "细菌", ["Virus"] = "病毒",
+["Mammal"] = "哺乳动物", ["Bird"] = "鸟", ["Fish"] = "鱼", ["Reptile"] = "爬行动物", ["Amphibian"] = "两栖动物",
+["Insect"] = "昆虫", ["Arachnid"] = "蛛形纲", ["Crustacean"] = "甲壳类", ["Mollusk"] = "软体动物", ["Worm"] = "蠕虫",
+
+-- 游戏内化学
+["Chemistry"] = "化学", ["Element"] = "元素", ["Compound"] = "化合物", ["Molecule"] = "分子", ["Atom"] = "原子",
+["Proton"] = "质子", ["Neutron"] = "中子", ["Electron"] = "电子", ["Periodic Table"] = "元素周期表", ["Reaction"] = "反应",
+["Acid"] = "酸", ["Base"] = "碱", ["Salt"] = "盐", ["Metal"] = "金属", ["Nonmetal"] = "非金属",
+["Gas"] = "气体", ["Liquid"] = "液体", ["Solid"] = "固体", ["Plasma"] = "等离子", ["Crystal"] = "晶体",
+["Organic"] = "有机", ["Inorganic"] = "无机", ["Biochemistry"] = "生物化学", ["Physical Chemistry"] = "物理化学", ["Analytical Chemistry"] = "分析化学",
+
+-- 游戏内物理学
+["Physics"] = "物理学", ["Mechanics"] = "力学", ["Thermodynamics"] = "热力学", ["Electromagnetism"] = "电磁学", ["Optics"] = "光学",
+["Acoustics"] = "声学", ["Quantum Mechanics"] = "量子力学", ["Relativity"] = "相对论", ["String Theory"] = "弦理论", ["Particle Physics"] = "粒子物理学",
+["Astrophysics"] = "天体物理学", ["Cosmology"] = "宇宙学", ["Nuclear Physics"] = "核物理学", ["Solid State Physics"] = "固体物理学", ["Fluid Dynamics"] = "流体动力学",
+["Energy"] = "能量", ["Force"] = "力", ["Motion"] = "运动", ["Gravity"] = "重力", ["Light"] = "光",
+["Sound"] = "声音", ["Heat"] = "热", ["Electricity"] = "电", ["Magnetism"] = "磁", ["Radiation"] = "辐射",
+
+-- 游戏内数学
+["Mathematics"] = "数学", ["Arithmetic"] = "算术", ["Algebra"] = "代数", ["Geometry"] = "几何", ["Trigonometry"] = "三角学",
+["Calculus"] = "微积分", ["Statistics"] = "统计学", ["Probability"] = "概率", ["Logic"] = "逻辑", ["Set Theory"] = "集合论",
+["Number Theory"] = "数论", ["Topology"] = "拓扑学", ["Differential Equations"] = "微分方程", ["Linear Algebra"] = "线性代数", ["Discrete Mathematics"] = "离散数学",
+["Number"] = "数字", ["Integer"] = "整数", ["Fraction"] = "分数", ["Decimal"] = "小数", ["Percentage"] = "百分比",
+["Equation"] = "方程", ["Function"] = "函数", ["Graph"] = "图形", ["Matrix"] = "矩阵", ["Vector"] = "向量",
+
+-- 游戏内计算机科学
+["Computer Science"] = "计算机科学", ["Programming"] = "编程", ["Algorithm"] = "算法", ["Data Structure"] = "数据结构", ["Software Engineering"] = "软件工程",
+["Artificial Intelligence"] = "人工智能", ["Machine Learning"] = "机器学习", ["Computer Vision"] = "计算机视觉", ["Natural Language Processing"] = "自然语言处理", ["Robotics"] = "机器人学",
+["Computer Graphics"] = "计算机图形学", ["Human-Computer Interaction"] = "人机交互", ["Database"] = "数据库", ["Network"] = "网络", ["Security"] = "安全",
+["Operating System"] = "操作系统", ["Compiler"] = "编译器", ["Parallel Computing"] = "并行计算", ["Distributed Systems"] = "分布式系统", ["Quantum Computing"] = "量子计算",
+["Code"] = "代码", ["Syntax"] = "语法", ["Debug"] = "调试", ["Compile"] = "编译", ["Execute"] = "执行",
+
+-- 游戏内工程学
+["Engineering"] = "工程学", ["Civil Engineering"] = "土木工程", ["Mechanical Engineering"] = "机械工程", ["Electrical Engineering"] = "电气工程", ["Chemical Engineering"] = "化学工程",
+["Computer Engineering"] = "计算机工程", ["Aerospace Engineering"] = "航空航天工程", ["Biomedical Engineering"] = "生物医学工程", ["Environmental Engineering"] = "环境工程", ["Industrial Engineering"] = "工业工程",
+["Design"] = "设计", ["Analysis"] = "分析", ["Simulation"] = "模拟", ["Prototype"] = "原型", ["Testing"] = "测试",
+["Manufacturing"] = "制造", ["Assembly"] = "组装", ["Quality Control"] = "质量控制", ["Maintenance"] = "维护", ["Optimization"] = "优化",
+["Blueprint"] = "蓝图", ["Specification"] = "规格", ["Standard"] = "标准", ["Regulation"] = "法规", ["Safety"] = "安全",
+
+-- 游戏内医学
+["Medicine"] = "医学", ["Health"] = "健康", ["Disease"] = "疾病", ["Treatment"] = "治疗", ["Diagnosis"] = "诊断",
+["Surgery"] = "手术", ["Therapy"] = "疗法", ["Medication"] = "药物", ["Vaccine"] = "疫苗", ["Prevention"] = "预防",
+["Anatomy"] = "解剖学", ["Physiology"] = "生理学", ["Pathology"] = "病理学", ["Pharmacology"] = "药理学", ["Immunology"] = "免疫学",
+["Doctor"] = "医生", ["Nurse"] = "护士", ["Patient"] = "患者", ["Hospital"] = "医院", ["Clinic"] = "诊所",
+["Symptom"] = "症状", ["Cause"] = "病因", ["Effect"] = "效果", ["Recovery"] = "恢复", ["Rehabilitation"] = "康复",
+
+-- 游戏内心理学
+["Psychology"] = "心理学", ["Mind"] = "心灵", ["Behavior"] = "行为", ["Emotion"] = "情感", ["Cognition"] = "认知",
+["Memory"] = "记忆", ["Learning"] = "学习", ["Intelligence"] = "智力", ["Personality"] = "人格", ["Consciousness"] = "意识",
+["Subconscious"] = "潜意识", ["Dream"] = "梦", ["Perception"] = "感知", ["Attention"] = "注意力", ["Motivation"] = "动机",
+["Stress"] = "压力", ["Anxiety"] = "焦虑", ["Depression"] = "抑郁", ["Therapy"] = "治疗", ["Counseling"] = "咨询",
+["Experiment"] = "实验", ["Observation"] = "观察", ["Hypothesis"] = "假设", ["Theory"] = "理论", ["Research"] = "研究",
+
+-- 游戏内社会学
+["Sociology"] = "社会学", ["Society"] = "社会", ["Culture"] = "文化", ["Community"] = "社区", ["Family"] = "家庭",
+["Group"] = "群体", ["Organization"] = "组织", ["Institution"] = "制度", ["Norm"] = "规范", ["Value"] = "价值",
+["Belief"] = "信仰", ["Tradition"] = "传统", ["Custom"] = "习俗", ["Role"] = "角色", ["Status"] = "地位",
+["Power"] = "权力", ["Authority"] = "权威", ["Government"] = "政府", ["Politics"] = "政治", ["Economy"] = "经济",
+["Education"] = "教育", ["Religion"] = "宗教", ["Law"] = "法律", ["Crime"] = "犯罪", ["Justice"] = "正义",
+
+-- 游戏内经济学
+["Economics"] = "经济学", ["Economy"] = "经济", ["Market"] = "市场", ["Supply"] = "供给", ["Demand"] = "需求",
+["Price"] = "价格", ["Value"] = "价值", ["Cost"] = "成本", ["Profit"] = "利润", ["Loss"] = "损失",
+["Investment"] = "投资", ["Capital"] = "资本", ["Labor"] = "劳动力", ["Resource"] = "资源", ["Production"] = "生产",
+["Consumption"] = "消费", ["Trade"] = "贸易", ["Export"] = "出口", ["Import"] = "进口", ["Currency"] = "货币",
+["Inflation"] = "通货膨胀", ["Deflation"] = "通货紧缩", ["Recession"] = "衰退", ["Growth"] = "增长", ["Development"] = "发展",
+
+-- 游戏内政治学
+["Political Science"] = "政治学", ["Politics"] = "政治", ["Government"] = "政府", ["State"] = "国家", ["Nation"] = "民族",
+["Citizen"] = "公民", ["Vote"] = "投票", ["Election"] = "选举", ["Democracy"] = "民主", ["Republic"] = "共和国",
+["Monarchy"] = "君主制", ["Dictatorship"] = "独裁", ["Socialism"] = "社会主义", ["Communism"] = "共产主义", ["Capitalism"] = "资本主义",
+["Law"] = "法律", ["Constitution"] = "宪法", ["Rights"] = "权利", ["Freedom"] = "自由", ["Justice"] = "正义",
+["Power"] = "权力", ["Authority"] = "权威", ["Policy"] = "政策", ["Diplomacy"] = "外交", ["War"] = "战争",
+
+-- 游戏内法学
+["Law"] = "法学", ["Legal"] = "法律", ["Justice"] = "正义", ["Right"] = "权利", ["Duty"] = "义务",
+["Contract"] = "合同", ["Agreement"] = "协议", ["Lawyer"] = "律师", ["Judge"] = "法官", ["Court"] = "法院",
+["Trial"] = "审判", ["Verdict"] = "判决", ["Sentence"] = "刑罚", ["Crime"] = "犯罪", ["Punishment"] = "惩罚",
+["Constitution"] = "宪法", ["Statute"] = "法规", ["Regulation"] = "规章", ["Precedent"] = "先例", ["Jurisdiction"] = "管辖权",
+["Plaintiff"] = "原告", ["Defendant"] = "被告", ["Witness"] = "证人", ["Evidence"] = "证据", ["Testimony"] = "证词",
+
+-- 游戏内历史学
+["History"] = "历史学", ["Past"] = "过去", ["Present"] = "现在", ["Future"] = "未来", ["Event"] = "事件",
+["Date"] = "日期", ["Year"] = "年", ["Century"] = "世纪", ["Millennium"] = "千年", ["Era"] = "时代",
+["Civilization"] = "文明", ["Culture"] = "文化", ["Society"] = "社会", ["War"] = "战争", ["Peace"] = "和平",
+["Revolution"] = "革命", ["Reform"] = "改革", ["Discovery"] = "发现", ["Invention"] = "发明", ["Exploration"] = "探索",
+["Ancient"] = "古代", ["Medieval"] = "中世纪", ["Modern"] = "现代", ["Contemporary"] = "当代", ["Prehistoric"] = "史前",
+
+-- 游戏内哲学
+["Philosophy"] = "哲学", ["Thought"] = "思想", ["Ideas"] = "理念", ["Logic"] = "逻辑", ["Reason"] = "理性",
+["Knowledge"] = "知识", ["Truth"] = "真理", ["Reality"] = "现实", ["Existence"] = "存在", ["Consciousness"] = "意识",
+["Ethics"] = "伦理学", ["Morality"] = "道德", ["Virtue"] = "美德", ["Justice"] = "正义", ["Good"] = "善",
+["Evil"] = "恶", ["Beauty"] = "美", ["Art"] = "艺术", ["Aesthetics"] = "美学", ["Metaphysics"] = "形而上学",
+["Epistemology"] = "认识论", ["Ontology"] = "本体论", ["Phenomenology"] = "现象学", ["Existentialism"] = "存在主义", ["Nihilism"] = "虚无主义",
+
+-- 游戏内语言学
+["Linguistics"] = "语言学", ["Language"] = "语言", ["Speech"] = "言语", ["Writing"] = "文字", ["Grammar"] = "语法",
+["Syntax"] = "句法", ["Semantics"] = "语义", ["Pragmatics"] = "语用", ["Phonetics"] = "语音学", ["Phonology"] = "音系学",
+["Morphology"] = "形态学", ["Lexicon"] = "词汇", ["Word"] = "词", ["Sentence"] = "句子", ["Text"] = "文本",
+["Meaning"] = "意义", ["Translation"] = "翻译", ["Interpretation"] = "解释", ["Communication"] = "交流", ["Sign"] = "符号",
+["Symbol"] = "象征", ["Code"] = "代码", ["Alphabet"] = "字母表", ["Script"] = "文字", ["Dialect"] = "方言",
+
+-- 游戏内艺术
+["Art"] = "艺术", ["Visual Art"] = "视觉艺术", ["Music"] = "音乐", ["Dance"] = "舞蹈", ["Theater"] = "戏剧",
+["Literature"] = "文学", ["Poetry"] = "诗歌", ["Painting"] = "绘画", ["Sculpture"] = "雕塑", ["Architecture"] = "建筑",
+["Design"] = "设计", ["Photography"] = "摄影", ["Film"] = "电影", ["Animation"] = "动画", ["Digital Art"] = "数字艺术",
+["Creative"] = "创造性", ["Imagination"] = "想象力", ["Expression"] = "表达", ["Style"] = "风格", ["Technique"] = "技巧",
+["Beauty"] = "美", ["Aesthetics"] = "美学", ["Harmony"] = "和谐", ["Balance"] = "平衡", ["Composition"] = "构图",
+
+-- 游戏内音乐
+["Music"] = "音乐", ["Sound"] = "声音", ["Melody"] = "旋律", ["Harmony"] = "和声", ["Rhythm"] = "节奏",
+["Beat"] = "节拍", ["Tempo"] = "速度", ["Pitch"] = "音高", ["Volume"] = "音量", ["Instrument"] = "乐器",
+["Voice"] = "人声", ["Song"] = "歌曲", ["Lyrics"] = "歌词", ["Composer"] = "作曲家", ["Performer"] = "演奏者",
+["Genre"] = "流派", ["Classical"] = "古典", ["Rock"] = "摇滚", ["Pop"] = "流行", ["Jazz"] = "爵士",
+["Electronic"] = "电子", ["Hip Hop"] = "嘻哈", ["Country"] = "乡村", ["Folk"] = "民间", ["World"] = "世界",
+
+-- 游戏内体育
+["Sports"] = "体育", ["Game"] = "比赛", ["Athlete"] = "运动员", ["Team"] = "团队", ["Coach"] = "教练",
+["Referee"] = "裁判", ["Stadium"] = "体育场", ["Field"] = "场地", ["Court"] = "球场", ["Track"] = "跑道",
+["Score"] = "得分", ["Goal"] = "进球", ["Point"] = "分数", ["Win"] = "胜利", ["Lose"] = "失败",
+["Draw"] = "平局", ["Champion"] = "冠军", ["Tournament"] = "锦标赛", ["Competition"] = "竞赛", ["Olympics"] = "奥运会",
+["Football"] = "足球", ["Basketball"] = "篮球", ["Baseball"] = "棒球", ["Tennis"] = "网球", ["Golf"] = "高尔夫",
+["Swimming"] = "游泳", ["Running"] = "跑步", ["Jumping"] = "跳跃", ["Throwing"] = "投掷", ["Weightlifting"] = "举重",
+
+-- 游戏内食物
+["Food"] = "食物", ["Drink"] = "饮料", ["Water"] = "水", ["Juice"] = "果汁", ["Soda"] = "汽水",
+["Coffee"] = "咖啡", ["Tea"] = "茶", ["Milk"] = "牛奶", ["Bread"] = "面包", ["Rice"] = "米饭",
+["Meat"] = "肉", ["Vegetable"] = "蔬菜", ["Fruit"] = "水果", ["Dessert"] = "甜点", ["Snack"] = "零食",
+["Cook"] = "烹饪", ["Recipe"] = "食谱", ["Ingredient"] = "食材", ["Spice"] = "香料", ["Flavor"] = "味道",
+["Taste"] = "味道", ["Smell"] = "气味", ["Texture"] = "口感", ["Nutrition"] = "营养", ["Calorie"] = "卡路里",
+["Vitamin"] = "维生素", ["Protein"] = "蛋白质", ["Carbohydrate"] = "碳水化合物", ["Fat"] = "脂肪", ["Fiber"] = "纤维",
+
+-- 游戏内服装
+["Clothing"] = "服装", ["Clothes"] = "衣服", ["Shirt"] = "衬衫", ["Pants"] = "裤子", ["Jacket"] = "夹克",
+["Dress"] = "连衣裙", ["Skirt"] = "裙子", ["Shoes"] = "鞋子", ["Boots"] = "靴子", ["Hat"] = "帽子",
+["Gloves"] = "手套", ["Scarf"] = "围巾", ["Socks"] = "袜子", ["Underwear"] = "内衣", ["Swimsuit"] = "泳衣",
+["Costume"] = "戏服", ["Uniform"] = "制服", ["Armor"] = "盔甲", ["Robe"] = "长袍", ["Cape"] = "披风",
+["Fabric"] = "织物", ["Cotton"] = "棉", ["Wool"] = "羊毛", ["Silk"] = "丝绸", ["Leather"] = "皮革",
+["Color"] = "颜色", ["Size"] = "尺码", ["Style"] = "款式", ["Fashion"] = "时尚", ["Design"] = "设计",
+
+-- 游戏内建筑
+["Architecture"] = "建筑", ["Building"] = "建筑物", ["House"] = "房子", ["Apartment"] = "公寓", ["Office"] = "办公室",
+["School"] = "学校", ["Hospital"] = "医院", ["Store"] = "商店", ["Mall"] = "商场", ["Hotel"] = "酒店",
+["Restaurant"] = "餐厅", ["Theater"] = "剧院", ["Museum"] = "博物馆", ["Library"] = "图书馆", ["Stadium"] = "体育场",
+["Bridge"] = "桥", ["Tower"] = "塔", ["Wall"] = "墙", ["Roof"] = "屋顶", ["Floor"] = "地板",
+["Window"] = "窗户", ["Door"] = "门", ["Stairs"] = "楼梯", ["Elevator"] = "电梯", ["Escalator"] = "自动扶梯",
+["Foundation"] = "地基", ["Structure"] = "结构", ["Design"] = "设计", ["Plan"] = "平面图", ["Blueprint"] = "蓝图",
+
+-- 游戏内交通
+["Transportation"] = "交通", ["Vehicle"] = "车辆", ["Car"] = "汽车", ["Bus"] = "公交车", ["Train"] = "火车",
+["Plane"] = "飞机", ["Ship"] = "船", ["Bicycle"] = "自行车", ["Motorcycle"] = "摩托车", ["Taxi"] = "出租车",
+["Subway"] = "地铁", ["Tram"] = "有轨电车", ["Ferry"] = "渡轮", ["Helicopter"] = "直升机", ["Rocket"] = "火箭",
+["Road"] = "道路", ["Street"] = "街道", ["Highway"] = "高速公路", ["Bridge"] = "桥", ["Tunnel"] = "隧道",
+["Traffic"] = "交通", ["Signal"] = "信号", ["Stop"] = "停止", ["Go"] = "前进", ["Yield"] = "让行",
+["Speed"] = "速度", ["Accident"] = "事故", ["Parking"] = "停车", ["Garage"] = "车库", ["Station"] = "车站",
+
+-- 游戏内自然
+["Nature"] = "自然", ["Environment"] = "环境", ["Ecosystem"] = "生态系统", ["Wildlife"] = "野生动物", ["Plant"] = "植物",
+["Animal"] = "动物", ["Insect"] = "昆虫", ["Bird"] = "鸟", ["Fish"] = "鱼", ["Mammal"] = "哺乳动物",
+["Tree"] = "树", ["Flower"] = "花", ["Grass"] = "草", ["Forest"] = "森林", ["Jungle"] = "丛林",
+["Desert"] = "沙漠", ["Mountain"] = "山", ["River"] = "河流", ["Lake"] = "湖", ["Ocean"] = "海洋",
+["Beach"] = "海滩", ["Island"] = "岛屿", ["Cave"] = "洞穴", ["Valley"] = "山谷", ["Waterfall"] = "瀑布",
+["Climate"] = "气候", ["Weather"] = "天气", ["Season"] = "季节", ["Sun"] = "太阳", ["Moon"] = "月亮",
+["Star"] = "星星", ["Sky"] = "天空", ["Cloud"] = "云", ["Rain"] = "雨", ["Snow"] = "雪",
+["Wind"] = "风", ["Storm"] = "风暴", ["Lightning"] = "闪电", ["Thunder"] = "雷声", ["Rainbow"] = "彩虹",
+
+-- 游戏内宇宙
+["Universe"] = "宇宙", ["Space"] = "太空", ["Galaxy"] = "星系", ["Star"] = "恒星", ["Planet"] = "行星",
+["Moon"] = "卫星", ["Sun"] = "太阳", ["Earth"] = "地球", ["Mars"] = "火星", ["Jupiter"] = "木星",
+["Saturn"] = "土星", ["Uranus"] = "天王星", ["Neptune"] = "海王星", ["Pluto"] = "冥王星", ["Asteroid"] = "小行星",
+["Comet"] = "彗星", ["Meteor"] = "流星", ["Black Hole"] = "黑洞", ["Nebula"] = "星云", ["Supernova"] = "超新星",
+["Orbit"] = "轨道", ["Gravity"] = "重力", ["Light Year"] = "光年", ["Solar System"] = "太阳系", ["Milky Way"] = "银河系",
+["Astronaut"] = "宇航员", ["Spacecraft"] = "航天器", ["Rocket"] = "火箭", ["Satellite"] = "卫星", ["Telescope"] = "望远镜",
+
+-- 游戏内时间
+["Time"] = "时间", ["Clock"] = "时钟", ["Watch"] = "手表", ["Calendar"] = "日历", ["Schedule"] = "日程",
+["Second"] = "秒", ["Minute"] = "分钟", ["Hour"] = "小时", ["Day"] = "天", ["Week"] = "周",
+["Month"] = "月", ["Year"] = "年", ["Decade"] = "十年", ["Century"] = "世纪", ["Millennium"] = "千年",
+["Past"] = "过去", ["Present"] = "现在", ["Future"] = "未来", ["History"] = "历史", ["Memory"] = "记忆",
+["Age"] = "年龄", ["Era"] = "时代", ["Period"] = "时期", ["Season"] = "季节", ["Moment"] = "时刻",
+["Duration"] = "持续时间", ["Interval"] = "间隔", ["Frequency"] = "频率", ["Speed"] = "速度", ["Delay"] = "延迟",
+
+-- 游戏内颜色
+["Color"] = "颜色", ["Red"] = "红色", ["Green"] = "绿色", ["Blue"] = "蓝色", ["Yellow"] = "黄色",
+["Orange"] = "橙色", ["Purple"] = "紫色", ["Pink"] = "粉色", ["Brown"] = "棕色", ["Black"] = "黑色",
+["White"] = "白色", ["Gray"] = "灰色", ["Silver"] = "银色", ["Gold"] = "金色", ["Bronze"] = "青铜色",
+["Cyan"] = "青色", ["Magenta"] = "洋红色", ["Turquoise"] = "青绿色", ["Lavender"] = "薰衣草色", ["Maroon"] = "栗色",
+["Navy"] = "海军蓝", ["Olive"] = "橄榄色", ["Teal"] = "蓝绿色", ["Indigo"] = "靛蓝色", ["Violet"] = "紫罗兰色",
+["Rainbow"] = "彩虹", ["Transparent"] = "透明", ["Opaque"] = "不透明", ["Shiny"] = "闪亮", ["Matte"] = "磨砂",
+["Glossy"] = "光滑", ["Dark"] = "深色", ["Light"] = "浅色", ["Bright"] = "明亮", ["Dull"] = "暗淡",
+
+-- 游戏内形状
+["Shape"] = "形状", ["Circle"] = "圆形", ["Square"] = "正方形", ["Triangle"] = "三角形", ["Rectangle"] = "矩形",
+["Oval"] = "椭圆形", ["Diamond"] = "菱形", ["Star"] = "星星", ["Heart"] = "心形", ["Cross"] = "十字形",
+["Arrow"] = "箭头", ["Line"] = "线", ["Curve"] = "曲线", ["Spiral"] = "螺旋", ["Polygon"] = "多边形",
+["Sphere"] = "球体", ["Cube"] = "立方体", ["Cone"] = "圆锥", ["Cylinder"] = "圆柱", ["Pyramid"] = "金字塔",
+["Torus"] = "圆环", ["Ellipsoid"] = "椭球体", ["Prism"] = "棱柱", ["Platonic Solid"] = "柏拉图立体", ["Fractal"] = "分形",
+
+-- 游戏内方向
+["Direction"] = "方向", ["North"] = "北", ["South"] = "南", ["East"] = "东", ["West"] = "西",
+["Up"] = "上", ["Down"] = "下", ["Left"] = "左", ["Right"] = "右", ["Forward"] = "前",
+["Backward"] = "后", ["Clockwise"] = "顺时针", ["Counterclockwise"] = "逆时针", ["Horizontal"] = "水平", ["Vertical"] = "垂直",
+["Diagonal"] = "对角", ["Parallel"] = "平行", ["Perpendicular"] = "垂直", ["Angle"] = "角度", ["Degree"] = "度",
+["Radial"] = "径向", ["Axial"] = "轴向", ["Longitudinal"] = "纵向", ["Transverse"] = "横向", ["Lateral"] = "横向",
+
+-- 游戏内数量
+["Quantity"] = "数量", ["Amount"] = "数量", ["Number"] = "数字", ["Count"] = "计数", ["Total"] = "总计",
+["Sum"] = "总和", ["Average"] = "平均", ["Maximum"] = "最大值", ["Minimum"] = "最小值", ["Range"] = "范围",
+["More"] = "更多", ["Less"] = "更少", ["Many"] = "许多", ["Few"] = "少数", ["Several"] = "几个",
+["All"] = "全部", ["Some"] = "一些", ["None"] = "无", ["Any"] = "任何", ["Each"] = "每个",
+["Every"] = "每一个", ["Both"] = "两者", ["Either"] = "任一", ["Neither"] = "两者都不", ["Single"] = "单一",
+["Double"] = "双倍", ["Triple"] = "三倍", ["Multiple"] = "多个", ["Infinite"] = "无限", ["Zero"] = "零",
+["One"] = "一", ["Two"] = "二", ["Three"] = "三", ["Four"] = "四", ["Five"] = "五",
+["Six"] = "六", ["Seven"] = "七", ["Eight"] = "八", ["Nine"] = "九", ["Ten"] = "十",
+["Hundred"] = "百", ["Thousand"] = "千", ["Million"] = "百万", ["Billion"] = "十亿", ["Trillion"] = "万亿",
+
+-- 游戏内大小
+["Size"] = "大小", ["Small"] = "小", ["Medium"] = "中", ["Large"] = "大", ["Tiny"] = "微小",
+["Huge"] = "巨大", ["Gigantic"] = "庞大", ["Enormous"] = "巨大", ["Massive"] = "庞大", ["Colossal"] = "巨大",
+["Miniature"] = "微型", ["Microscopic"] = "微观", ["Macroscopic"] = "宏观", ["Length"] = "长度", ["Width"] = "宽度",
+["Height"] = "高度", ["Depth"] = "深度", ["Diameter"] = "直径", ["Radius"] = "半径", ["Circumference"] = "周长",
+["Area"] = "面积", ["Volume"] = "体积", ["Weight"] = "重量", ["Mass"] = "质量", ["Density"] = "密度",
+["Thick"] = "厚", ["Thin"] = "薄", ["Wide"] = "宽", ["Narrow"] = "窄", ["Tall"] = "高",
+["Short"] = "短", ["Long"] = "长", ["Big"] = "大", ["Little"] = "小", ["Heavy"] = "重",
+["Light"] = "轻", ["Fat"] = "胖", ["Skinny"] = "瘦", ["Broad"] = "宽阔", ["Slender"] = "细长",
+
+-- 游戏内速度
+["Speed"] = "速度", ["Fast"] = "快", ["Slow"] = "慢", ["Quick"] = "快速", ["Rapid"] = "迅速",
+["Swift"] = "敏捷", ["Instant"] = "瞬间", ["Immediate"] = "立即", ["Gradual"] = "逐渐", ["Steady"] = "稳定",
+["Accelerate"] = "加速", ["Decelerate"] = "减速", ["Velocity"] = "速度", ["Acceleration"] = "加速度", ["Momentum"] = "动量",
+["Rate"] = "速率", ["Pace"] = "步伐", ["Tempo"] = "节奏", ["Frequency"] = "频率", ["Interval"] = "间隔",
+["Delay"] = "延迟", ["Lag"] = "滞后", ["Latency"] = "延迟", ["Response Time"] = "响应时间", ["Reaction Time"] = "反应时间",
+
+-- 游戏内力量
+["Strength"] = "力量", ["Power"] = "力量", ["Force"] = "力", ["Energy"] = "能量", ["Might"] = "威力",
+["Potency"] = "效力", ["Intensity"] = "强度", ["Durability"] = "耐久性", ["Toughness"] = "韧性", ["Hardness"] = "硬度",
+["Weak"] = "弱", ["Strong"] = "强", ["Powerful"] = "强大", ["Mighty"] = "强大", ["Robust"] = "健壮",
+["Fragile"] = "脆弱", ["Brittle"] = "易碎", ["Delicate"] = "精致", ["Sturdy"] = "坚固", ["Resilient"] = "有弹性",
+["Endurance"] = "耐力", ["Stamina"] = "耐力", ["Vitality"] = "活力", ["Health"] = "生命值", ["Fitness"] = "健康",
+
+-- 游戏内智力
+["Intelligence"] = "智力", ["Wisdom"] = "智慧", ["Knowledge"] = "知识", ["Understanding"] = "理解", ["Insight"] = "洞察",
+["Clever"] = "聪明", ["Smart"] = "聪明", ["Brilliant"] = "才华横溢", ["Genius"] = "天才", ["Intellectual"] = "知识分子",
+["Dull"] = "迟钝", ["Stupid"] = "愚蠢", ["Ignorant"] = "无知", ["Foolish"] = "愚蠢", ["Naive"] = "天真",
+["Learning"] = "学习", ["Memory"] = "记忆", ["Logic"] = "逻辑", ["Reason"] = "理性", ["Analysis"] = "分析",
+["Problem Solving"] = "问题解决", ["Critical Thinking"] = "批判性思维", ["Creativity"] = "创造力", ["Imagination"] = "想象力", ["Innovation"] = "创新",
+
+-- 游戏内情感
+["Emotion"] = "情感", ["Feeling"] = "感觉", ["Mood"] = "心情", ["Sentiment"] = "情绪", ["Passion"] = "激情",
+["Happy"] = "快乐", ["Sad"] = "悲伤", ["Angry"] = "愤怒", ["Fear"] = "恐惧", ["Love"] = "爱",
+["Hate"] = "恨", ["Joy"] = "喜悦", ["Sorrow"] = "悲伤", ["Excitement"] = "兴奋", ["Boredom"] = "无聊",
+["Anxiety"] = "焦虑", ["Stress"] = "压力", ["Depression"] = "抑郁", ["Hope"] = "希望", ["Despair"] = "绝望",
+["Pride"] = "骄傲", ["Shame"] = "羞耻", ["Guilt"] = "内疚", ["Envy"] = "嫉妒", ["Jealousy"] = "嫉妒",
+["Compassion"] = "同情", ["Empathy"] = "同理心", ["Sympathy"] = "同情", ["Affection"] = "喜爱", ["Attachment"] = "依恋",
+
+-- 游戏内个性
+["Personality"] = "个性", ["Character"] = "性格", ["Trait"] = "特质", ["Nature"] = "本性", ["Disposition"] = "性情",
+["Kind"] = "善良", ["Cruel"] = "残忍", ["Generous"] = "慷慨", ["Selfish"] = "自私", ["Honest"] = "诚实",
+["Dishonest"] = "不诚实", ["Brave"] = "勇敢", ["Cowardly"] = "懦弱", ["Confident"] = "自信", ["Shy"] = "害羞",
+["Outgoing"] = "外向", ["Introverted"] = "内向", ["Friendly"] = "友好", ["Hostile"] = "敌对", ["Patient"] = "耐心",
+["Impatient"] = "不耐烦", ["Calm"] = "冷静", ["Anxious"] = "焦虑", ["Optimistic"] = "乐观", ["Pessimistic"] = "悲观",
+["Rational"] = "理性", ["Emotional"] = "感性", ["Logical"] = "逻辑", ["Creative"] = "有创造力", ["Analytical"] = "分析性",
+
+-- 游戏内社交
+["Social"] = "社交", ["Society"] = "社会", ["Community"] = "社区", ["Group"] = "群体", ["Team"] = "团队",
+["Friendship"] = "友谊", ["Relationship"] = "关系", ["Interaction"] = "互动", ["Communication"] = "交流", ["Cooperation"] = "合作",
+["Competition"] = "竞争", ["Conflict"] = "冲突", ["Harmony"] = "和谐", ["Discord"] = "不和", ["Alliance"] = "联盟",
+["Enemy"] = "敌人", ["Rival"] = "对手", ["Partner"] = "伙伴", ["Companion"] = "同伴", ["Ally"] = "盟友",
+["Stranger"] = "陌生人", ["Acquaintance"] = "熟人", ["Friend"] = "朋友", ["Best Friend"] = "最好的朋友", ["Family"] = "家庭",
+["Parent"] = "父母", ["Child"] = "孩子", ["Sibling"] = "兄弟姐妹", ["Relative"] = "亲戚", ["Neighbor"] = "邻居",
+
+-- 游戏内道德
+["Morality"] = "道德", ["Ethics"] = "伦理", ["Virtue"] = "美德", ["Vice"] = "恶习", ["Good"] = "善",
+["Evil"] = "恶", ["Right"] = "正确", ["Wrong"] = "错误", ["Justice"] = "正义", ["Injustice"] = "不公正",
+["Fair"] = "公平", ["Unfair"] = "不公平", ["Honest"] = "诚实", ["Dishonest"] = "不诚实", ["Truth"] = "真理",
+["Lie"] = "谎言", ["Loyal"] = "忠诚", ["Betrayal"] = "背叛", ["Trust"] = "信任", ["Distrust"] = "不信任",
+["Responsibility"] = "责任", ["Irresponsibility"] = "不负责任", ["Duty"] = "义务", ["Obligation"] = "责任", ["Conscience"] = "良心",
+["Guilt"] = "内疚", ["Innocence"] = "无辜", ["Sin"] = "罪", ["Redemption"] = "救赎", ["Forgiveness"] = "宽恕",
+
+-- 游戏内精神
+["Spirit"] = "精神", ["Soul"] = "灵魂", ["Mind"] = "心灵", ["Consciousness"] = "意识", ["Subconscious"] = "潜意识",
+["Psychology"] = "心理学", ["Mental"] = "心理", ["Emotional"] = "情感", ["Intellectual"] = "智力", ["Spiritual"] = "精神",
+["Meditation"] = "冥想", ["Prayer"] = "祈祷", ["Faith"] = "信仰", ["Belief"] = "信念", ["Religion"] = "宗教",
+["Philosophy"] = "哲学", ["Wisdom"] = "智慧", ["Enlightenment"] = "启蒙", ["Awakening"] = "觉醒", ["Transcendence"] = "超越",
+["Karma"] = "因果", ["Destiny"] = "命运", ["Fate"] = "命运", ["Free Will"] = "自由意志", ["Determinism"] = "决定论",
+
+-- 游戏内魔法
+["Magic"] = "魔法", ["Spell"] = "法术", ["Enchantment"] = "附魔", ["Curse"] = "诅咒", ["Blessing"] = "祝福",
+["Sorcery"] = "巫术", ["Witchcraft"] = "巫术", ["Wizardry"] = "魔法", ["Mana"] = "魔法值", ["Arcane"] = "奥术",
+["Mystic"] = "神秘", ["Occult"] = "神秘学", ["Supernatural"] = "超自然", ["Divine"] = "神圣", ["Celestial"] = "天体",
+["Elemental"] = "元素", ["Fire"] = "火焰", ["Water"] = "水", ["Earth"] = "土", ["Air"] = "空气",
+["Light"] = "光", ["Dark"] = "暗", ["Life"] = "生命", ["Death"] = "死亡", ["Time"] = "时间",
+["Space"] = "空间", ["Reality"] = "现实", ["Illusion"] = "幻象", ["Teleportation"] = "传送", ["Transmutation"] = "变形",
+["Summoning"] = "召唤", ["Necromancy"] = "死灵术", ["Alchemy"] = "炼金术", ["Divination"] = "占卜", ["Enchanting"] = "附魔",
+
+-- 游戏内科技
+["Technology"] = "科技", ["Science"] = "科学", ["Engineering"] = "工程", ["Innovation"] = "创新", ["Invention"] = "发明",
+["Device"] = "设备", ["Gadget"] = "小工具", ["Tool"] = "工具", ["Machine"] = "机器", ["Robot"] = "机器人",
+["Computer"] = "计算机", ["Software"] = "软件", ["Hardware"] = "硬件", ["Network"] = "网络", ["Internet"] = "互联网",
+["Digital"] = "数字", ["Analog"] = "模拟", ["Electronic"] = "电子", ["Mechanical"] = "机械", ["Automation"] = "自动化",
+["AI"] = "人工智能", ["Virtual Reality"] = "虚拟现实", ["Augmented Reality"] = "增强现实", ["Cyborg"] = "赛博格", ["Nanotechnology"] = "纳米技术",
+["Biotechnology"] = "生物技术", ["Genetic Engineering"] = "基因工程", ["Space Technology"] = "航天技术", ["Renewable Energy"] = "可再生能源", ["Sustainable"] = "可持续",
+
+-- 游戏内未来
+["Future"] = "未来", ["Tomorrow"] = "明天", ["Next"] = "下一个", ["Coming"] = "即将到来", ["Advance"] = "前进",
+["Progress"] = "进步", ["Development"] = "发展", ["Evolution"] = "进化", ["Revolution"] = "革命", ["Change"] = "变化",
+["Innovation"] = "创新", ["Discovery"] = "发现", ["Exploration"] = "探索", ["Colonization"] = "殖民", ["Space"] = "太空",
+["Time Travel"] = "时间旅行", ["Parallel Universe"] = "平行宇宙", ["Alternate Reality"] = "替代现实", ["Dystopia"] = "反乌托邦", ["Utopia"] = "乌托邦",
+["Apocalypse"] = "末日", ["Post-apocalyptic"] = "后末日", ["Cyberpunk"] = "赛博朋克", ["Steampunk"] = "蒸汽朋克", ["Sci-fi"] = "科幻",
+["Fantasy"] = "奇幻", ["Horror"] = "恐怖", ["Mystery"] = "神秘", ["Adventure"] = "冒险", ["Romance"] = "浪漫",
+
+-- 游戏内过去
+["Past"] = "过去", ["Yesterday"] = "昨天", ["History"] = "历史", ["Ancient"] = "古代", ["Medieval"] = "中世纪",
+["Renaissance"] = "文艺复兴", ["Industrial Revolution"] = "工业革命", ["World War"] = "世界大战", ["Prehistoric"] = "史前", ["Primitive"] = "原始",
+["Traditional"] = "传统", ["Classical"] = "古典", ["Antique"] = "古董", ["Vintage"] = "复古", ["Retro"] = "复古",
+["Old"] = "老", ["New"] = "新", ["Modern"] = "现代", ["Contemporary"] = "当代", ["Current"] = "当前",
+["Present"] = "现在", ["Today"] = "今天", ["Now"] = "现在", ["Recent"] = "最近", ["Latest"] = "最新",
+
+-- 游戏内现实
+["Reality"] = "现实", ["Real"] = "真实", ["Fake"] = "虚假", ["Illusion"] = "幻象", ["Dream"] = "梦",
+["Nightmare"] = "噩梦", ["Fantasy"] = "幻想", ["Imagination"] = "想象", ["Virtual"] = "虚拟", ["Simulation"] = "模拟",
+["Augmented"] = "增强", ["Mixed"] = "混合", ["Alternate"] = "替代", ["Parallel"] = "平行", ["Multiverse"] = "多重宇宙",
+["Existence"] = "存在", ["Being"] = "存在", ["Life"] = "生命", ["Death"] = "死亡", ["Birth"] = "出生",
+["Creation"] = "创造", ["Destruction"] = "毁灭", ["Beginning"] = "开始", ["End"] = "结束", ["Eternal"] = "永恒",
+
+-- 游戏内概念
+["Concept"] = "概念", ["Idea"] = "想法", ["Thought"] = "思想", ["Theory"] = "理论", ["Hypothesis"] = "假设",
+["Principle"] = "原则", ["Law"] = "定律", ["Rule"] = "规则", ["Standard"] = "标准", ["Model"] = "模型",
+["Framework"] = "框架", ["Structure"] = "结构", ["System"] = "系统", ["Process"] = "过程", ["Method"] = "方法",
+["Technique"] = "技巧", ["Strategy"] = "策略", ["Plan"] = "计划", ["Goal"] = "目标", ["Objective"] = "目标",
+["Purpose"] = "目的", ["Meaning"] = "意义", ["Significance"] = "重要性", ["Value"] = "价值", ["Importance"] = "重要性",
+["Priority"] = "优先级", ["Focus"] = "焦点", ["Attention"] = "注意力", ["Awareness"] = "意识", ["Understanding"] = "理解",
+
+-- 游戏内抽象
+["Abstract"] = "抽象", ["Concrete"] = "具体", ["Physical"] = "物理", ["Mental"] = "心理", ["Emotional"] = "情感",
+["Spiritual"] = "精神", ["Philosophical"] = "哲学", ["Theoretical"] = "理论", ["Practical"] = "实践", ["Applied"] = "应用",
+["General"] = "一般", ["Specific"] = "具体", ["Universal"] = "普遍", ["Particular"] = "特定", ["Common"] = "常见",
+["Rare"] = "稀有", ["Unique"] = "独特", ["Special"] = "特殊", ["Ordinary"] = "普通", ["Extraordinary"] = "非凡",
+["Normal"] = "正常", ["Abnormal"] = "异常", ["Natural"] = "自然", ["Artificial"] = "人工", ["Man-made"] = "人造",
+["Organic"] = "有机", ["Inorganic"] = "无机", ["Living"] = "活", ["Non-living"] = "非生命", ["Alive"] = "活着",
+["Dead"] = "死亡", ["Animate"] = "有生命的", ["Inanimate"] = "无生命的", ["Sentient"] = "有感知的", ["Insentient"] = "无感知的",
+
+-- 游戏内程度
+["Degree"] = "程度", ["Level"] = "等级", ["Intensity"] = "强度", ["Severity"] = "严重性", ["Magnitude"] = "量级",
+["Extent"] = "范围", ["Scope"] = "范围", ["Scale"] = "规模", ["Range"] = "范围", ["Spectrum"] = "光谱",
+["Full"] = "满", ["Empty"] = "空", ["Complete"] = "完成", ["Incomplete"] = "未完成", ["Partial"] = "部分",
+["Whole"] = "整体", ["Total"] = "总计", ["Entire"] = "全部", ["Fraction"] = "分数", ["Percentage"] = "百分比",
+["Maximum"] = "最大", ["Minimum"] = "最小", ["Optimal"] = "最佳", ["Ideal"] = "理想", ["Perfect"] = "完美",
+["Imperfect"] = "不完美", ["Excellent"] = "优秀", ["Good"] = "好", ["Average"] = "平均", ["Poor"] = "差",
+["Bad"] = "坏", ["Terrible"] = "糟糕", ["Horrible"] = "可怕", ["Awful"] = "糟糕", ["Wonderful"] = "精彩",
+["Amazing"] = "惊人", ["Fantastic"] = "奇妙", ["Great"] = "伟大", ["Nice"] = "好", ["Okay"] = "还好",
+["Fine"] = "好", ["Decent"] = "体面", ["Acceptable"] = "可接受", ["Unacceptable"] = "不可接受", ["Satisfactory"] = "满意",
+["Unsatisfactory"] = "不满意", ["Sufficient"] = "足够", ["Insufficient"] = "不足", ["Adequate"] = "充分", ["Inadequate"] = "不充分",
+
+-- 游戏内比较
+["Comparison"] = "比较", ["Similar"] = "相似", ["Different"] = "不同", ["Same"] = "相同", ["Identical"] = "相同",
+["Equal"] = "相等", ["Unequal"] = "不相等", ["Equivalent"] = "等价", ["Comparable"] = "可比", ["Incomparable"] = "无可比拟",
+["Better"] = "更好", ["Worse"] = "更差", ["Best"] = "最好", ["Worst"] = "最差", ["Superior"] = "优越",
+["Inferior"] = "低劣", ["Higher"] = "更高", ["Lower"] = "更低", ["Greater"] = "更大", ["Lesser"] = "较小",
+["More"] = "更多", ["Less"] = "更少", ["Most"] = "最多", ["Least"] = "最少", ["Increase"] = "增加",
+["Decrease"] = "减少", ["Grow"] = "增长", ["Shrink"] = "缩小", ["Expand"] = "扩展", ["Contract"] = "收缩",
+["Advantage"] = "优势", ["Disadvantage"] = "劣势", ["Benefit"] = "好处", ["Drawback"] = "缺点", ["Pro"] = "优点",
+["Con"] = "缺点", ["Positive"] = "正面", ["Negative"] = "负面", ["Good"] = "好", ["Bad"] = "坏",
+["Right"] = "正确", ["Wrong"] = "错误", ["True"] = "真", ["False"] = "假", ["Correct"] = "正确",
+["Incorrect"] = "不正确", ["Accurate"] = "准确", ["Inaccurate"] = "不准确", ["Precise"] = "精确", ["Imprecise"] = "不精确",
+["Exact"] = "确切", ["Approximate"] = "近似"
 }
 
 -- 翻译函数
