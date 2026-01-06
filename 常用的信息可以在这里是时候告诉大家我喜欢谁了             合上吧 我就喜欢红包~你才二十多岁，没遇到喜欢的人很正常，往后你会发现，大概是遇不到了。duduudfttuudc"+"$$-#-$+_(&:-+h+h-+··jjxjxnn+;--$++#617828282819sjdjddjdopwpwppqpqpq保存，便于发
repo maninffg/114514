@@ -19,7 +19,7 @@ end
 
 -- 创建弹窗
 WindUI:Popup({
-    Title = "防踢脚本加载",
+    Title = "脚本中心防踢脚本加载",
     Icon = "crown",
     Content = "正在加载防踢脚本...\n\n警告：防踢功能只适用于部分服务器。\n使用风险自负。",
     Buttons = {
@@ -158,15 +158,15 @@ function createAntiKickWindow()
     
     -- 创建窗口
     local Window = WindUI:CreateWindow({
-        Title = "防踢脚本 v0.2.6",
-        Author = "基于WindUI开发",
+        Title = "脚本中心防踢 v0.2.6",
+        Author = "Script Hub",
         Folder = "AntiKickScript",
         NewElements = true,
         HideSearchBar = false,
         Icon = "crown", -- 窗口图标改为王冠
         BorderColor = Color3.fromRGB(255, 255, 0), -- 黄色边框
         OpenButton = {
-            Title = "打开防踢脚本",
+            Title = "打开脚本中心防踢",
             CornerRadius = UDim.new(0, 8),
             StrokeThickness = 2,
             Enabled = true,
@@ -188,7 +188,7 @@ function createAntiKickWindow()
     
     -- 创建主标签页
     local MainTab = Window:Tab({
-        Title = "防踢功能",
+        Title = "主功能",
         Icon = customIcon,
     })
     
@@ -220,7 +220,7 @@ function createAntiKickWindow()
     -- 主开关
     local masterToggle
     masterToggle = AntiKickSection:Toggle({
-        Title = "🛡️ 启用防踢功能",
+        Title = "启用防踢功能",
         Desc = "启用后将尝试拦截踢出操作",
         Icon = "shield",
         Default = false,
